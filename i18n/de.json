@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "lang": "de",
+    "label": "Deutsch",
+    "status": "todo",
+    "note": "Leere Zeichenketten fallen auf den niederländischen HTML-Text zurück. Bitte deutsche Übersetzungen einfügen."
+  },
+
+  "nav": {
+    "home":      "Startseite",
+    "events":    "Events",
+    "workshops": "Workshops",
+    "shop":      "Shop",
+    "contact":   "Kontakt",
+    "book":      "Jetzt buchen"
+  },
+
+  "hero": {
+    "badge":    "🚲 Das einzige Kaffeefahrrad, das Bohnen mit Pedalantrieb mahlt",
+    "title":    "Kaffee radeln<br>mit einem <em>Lächeln</em>",
+    "subtitle": "Auf unseren Velopresso-Kaffeefahrrädern mahlen wir beim Fahren unsere Bohnen und servieren Cappuccinos, Lattes, Chai und Tee — mit viel Leidenschaft. Der Blickfang auf Ihrem Event!",
+    "cta1":     "Unsere Dienste entdecken",
+    "cta2":     "Latte Art Workshop"
+  },
+
+  "about": {
+    "label":     "Wer sind wir?",
+    "title":     "Smiling Baristas auf einem Velopresso",
+    "text1":     "Wir sind Didi und seine Smiling Baristas — und wir radeln Kaffee mit einem Lächeln. Auf unseren Kaffeefahrrädern mahlen wir beim Fahren unsere Bohnen und servieren Cappuccinos, Lattes, Chai und Tee, mit viel Leidenschaft!",
+    "text2":     "Wir sorgen für Stimmung auf Ihrem Event, sind der Blickfang auf Ihrer Firmenfeier und das Eisbrecher auf Ihrem Messestand. Der Velopresso ist das einzige vollständig mobile Kaffeefahrrad, bei dem Sie die Bohnen mit Pedalantrieb mahlen.",
+    "cta":       "Kontakt aufnehmen",
+    "stat1val":  "4",
+    "stat1lbl":  "Velopressos",
+    "stat2val":  "~50",
+    "stat2lbl":  "Getränke pro Stunde",
+    "stat3val":  "5",
+    "stat3lbl":  "Sprachen"
+  },
+
+  "services": {
+    "label":    "Was wir tun",
+    "title":    "Maßgeschneiderte Kaffeeerlebnisse",
+    "subtitle": "Von Teambuilding bis Markenaktivierung — wir liefern unvergessliche Kaffeemomente für jeden Eventtyp.",
+    "svc1title": "Spreading Smiles",
+    "svc1text":  "Unsere Velopresso-Kaffeefahrräder bringen die Atmosphäre zu Ihrem Event, Ihrer Firmenfeier oder Ihrem Messestand. Vollständig autark — wir kommen zu Ihnen.",
+    "svc1link":  "Mehr Info →",
+    "svc2title": "Smiling Marketista",
+    "svc2text":  "Setzen Sie Ihre Marke in Szene mit einem vollständig gebrandeten Velopresso. Fahrraddekoration mit Ihrem Logo, gestempelten Bechern und einer maßgeschneiderten Speisekarte.",
+    "svc2link":  "Markenaktivierung →",
+    "svc3title": "Latte Art Workshop",
+    "svc3text":  "Vom Anfänger zum Künstler — lernen Sie, Milch perfekt zu dämpfen und Herzen in einen Cappuccino zu gießen, der alle begeistert.",
+    "svc3link":  "Workshops ansehen →"
+  },
+
+  "products": {
+    "label":    "Ausgewählt",
+    "title":    "Beliebte Produkte",
+    "subtitle": "Unsere meistverkauften Kaffees, Accessoires und Geschenkgutscheine.",
+    "more":     "Alle Produkte ansehen"
+  },
+
+  "reviews": {
+    "label":    "Was Kunden sagen",
+    "title":    "Erlebnisse, die bleiben",
+    "moreBtn":  "Alle Google-Bewertungen ansehen"
+  },
+
+  "cta": {
+    "title":    "Bereit loszulegen?",
+    "subtitle": "Erzählen Sie uns von Ihrem Event und wir stellen ein maßgeschneidertes Angebot zusammen.",
+    "btn1":     "Angebot anfragen",
+    "btn2":     "Workshop buchen"
+  },
+
+  "events": {
+    "pageLabel":   "Events & Catering",
+    "pageTitle":   "Mobiler Kaffee für jedes Event",
+    "pageSubtitle":"Der Velopresso fährt zu Ihrer Party, Messe oder Ihrem Firmenevent — vollständig autark.",
+    "menu": {
+      "title": "Unser Menü",
+      "hot":   "Heiß",
+      "cold":  "Kalt",
+      "extra": "Extras"
+    },
+    "practical": {
+      "title": "Praktisches"
+    }
+  },
+
+  "workshops": {
+    "pageLabel":   "Workshops",
+    "pageTitle":   "Vom Anfänger zum Künstler",
+    "pageSubtitle":"Lernen Sie die Geheimnisse des Baristas in einem praktischen Workshop. Ideal als Teambuilding, Firmenaktivität oder einfach zum Spaß!",
+    "bookBtn":     "Jetzt buchen",
+    "quoteBtn":    "Angebot anfragen",
+    "formTitle":   "Workshop-Anmeldung",
+    "formSubtitle":"Füllen Sie das Formular aus und wir melden uns bei Ihnen."
+  },
+
+  "shop": {
+    "pageLabel":   "Webshop",
+    "pageTitle":   "Kaffee & Zubehör",
+    "pageSubtitle":"Unsere Produkte — von frisch gerösteten Bohnen bis zu Workshop-Geschenkgutscheinen — nach Hause geliefert.",
+    "filterCat":   "Kategorien",
+    "filterPrice": "Preis",
+    "catAll":      "Alles",
+    "catKoffie":   "Kaffee",
+    "catAcc":      "Zubehör",
+    "catCadeau":   "Geschenkgutscheine",
+    "catWs":       "Workshop-Plätze",
+    "priceAll":    "Alle Preise",
+    "price020":    "Unter € 20",
+    "price2050":   "€ 20 – € 50",
+    "price50":     "Über € 50",
+    "sortNameAsc": "Name A–Z",
+    "sortNameDesc":"Name Z–A",
+    "sortPriceLow":"Preis aufsteigend",
+    "sortPriceHigh":"Preis absteigend",
+    "addToCart":   "In den Warenkorb",
+    "loadMore":    "Mehr laden"
+  },
+
+  "cart": {
+    "title":       "Warenkorb",
+    "empty":       "Ihr Warenkorb ist leer",
+    "subtotal":    "Zwischensumme",
+    "shippingNote":"Versandkosten werden beim Checkout berechnet.",
+    "checkout":    "Zur Kasse",
+    "continueShopping": "Weiter einkaufen",
+    "added":       "In den Warenkorb gelegt ✓"
+  },
+
+  "checkout": {
+    "title":       "Bestellung abschließen",
+    "summary":     "Bestellübersicht",
+    "name":        "Name",
+    "email":       "E-Mail",
+    "phone":       "Telefon",
+    "street":      "Straße + Nr.",
+    "zip":         "Postleitzahl",
+    "city":        "Stadt",
+    "note":        "Anmerkung",
+    "notePlaceholder": "Eventuelle Anmerkungen zu Ihrer Bestellung…",
+    "confirm":     "Bestellung bestätigen",
+    "processing":  "Verarbeitung…",
+    "successMsg":  "Bestellung aufgegeben! Wir melden uns in Kürze.",
+    "errorMsg":    "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns."
+  },
+
+  "contact": {
+    "pageLabel":   "Kontakt",
+    "pageTitle":   "Kontakt aufnehmen",
+    "pageSubtitle":"Haben Sie eine Frage, möchten ein Angebot oder wollen einfach über Kaffee plaudern? Schreiben Sie uns.",
+    "formTitle":   "Nachricht senden",
+    "infoTitle":   "Kontaktdaten",
+    "faqTitle":    "Häufig gestellte Fragen"
+  },
+
+  "footer": {
+    "tagline":  "Wir bringen Wärme, Lächeln und ausgezeichneten Kaffee zu Ihrem Event — in ganz Belgien.",
+    "menu":     "Menü",
+    "services": "Dienstleistungen",
+    "contact":  "Kontakt",
+    "privacy":  "Datenschutzerklärung",
+    "terms":    "Allgemeine Geschäftsbedingungen",
+    "admin":    "Verwaltung"
+  }
+}

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="nl" data-admin-page="true">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smiling Barista — Beheer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --espresso: #001E35;
+      --brown:    #00508C;
+      --blue:     #0366C5;
+      --latte:    #9DCAE5;
+      --cream:    #EBF4FA;
+      --white:    #FFFFFF;
+      --text:     #0A1F2E;
+      --muted:    #4A7A9B;
+      --border:   #C5DFF0;
+      --bg:       #F0F6FB;
+      --red:      #DC2626;
+      --green:    #16A34A;
+      --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-xl: 18px; --r-2xl: 24px; --r-full: 9999px;
+      --sh-sm: 0 1px 3px rgba(0,30,53,.07);
+      --sh-md: 0 4px 16px rgba(0,30,53,.10);
+      --sh-lg: 0 8px 32px rgba(0,30,53,.15);
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+    /* ── LOGIN ─────────────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(145deg, var(--espresso) 0%, #004A80 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: var(--white); border-radius: var(--r-2xl);
+      padding: 2.75rem 2.25rem; width: 360px; text-align: center;
+      box-shadow: var(--sh-lg);
+    }
+    .login-mark {
+      width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      background: var(--blue); color: #fff;
+      font-family: 'Playfair Display', serif; font-size: 1.125rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
+    }
+    .login-card h1 { font-family: 'Playfair Display', serif; font-size: 1.375rem; margin-bottom: .25rem; }
+    .login-card p  { color: var(--muted); font-size: .875rem; margin-bottom: 1.75rem; }
+    .login-err     { color: var(--red); font-size: .8125rem; min-height: 1.2em; margin-bottom: .625rem; }
+    .login-card input {
+      width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-lg); font-size: .9375rem; font-family: inherit;
+      outline: none; margin-bottom: .875rem; transition: border-color .15s;
+    }
+    .login-card input:focus { border-color: var(--blue); }
+    .login-btn {
+      width: 100%; padding: .75rem; background: var(--blue); color: #fff;
+      border: none; border-radius: var(--r-full); font-size: .9375rem; font-weight: 600;
+      cursor: pointer; transition: background .15s; font-family: inherit;
+    }
+    .login-btn:hover { background: var(--brown); }
+
+    /* ── LAYOUT ────────────────────────────────────────── */
+    #app { display: none; min-height: 100vh; }
+
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+      background: var(--espresso); display: flex; flex-direction: column; z-index: 100;
+    }
+    .sb-logo {
+      padding: 1.375rem 1.5rem 1.125rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .sb-logo-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: #fff; line-height: 1.2; }
+    .sb-logo-sub  { font-size: .6875rem; color: rgba(255,255,255,.38); letter-spacing: .08em; text-transform: uppercase; margin-top: .2rem; }
+    .sb-nav { flex: 1; padding: .5rem 0; overflow-y: auto; }
+    .sb-section { padding: 1rem 1.5rem .375rem; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.28); }
+    .sb-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .625rem 1.5rem; width: 100%; text-align: left;
+      background: none; border: none; border-left: 3px solid transparent;
+      color: rgba(255,255,255,.6); font-size: .875rem; cursor: pointer;
+      transition: all .15s; font-family: inherit;
+    }
+    .sb-item:hover  { background: rgba(255,255,255,.06); color: #fff; }
+    .sb-item.active { background: rgba(255,255,255,.1); color: #fff; font-weight: 600; border-left-color: var(--latte); }
+    .sb-item svg { flex-shrink: 0; opacity: .75; }
+    .sb-item.active svg { opacity: 1; }
+    .sb-foot {
+      padding: .875rem 1.25rem; border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; flex-direction: column; gap: .375rem;
+    }
+    .sb-foot-btn {
+      display: flex; align-items: center; gap: .5rem; padding: .5rem .75rem;
+      background: none; border: 1px solid rgba(255,255,255,.12); border-radius: var(--r-md);
+      color: rgba(255,255,255,.6); font-size: .8125rem; cursor: pointer; transition: all .15s; font-family: inherit;
+    }
+    .sb-foot-btn:hover { background: rgba(255,255,255,.07); color: #fff; }
+
+    .main { margin-left: 220px; padding: 2rem 2.25rem; min-height: 100vh; }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .page-head h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    .page-head p  { color: var(--muted); font-size: .875rem; margin-top: .2rem; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── BUTTONS ───────────────────────────────────────── */
+    .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem 1.125rem; border-radius: var(--r-full); font-size: .875rem; font-weight: 600; border: none; cursor: pointer; transition: all .15s; white-space: nowrap; font-family: inherit; }
+    .btn-primary  { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--brown); box-shadow: var(--sh-md); }
+    .btn-outline  { background: #fff; color: var(--blue); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--blue); }
+    .btn-danger   { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm       { padding: .35rem .875rem; font-size: .8125rem; }
+    .btn-icon     { padding: .45rem; border-radius: var(--r-md); background: var(--cream); color: var(--blue); border: none; cursor: pointer; display: inline-flex; transition: background .15s; line-height: 1; }
+    .btn-icon:hover { background: #c5def0; }
+    .btn-icon.del { background: #fee2e2; color: var(--red); }
+    .btn-icon.del:hover { background: #fecaca; }
+
+    /* ── CARD ──────────────────────────────────────────── */
+    .card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); }
+    .card-head { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .card-head h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
+    .card-body { padding: 1.5rem; }
+
+    /* ── STATS ─────────────────────────────────────────── */
+    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-chip { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); padding: 1.125rem 1.25rem; display: flex; align-items: center; gap: .875rem; }
+    .stat-icon { width: 2.25rem; height: 2.25rem; background: var(--cream); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--blue); }
+    .stat-val  { font-size: 1.5rem; font-weight: 700; line-height: 1; font-family: 'Playfair Display', serif; }
+    .stat-lbl  { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
+
+    /* ── CALENDAR ──────────────────────────────────────── */
+    .agenda-layout { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; }
+    .cal { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); overflow: hidden; }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--espresso); color: #fff; }
+    .cal-head h3 { font-family: 'Playfair Display', serif; font-size: 1.0625rem; }
+    .cal-nav { width: 2rem; height: 2rem; background: rgba(255,255,255,.12); border: none; border-radius: var(--r-md); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .cal-nav:hover { background: rgba(255,255,255,.22); }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); background: var(--cream); padding: .5rem 0; }
+    .cal-weekday { text-align: center; font-size: .6875rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); padding: .5rem; gap: 2px; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: var(--r-md); cursor: pointer; position: relative; font-size: .875rem;
+      transition: background .12s; user-select: none; min-height: 38px;
+    }
+    .cal-day:hover:not(.cal-empty):not(.cal-past) { background: var(--cream); }
+    .cal-empty  { cursor: default; }
+    .cal-past   { color: #b0c8da; cursor: default; }
+    .cal-today  { font-weight: 700; color: var(--blue); }
+    .cal-has    { font-weight: 600; }
+    .cal-sel    { background: var(--blue) !important; color: #fff !important; border-radius: var(--r-md); }
+    .cal-dots   { display: flex; gap: 3px; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
+    .cal-dot    { width: 5px; height: 5px; border-radius: 50%; display: block; }
+    .cal-sel .cal-dot { background: rgba(255,255,255,.7) !important; }
+
+    /* Session list */
+    .session-list { display: flex; flex-direction: column; gap: .5rem; }
+    .sess-row {
+      background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-lg);
+      padding: .875rem 1rem; display: flex; align-items: center; gap: .875rem; transition: box-shadow .15s;
+    }
+    .sess-row:hover { box-shadow: var(--sh-sm); }
+    .sess-bar   { width: 3px; height: 2.5rem; border-radius: 2px; flex-shrink: 0; }
+    .sess-date  { font-weight: 700; font-size: .875rem; min-width: 90px; }
+    .sess-time  { font-size: .8125rem; color: var(--muted); }
+    .sess-name  { flex: 1; font-size: .875rem; font-weight: 500; }
+    .sess-spots { font-size: .8125rem; font-weight: 600; min-width: 50px; text-align: right; }
+    .sess-pay   { font-size: .7rem; padding: .2rem .5rem; border-radius: var(--r-full); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .pay-odoo   { background: #dbeafe; color: #1d4ed8; }
+    .pay-mollie { background: #fef3c7; color: #b45309; }
+    .pay-email  { background: var(--cream); color: var(--blue); }
+    .spots-ok   { color: var(--green); }
+    .spots-low  { color: #ea580c; }
+    .spots-full { color: var(--red); }
+
+    /* Day panel sessions */
+    .day-sess { display: flex; flex-direction: column; gap: .75rem; }
+    .day-sess-card { background: var(--cream); border-radius: var(--r-lg); padding: .875rem 1rem; display: flex; align-items: flex-start; gap: .875rem; }
+    .day-sess-bar  { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
+    .day-sess-body { flex: 1; }
+    .day-sess-name { font-weight: 600; font-size: .875rem; }
+    .day-sess-meta { font-size: .8125rem; color: var(--muted); margin-top: .1rem; }
+    .day-sess-spots{ font-size: .8125rem; font-weight: 600; margin-top: .3rem; }
+    .day-sess-acts { display: flex; gap: .3rem; flex-shrink: 0; }
+
+    /* ── IMAGES ────────────────────────────────────────── */
+    .img-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(185px,1fr)); gap: 1rem; }
+    .img-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); overflow: hidden; transition: box-shadow .15s; }
+    .img-card:hover { box-shadow: var(--sh-md); }
+    .img-card-prev { height: 118px; background: var(--cream); position: relative; overflow: hidden; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+    .img-card-prev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .img-card-overlay { position: absolute; inset: 0; background: rgba(0,30,53,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity .15s; color: #fff; font-size: .8125rem; font-weight: 600; gap: .25rem; }
+    .img-card-prev:hover .img-card-overlay { opacity: 1; }
+    .img-card-body { padding: .625rem .875rem; }
+    .img-card-name { font-weight: 600; font-size: .8125rem; }
+    .img-card-page { font-size: .75rem; color: var(--muted); }
+
+    /* ── PRODUCTS ──────────────────────────────────────── */
+    .prod-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(225px,1fr)); gap: 1rem; }
+    .prod-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); overflow: hidden; transition: box-shadow .15s, transform .15s; }
+    .prod-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
+    .prod-img  { height: 128px; background: var(--cream); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .prod-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .prod-body { padding: .875rem 1rem; }
+    .prod-name { font-weight: 600; font-size: .9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prod-cat  { font-size: .8125rem; color: var(--muted); margin-bottom: .75rem; }
+    .prod-foot { display: flex; justify-content: space-between; align-items: center; }
+    .prod-price{ font-weight: 700; color: var(--blue); font-size: 1rem; }
+    .badge-pill{ display: inline-block; background: var(--blue); color: #fff; font-size: .6875rem; font-weight: 700; padding: .2rem .5rem; border-radius: var(--r-full); position: absolute; top: .5rem; left: .5rem; }
+
+    /* ── SETTINGS ──────────────────────────────────────── */
+    .settings-sec { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); padding: 1.75rem; max-width: 620px; margin-bottom: 1.5rem; }
+    .settings-sec h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 1.25rem; padding-bottom: .875rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .5rem; }
+    .field     { margin-bottom: 1rem; }
+    .field:last-of-type { margin-bottom: 0; }
+    .field label{ font-weight: 500; display: block; margin-bottom: .375rem; font-size: .875rem; }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: .625rem .875rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-lg); font-size: .875rem; font-family: inherit;
+      outline: none; transition: border-color .15s; background: #fff;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--blue); }
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field-hint { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+
+    /* ── MODAL ─────────────────────────────────────────── */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,20,40,.5); backdrop-filter: blur(3px);
+      display: flex; align-items: center; justify-content: center; z-index: 9000; padding: 1rem;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #fff; border-radius: var(--r-2xl); width: 100%; max-width: 520px;
+      max-height: 92vh; display: flex; flex-direction: column;
+      box-shadow: var(--sh-lg); transform: translateY(14px); transition: transform .2s;
+    }
+    .modal-bg.open .modal-box { transform: none; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .modal-head h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
+    .modal-close { width: 1.875rem; height: 1.875rem; border-radius: 50%; background: var(--cream); border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+    .modal-close:hover { background: var(--border); }
+    .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+    .modal-foot { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: .625rem; }
+
+    /* Image upload helpers */
+    .img-drop { border: 2px dashed var(--border); border-radius: var(--r-lg); padding: 1.125rem; text-align: center; cursor: pointer; color: var(--muted); font-size: .875rem; position: relative; transition: all .15s; }
+    .img-drop:hover { border-color: var(--blue); background: var(--cream); color: var(--blue); }
+    .img-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .img-prev { width: 100%; height: 128px; background: var(--cream); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--muted); margin-bottom: .625rem; }
+    .img-prev img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Toggle */
+    .toggle { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #CBD5E1; border-radius: 99px; transition: .2s; cursor: pointer; }
+    .toggle-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+    input:checked + .toggle-slider { background: var(--blue); }
+    input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* Block list */
+    .block-list { display: flex; flex-direction: column; gap: .5rem; max-width: 620px; }
+    .block-item { display: flex; align-items: center; gap: .75rem; background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: .875rem 1rem; transition: box-shadow .15s; }
+    .block-item:hover { box-shadow: var(--sh-md); }
+    .block-item.sortable-ghost { opacity: .35; border: 2px dashed var(--blue); background: var(--cream); }
+    .drag-handle { color: var(--muted); cursor: grab; display: flex; padding: .2rem; }
+    .drag-handle:active { cursor: grabbing; }
+    .block-icon { width: 2rem; height: 2rem; border-radius: var(--r-md); background: var(--cream); color: var(--blue); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .block-name { flex: 1; font-weight: 500; }
+    .block-hidden .block-name { color: var(--muted); text-decoration: line-through; }
+
+    /* Info chip */
+    .info-chip { background: var(--cream); color: var(--blue); border-radius: var(--r-lg); padding: .75rem 1rem; font-size: .8125rem; margin-bottom: 1.5rem; border-left: 3px solid var(--blue); display: flex; gap: .625rem; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; color: #fff; padding: .75rem 1.25rem; border-radius: var(--r-lg); font-size: .875rem; font-weight: 500; box-shadow: var(--sh-md); animation: toastIn .25s ease, toastOut .3s 2.7s ease forwards; pointer-events: none; }
+    @keyframes toastIn  { from { transform: translateY(10px); opacity: 0; } }
+    @keyframes toastOut { to   { transform: translateY(10px); opacity: 0; } }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 190px; }
+      .main { margin-left: 190px; padding: 1.5rem; }
+      .agenda-layout { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-mark">SB</div>
+    <h1>Smiling Barista</h1>
+    <p>Voer het wachtwoord in om verder te gaan</p>
+    <div class="login-err" id="login-err"></div>
+    <input type="password" id="login-pwd" placeholder="Wachtwoord" autofocus>
+    <button class="login-btn" onclick="doLogin()">Inloggen</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <nav class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">Smiling Barista</div>
+      <div class="sb-logo-sub">Beheerpaneel</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Overzicht</div>
+      <button class="sb-item active" data-tab="dashboard" onclick="showTab('dashboard')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <div class="sb-section">Workshops</div>
+      <button class="sb-item" data-tab="agenda" onclick="showTab('agenda')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agenda
+      </button>
+      <div class="sb-section">Website</div>
+      <button class="sb-item" data-tab="blocks" onclick="showTab('blocks')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Pagina-indeling
+      </button>
+      <button class="sb-item" data-tab="images" onclick="showTab('images')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Afbeeldingen
+      </button>
+      <div class="sb-section">Webshop</div>
+      <button class="sb-item" data-tab="products" onclick="showTab('products')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Producten
+      </button>
+      <div class="sb-section">Systeem</div>
+      <button class="sb-item" data-tab="settings" onclick="showTab('settings')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Instellingen
+      </button>
+    </div>
+    <div class="sb-foot">
+      <button class="sb-foot-btn" onclick="CMS.exportJSON()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exporteer JSON
+      </button>
+      <label class="sb-foot-btn" style="cursor:pointer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importeer JSON
+        <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+      </label>
+      <button class="sb-foot-btn" onclick="window.open('index.html','_blank')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Bekijk website
+      </button>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="tab-pane active">
+      <div class="page-head"><div><h2>Dashboard</h2><p>Overzicht van workshops en website.</p></div></div>
+      <div class="stat-row" id="dash-stats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+        <div class="card">
+          <div class="card-head">
+            <h3>Eerstvolgende sessies</h3>
+            <button class="btn btn-primary btn-sm" onclick="showTab('agenda')">Agenda</button>
+          </div>
+          <div id="dash-sessions" style="padding:0"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Snelkoppelingen</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:.75rem">
+            <button class="btn btn-primary" onclick="showTab('agenda');openSessionModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nieuwe sessie inplannen
+            </button>
+            <button class="btn btn-outline" onclick="showTab('images')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Foto's uploaden
+            </button>
+            <button class="btn btn-outline" onclick="showTab('products');openProductModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Product toevoegen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENDA -->
+    <div id="tab-agenda" class="tab-pane">
+      <div class="page-head">
+        <div><h2>Agenda</h2><p>Plan workshop-sessies in en beheer beschikbaarheid en betaalmethode.</p></div>
+        <button class="btn btn-primary" onclick="openSessionModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nieuwe sessie
+        </button>
+      </div>
+      <div class="agenda-layout">
+        <div>
+          <div class="cal">
+            <div class="cal-head">
+              <button class="cal-nav" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <h3 id="cal-label"></h3>
+              <button class="cal-nav" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+            <div class="cal-weekdays" id="cal-wd"></div>
+            <div class="cal-grid"     id="cal-grid"></div>
+          </div>
+          <div style="margin-top:1.5rem">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.875rem">Alle komende sessies</div>
+            <div class="session-list" id="session-list"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="position:sticky;top:1.5rem">
+            <div class="card-head" style="justify-content:space-between">
+              <h3 id="day-title">Selecteer een dag</h3>
+              <button class="btn btn-primary btn-sm" id="day-add" style="display:none" onclick="openSessionModal()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Sessie
+              </button>
+            </div>
+            <div class="card-body" id="day-body">
+              <p style="color:var(--muted);font-size:.875rem">Klik op een datum om sessies te bekijken.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA-INDELING -->
+    <div id="tab-blocks" class="tab-pane">
+      <div class="page-head">
+        <div><h2>Pagina-indeling</h2><p>Sleep secties om te herschikken. Toggle om te verbergen.</p></div>
+        <button class="btn btn-primary" onclick="saveBlocks()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Opslaan
+        </button>
+      </div>
+      <div class="info-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Wijzigingen zijn zichtbaar na klikken op Opslaan.</div>
+      <ul class="block-list" id="blocks-list"></ul>
+    </div>
+
+    <!-- AFBEELDINGEN -->
+    <div id="tab-images" class="tab-pane">
+      <div class="page-head"><div><h2>Afbeeldingen</h2><p>Upload foto's voor de blokken op de website.</p></div></div>
+      <div class="info-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Foto's worden opgeslagen in de browser (max. ~5 MB per afbeelding).</div>
+      <div class="img-grid" id="images-grid"></div>
+    </div>
+
+    <!-- PRODUCTEN -->
+    <div id="tab-products" class="tab-pane">
+      <div class="page-head">
+        <div><h2>Producten</h2><p>Beheer de webshop-producten.</p></div>
+        <button class="btn btn-primary" onclick="openProductModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nieuw product
+        </button>
+      </div>
+      <div class="prod-grid" id="products-grid"></div>
+    </div>
+
+    <!-- INSTELLINGEN -->
+    <div id="tab-settings" class="tab-pane">
+      <div class="page-head"><div><h2>Instellingen</h2><p>Contactgegevens, betaling en website-configuratie.</p></div></div>
+      <div class="settings-sec">
+        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-5-5 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Contactgegevens</h3>
+        <div class="field-row"><div class="field"><label>Telefoon</label><input data-key="phone" type="tel"></div><div class="field"><label>E-mail</label><input data-key="email" type="email"></div></div>
+        <div class="field"><label>Adres</label><input data-key="address"></div>
+        <div class="field-row"><div class="field"><label>BTW-nummer</label><input data-key="btw"></div><div class="field"><label>Instagram URL</label><input data-key="instagram" type="url"></div></div>
+      </div>
+      <div class="settings-sec">
+        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Odoo (boeking + betaling)</h3>
+        <div class="info-chip" style="margin-bottom:1rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Odoo Event Planner verwerkt boekingen én betalingen. Kies per sessie "Odoo" als betaalmethode.</div>
+        <div class="field"><label>Odoo URL</label><input id="set-odoo-url" placeholder="https://jouw-bedrijf.odoo.com"></div>
+        <div class="field-row"><div class="field"><label>Database</label><input id="set-odoo-db"></div><div class="field"><label>Gebruiker (e-mail)</label><input id="set-odoo-user" type="email"></div></div>
+        <div class="field"><label>API-sleutel</label><input id="set-odoo-key" type="password" placeholder="••••••••••••"></div>
+        <div style="margin-top:1.25rem"><button class="btn btn-primary" onclick="saveOdooSettings()">Odoo opslaan</button></div>
+      </div>
+      <div class="settings-sec">
+        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Mollie (payment link)</h3>
+        <div class="info-chip" style="margin-bottom:1rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Maak per sessie een Mollie Payment Link aan in het Mollie-dashboard en plak die link bij het aanmaken van de sessie.</div>
+        <div class="field"><label>Standaard fallback-link (optioneel)</label><input id="set-mollie-link" type="url" placeholder="https://usepayment.mollie.com/..."></div>
+        <div style="margin-top:1rem"><button class="btn btn-primary" onclick="saveMollieSettings()">Mollie opslaan</button></div>
+      </div>
+      <div class="settings-sec">
+        <h3>Overig</h3>
+        <div class="field"><label>Tagline (footer)</label><input data-key="tagline"></div>
+        <div style="margin-top:1.25rem"><button class="btn btn-primary" onclick="saveSettings()">Opslaan</button></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: Sessie -->
+<div class="modal-bg" id="session-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="sm-title">Nieuwe sessie</h3><button class="modal-close" onclick="closeModal('session-modal')">&#x2715;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Workshop *</label>
+        <select id="sm-ws">
+          <option value="">— Kies een workshop —</option>
+          <option value="latte-art-1">Latte Art Level 1 — Sweet Hearts (€99)</option>
+          <option value="home-barista">Home Barista (€99)</option>
+          <option value="brewing">Brewing — Slow Brew (€69)</option>
+          <option value="latte-art-2">Latte Art Level 2 — Masterclass (€149)</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Datum *</label><input type="date" id="sm-date"></div>
+        <div class="field"><label>Starttijd *</label><input type="time" id="sm-time" value="10:00"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Max. plaatsen</label><input type="number" id="sm-max" min="1" max="20" placeholder="Standaard van workshop"><div class="field-hint">Leeg = standaard maximum.</div></div>
+        <div class="field"><label>Reeds geboekt</label><input type="number" id="sm-booked" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>Betaalmethode *</label>
+        <select id="sm-pay" onchange="togglePayFields()">
+          <option value="email">E-mail (geen online betaling)</option>
+          <option value="odoo">Odoo Event Planner</option>
+          <option value="mollie">Mollie payment link</option>
+        </select>
+      </div>
+      <div id="sm-odoo-wrap" style="display:none" class="field"><label>Odoo Event ID</label><input type="number" id="sm-odoo-id" placeholder="bijv. 42"><div class="field-hint">Het event-ID uit de Odoo Events module.</div></div>
+      <div id="sm-mollie-wrap" style="display:none" class="field"><label>Mollie Payment Link *</label><input type="url" id="sm-mollie" placeholder="https://usepayment.mollie.com/..."></div>
+      <div class="field"><label>Notitie (intern)</label><textarea id="sm-notes" rows="2" placeholder="Bijv. privégroep, speciale locatie…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('session-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveSession()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Product -->
+<div class="modal-bg" id="product-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="pm-title">Nieuw product</h3><button class="modal-close" onclick="closeModal('product-modal')">&#x2715;</button></div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field"><label>Naam *</label><input id="pf-name" placeholder="Productnaam"></div>
+        <div class="field"><label>Prijs (€) *</label><input id="pf-price" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Categorie</label><select id="pf-cat"><option value="koffie">Koffie</option><option value="accessoires">Accessoires</option><option value="cadeaubon">Cadeaubon</option></select></div>
+        <div class="field"><label>Badge</label><input id="pf-badge" placeholder="Bestseller / Nieuw"></div>
+      </div>
+      <div class="field"><label>Omschrijving</label><textarea id="pf-desc" rows="3"></textarea></div>
+      <div class="field">
+        <label>Afbeelding</label>
+        <div class="img-prev" id="pf-preview"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="img-drop" style="margin-bottom:.5rem">Klik om foto te uploaden<input type="file" accept="image/*" onchange="handleProdImg(this)"></div>
+        <input id="pf-img-url" type="url" placeholder="Of plak een URL…" oninput="previewUrl(this.value,'pf-preview')">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('product-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveProduct()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Afbeelding -->
+<div class="modal-bg" id="img-modal">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-head"><h3 id="im-title">Afbeelding</h3><button class="modal-close" onclick="closeModal('img-modal')">&#x2715;</button></div>
+    <div class="modal-body">
+      <div class="img-prev" id="im-preview" style="height:158px;margin-bottom:.75rem"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <div class="img-drop" style="margin-bottom:.75rem">Klik om foto te selecteren<input type="file" accept="image/*" onchange="handleImgUpload(this)"></div>
+      <div class="field"><label>Of URL</label><input type="url" id="im-url" placeholder="https://…" oninput="previewUrl(this.value,'im-preview')"></div>
+      <div id="im-remove" style="display:none;margin-top:.75rem"><button class="btn btn-danger btn-sm" onclick="removeImg()">Afbeelding verwijderen</button></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('img-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveImg()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/sessions.js"></script>
+<script src="js/cms.js"></script>
+<script>
+/* ─── LOGIN ─────────────────────────────────────────────── */
+const PASS = 'smiling2026';
+function doLogin() {
+  if (document.getElementById('login-pwd').value === PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    document.getElementById('login-err').textContent = 'Fout wachtwoord.';
+  }
+}
+document.getElementById('login-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+/* ─── TABS ──────────────────────────────────────────────── */
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+  if (name === 'agenda')    { if (!calYear) initCalendar(); renderCalendar(); }
+  if (name === 'dashboard') renderDashboard();
+}
+
+/* ─── UTILS ─────────────────────────────────────────────── */
+function esc(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escA(s) { return String(s).replace(/"/g,'&quot;'); }
+let _editId = null, _imgKey = null;
+
+function toast(msg, ok) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.background = ok === false ? 'var(--red)' : 'var(--green)';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); _editId = null; }
+document.addEventListener('click', e => { if (e.target.classList.contains('modal-bg')) closeModal(e.target.id); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-bg.open').forEach(m => closeModal(m.id)); });
+
+const WS_COLORS = { 'latte-art-1':'#0366C5','home-barista':'#00508C','brewing':'#2E7D9F','latte-art-2':'#001E35' };
+function fmtDate(ds) {
+  const d = new Date(ds + 'T00:00:00');
+  const mn = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  const dy = ['zo','ma','di','wo','do','vr','za'];
+  return dy[d.getDay()] + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
+}
+function spotsClass(left) { return left === 0 ? 'spots-full' : left <= 2 ? 'spots-low' : 'spots-ok'; }
+function payLabel(type)   { return type === 'odoo' ? 'Odoo' : type === 'mollie' ? 'Mollie' : 'E-mail'; }
+
+/* ─── DASHBOARD ─────────────────────────────────────────── */
+function renderDashboard() {
+  const sessions = Sessions.getUpcoming();
+  const products = CMS.getProducts();
+  document.getElementById('dash-stats').innerHTML =
+    stat('Komende sessies', sessions.length, '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>') +
+    stat('Geboekte plaatsen', sessions.reduce((a,s)=>a+(s.spotsBooked||0),0), '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>') +
+    stat('Producten', products.length, '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') +
+    stat('Workshop-types', Object.keys(Sessions.WORKSHOPS).length, '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>');
+
+  const next = sessions.slice(0, 5);
+  document.getElementById('dash-sessions').innerHTML = next.length
+    ? next.map(s => {
+        const ws   = Sessions.WORKSHOPS[s.workshopKey];
+        const left = Sessions.spotsLeft(s);
+        const max  = s.maxSpots || ws?.maxSpots || 8;
+        return `<div style="display:flex;align-items:center;gap:.875rem;padding:.875rem 1.25rem;border-bottom:1px solid var(--border)">
+          <div style="width:3px;height:2.5rem;background:${WS_COLORS[s.workshopKey]};border-radius:2px;flex-shrink:0"></div>
+          <div style="flex:1"><div style="font-weight:600;font-size:.875rem">${fmtDate(s.date)} · ${s.time}</div><div style="font-size:.8125rem;color:var(--muted)">${esc(ws?.shortName||s.workshopKey)}</div></div>
+          <div class="sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max}</div>
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--muted);padding:1.25rem;font-size:.875rem">Nog geen sessies gepland.</p>';
+}
+function stat(label, val, path) {
+  return `<div class="stat-chip"><div class="stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${path}</svg></div><div><div class="stat-val">${val}</div><div class="stat-lbl">${label}</div></div></div>`;
+}
+
+/* ─── CALENDAR ──────────────────────────────────────────── */
+let calYear = 0, calMonth = 0, calSel = null;
+function initCalendar() {
+  const n = new Date();
+  calYear = n.getFullYear(); calMonth = n.getMonth();
+}
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+function renderCalendar() {
+  const MN = Sessions.NL_MONTHS;
+  const DN = Sessions.NL_DAYS_SHORT;
+  document.getElementById('cal-label').textContent = MN[calMonth] + ' ' + calYear;
+  document.getElementById('cal-wd').innerHTML = DN.map(d => `<div class="cal-weekday">${d}</div>`).join('');
+
+  const sessMap = Sessions.getDatesWithSessions(null, calYear, calMonth);
+  const first   = new Date(calYear, calMonth, 1);
+  const offset  = (first.getDay() + 6) % 7;
+  const days    = new Date(calYear, calMonth + 1, 0).getDate();
+  const today   = new Date(); today.setHours(0,0,0,0);
+
+  let html = '<div class="cal-empty"></div>'.repeat(offset);
+  for (let d = 1; d <= days; d++) {
+    const ds   = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const dt   = new Date(calYear, calMonth, d);
+    const past = dt < today;
+    const isT  = dt.getTime() === today.getTime();
+    const has  = !!sessMap[ds];
+    const sel  = calSel === ds;
+    const cls  = ['cal-day', past?'cal-past':'', isT?'cal-today':'', has?'cal-has':'', sel?'cal-sel':''].filter(Boolean).join(' ');
+    const dots = has ? '<div class="cal-dots">' + sessMap[ds].slice(0,3).map(s=>`<span class="cal-dot" style="background:${WS_COLORS[s.workshopKey]}"></span>`).join('') + '</div>' : '';
+    html += `<div class="${cls}"${past?'':` onclick="selectDay('${ds}')"`}>${d}${dots}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+  renderSessionList();
+}
+
+function selectDay(ds) {
+  calSel = ds;
+  renderCalendar();
+  document.getElementById('sm-date').value = ds;
+  document.getElementById('day-add').style.display = '';
+
+  const d  = new Date(ds + 'T00:00:00');
+  const dn = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+  const mn = Sessions.NL_MONTHS;
+  document.getElementById('day-title').textContent =
+    dn[d.getDay()].charAt(0).toUpperCase() + dn[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
+
+  const list = Sessions.getAll().filter(s => s.date === ds);
+  const body = document.getElementById('day-body');
+  if (!list.length) {
+    body.innerHTML = '<p style="color:var(--muted);font-size:.875rem">Geen sessies op deze dag.</p>';
+    return;
+  }
+  body.innerHTML = '<div class="day-sess">' + list.map(s => {
+    const ws   = Sessions.WORKSHOPS[s.workshopKey];
+    const left = Sessions.spotsLeft(s);
+    const max  = s.maxSpots || ws?.maxSpots || 8;
+    return `<div class="day-sess-card">
+      <div class="day-sess-bar" style="background:${WS_COLORS[s.workshopKey]}"></div>
+      <div class="day-sess-body">
+        <div class="day-sess-name">${esc(ws?.shortName||s.workshopKey)}</div>
+        <div class="day-sess-meta">${s.time} &nbsp;·&nbsp; <span class="sess-pay pay-${s.paymentType}">${payLabel(s.paymentType)}</span></div>
+        <div class="day-sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max} geboekt · ${left} vrij</div>
+      </div>
+      <div class="day-sess-acts">
+        <button class="btn-icon" onclick="openSessionModal(${s.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+        <button class="btn-icon del" onclick="delSession(${s.id},'${ds}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function renderSessionList() {
+  const list = Sessions.getUpcoming();
+  const el   = document.getElementById('session-list');
+  if (!list.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:.875rem;padding:.25rem 0">Nog geen sessies gepland.</p>';
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const ws   = Sessions.WORKSHOPS[s.workshopKey];
+    const left = Sessions.spotsLeft(s);
+    const max  = s.maxSpots || ws?.maxSpots || 8;
+    return `<div class="sess-row">
+      <div class="sess-bar" style="background:${WS_COLORS[s.workshopKey]}"></div>
+      <div><div class="sess-date">${fmtDate(s.date)}</div><div class="sess-time">${s.time}</div></div>
+      <div class="sess-name">${esc(ws?.name||s.workshopKey)}</div>
+      <span class="sess-pay pay-${s.paymentType}">${payLabel(s.paymentType)}</span>
+      <div class="sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max}</div>
+      <div style="display:flex;gap:.3rem">
+        <button class="btn-icon" onclick="openSessionModal(${s.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+        <button class="btn-icon del" onclick="delSession(${s.id},null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ─── SESSION MODAL ─────────────────────────────────────── */
+function togglePayFields() {
+  const v = document.getElementById('sm-pay').value;
+  document.getElementById('sm-odoo-wrap').style.display   = v === 'odoo'   ? '' : 'none';
+  document.getElementById('sm-mollie-wrap').style.display = v === 'mollie' ? '' : 'none';
+}
+
+function openSessionModal(id) {
+  _editId = id || null;
+  const s = id ? Sessions.getAll().find(x => x.id === id) : null;
+  document.getElementById('sm-title').textContent    = s ? 'Sessie bewerken' : 'Nieuwe sessie';
+  document.getElementById('sm-ws').value             = s?.workshopKey  || '';
+  document.getElementById('sm-date').value           = s?.date         || (calSel || '');
+  document.getElementById('sm-time').value           = s?.time         || '10:00';
+  document.getElementById('sm-max').value            = s?.maxSpots     || '';
+  document.getElementById('sm-booked').value         = s?.spotsBooked  || 0;
+  document.getElementById('sm-pay').value            = s?.paymentType  || 'email';
+  document.getElementById('sm-odoo-id').value        = s?.odooEventId  || '';
+  document.getElementById('sm-mollie').value         = s?.mollieLink   || '';
+  document.getElementById('sm-notes').value          = s?.notes        || '';
+  togglePayFields();
+  openModal('session-modal');
+}
+
+function saveSession() {
+  const workshopKey = document.getElementById('sm-ws').value;
+  const date        = document.getElementById('sm-date').value;
+  const time        = document.getElementById('sm-time').value;
+  const paymentType = document.getElementById('sm-pay').value;
+  if (!workshopKey || !date || !time) { toast('Vul workshop, datum en tijd in.', false); return; }
+  const ws = Sessions.WORKSHOPS[workshopKey];
+  const data = {
+    workshopKey, date, time, paymentType,
+    maxSpots:    parseInt(document.getElementById('sm-max').value)    || ws?.maxSpots || 8,
+    spotsBooked: parseInt(document.getElementById('sm-booked').value) || 0,
+    odooEventId: paymentType === 'odoo'   ? (parseInt(document.getElementById('sm-odoo-id').value) || null) : null,
+    mollieLink:  paymentType === 'mollie' ? document.getElementById('sm-mollie').value.trim()                : '',
+    notes:       document.getElementById('sm-notes').value.trim(),
+  };
+  if (_editId) { Sessions.update(_editId, data); toast('Sessie bijgewerkt'); }
+  else         { Sessions.add(data);             toast('Sessie aangemaakt'); }
+  closeModal('session-modal');
+  renderCalendar();
+  if (calSel) selectDay(calSel);
+  renderDashboard();
+}
+
+function delSession(id, ds) {
+  if (!confirm('Sessie definitief verwijderen?')) return;
+  Sessions.remove(id);
+  renderCalendar();
+  if (ds) selectDay(ds);
+  renderDashboard();
+  toast('Sessie verwijderd');
+}
+
+/* ─── BLOCKS ────────────────────────────────────────────── */
+function renderBlocks() {
+  const blocks = CMS.getBlocks();
+  const list   = document.getElementById('blocks-list');
+  list.innerHTML = blocks.map(b => `
+    <li class="block-item ${b.visible?'':'block-hidden'}" data-id="${b.id}">
+      <span class="drag-handle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/><circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/></svg></span>
+      <span class="block-icon">${b.icon}</span>
+      <span class="block-name">${esc(b.label)}</span>
+      <label class="toggle"><input type="checkbox" ${b.visible?'checked':''} onchange="toggleBlock('${b.id}',this.checked)"><span class="toggle-slider"></span></label>
+    </li>`).join('');
+  Sortable.create(list, { animation: 160, handle: '.drag-handle', ghostClass: 'sortable-ghost' });
+}
+function toggleBlock(id, v) {
+  const b = CMS.getBlocks().find(x => x.id === id);
+  if (b) b.visible = v;
+  document.querySelector(`#blocks-list [data-id="${id}"]`)?.classList.toggle('block-hidden', !v);
+}
+function saveBlocks() {
+  const items  = Array.from(document.getElementById('blocks-list').querySelectorAll('[data-id]'));
+  const stored = CMS.getBlocks();
+  const bMap   = Object.fromEntries(stored.map(b => [b.id, b]));
+  items.forEach(li => { const t = li.querySelector('input[type=checkbox]'); if (bMap[li.dataset.id]) bMap[li.dataset.id].visible = t.checked; });
+  CMS.saveBlocks(items.map(li => bMap[li.dataset.id]).filter(Boolean));
+  toast('Pagina-indeling opgeslagen');
+}
+
+/* ─── IMAGES ────────────────────────────────────────────── */
+const IMG_BLOCKS = [
+  {key:'img_hero',     label:'Hero',           page:'Home'},
+  {key:'img_about',    label:'Over ons',        page:'Home'},
+  {key:'img_svc1',     label:'Dienst 1',        page:'Home'},
+  {key:'img_svc2',     label:'Dienst 2',        page:'Home'},
+  {key:'img_svc3',     label:'Dienst 3',        page:'Home'},
+  {key:'img_ev_velo',  label:'Velopresso',      page:'Events'},
+  {key:'img_ev_mkt',   label:'Marketista',      page:'Events'},
+  {key:'img_tb_intro', label:'Teambuilding',    page:'Teambuilding'},
+  {key:'img_ws_la1',   label:'Latte Art L1',    page:'Workshops'},
+  {key:'img_ws_hb',    label:'Home Barista',    page:'Workshops'},
+  {key:'img_ws_brew',  label:'Brewing',         page:'Workshops'},
+  {key:'img_ws_la2',   label:'Masterclass',     page:'Workshops'},
+  {key:'img_ws_sfeer1',label:'Sfeer 1',         page:'Workshops'},
+  {key:'img_ws_sfeer2',label:'Sfeer 2',         page:'Workshops'},
+  {key:'img_ws_sfeer3',label:'Sfeer 3',         page:'Workshops'},
+  {key:'img_gd_intro', label:'Goede Doelen',    page:'Goede Doelen'},
+  {key:'img_prod1',    label:'Product 1',       page:'Shop'},
+  {key:'img_prod2',    label:'Product 2',       page:'Shop'},
+  {key:'img_prod3',    label:'Product 3',       page:'Shop'},
+  {key:'img_prod4',    label:'Product 4',       page:'Shop'},
+];
+function renderImages() {
+  const c = CMS.getContent();
+  document.getElementById('images-grid').innerHTML = IMG_BLOCKS.map(b => {
+    const url = c[b.key] || '';
+    return `<div class="img-card">
+      <div class="img-card-prev" onclick="openImgModal('${b.key}','${escA(b.label)}')">
+        ${url ? `<img src="${escA(url)}" alt="">` : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--latte)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`}
+        <div class="img-card-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</div>
+      </div>
+      <div class="img-card-body"><div class="img-card-name">${esc(b.label)}</div><div class="img-card-page">${esc(b.page)}</div></div>
+    </div>`;
+  }).join('');
+}
+function openImgModal(key, label) {
+  _imgKey = key;
+  const url = CMS.getContent()[key] || '';
+  document.getElementById('im-title').textContent = label;
+  document.getElementById('im-url').value = url;
+  previewUrl(url, 'im-preview');
+  document.getElementById('im-remove').style.display = url ? '' : 'none';
+  openModal('img-modal');
+}
+async function handleImgUpload(input) {
+  if (!input.files[0]) return;
+  const b64 = await CMS.fileToBase64(input.files[0]);
+  document.getElementById('im-url').value = b64;
+  previewUrl(b64, 'im-preview');
+  document.getElementById('im-remove').style.display = '';
+}
+function saveImg() {
+  if (!_imgKey) return;
+  const url = document.getElementById('im-url').value.trim();
+  const c = CMS.getContent(); c[_imgKey] = url; CMS.saveContent(c);
+  closeModal('img-modal'); renderImages(); toast('Afbeelding opgeslagen');
+}
+function removeImg() {
+  const c = CMS.getContent(); delete c[_imgKey]; CMS.saveContent(c);
+  closeModal('img-modal'); renderImages(); toast('Verwijderd');
+}
+
+/* ─── PRODUCTS ──────────────────────────────────────────── */
+function renderProducts() {
+  const ps  = CMS.getProducts();
+  const fmt = n => '€ ' + Number(n).toFixed(2).replace('.', ',');
+  document.getElementById('products-grid').innerHTML = ps.length
+    ? ps.map(p => `<div class="prod-card">
+        <div class="prod-img">
+          ${p.image ? `<img src="${escA(p.image)}" alt="">` : `<span style="font-size:1.75rem;color:var(--muted)">${p.emoji||'SB'}</span>`}
+          ${p.badge ? `<span class="badge-pill">${esc(p.badge)}</span>` : ''}
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">${esc(p.name)}</div>
+          <div class="prod-cat">${esc(p.cat)}</div>
+          <div class="prod-foot">
+            <span class="prod-price">${fmt(p.price)}</span>
+            <div style="display:flex;gap:.3rem">
+              <button class="btn-icon" onclick="openProductModal(${p.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+              <button class="btn-icon del" onclick="deleteProd(${p.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('')
+    : '<p style="color:var(--muted)">Nog geen producten.</p>';
+}
+function openProductModal(id) {
+  _editId = id || null;
+  const p = id ? CMS.getProducts().find(x => x.id === id) : null;
+  document.getElementById('pm-title').textContent = p ? p.name : 'Nieuw product';
+  document.getElementById('pf-name').value    = p?.name  || '';
+  document.getElementById('pf-price').value   = p?.price || '';
+  document.getElementById('pf-cat').value     = p?.cat   || 'koffie';
+  document.getElementById('pf-badge').value   = p?.badge || '';
+  document.getElementById('pf-desc').value    = p?.desc  || '';
+  document.getElementById('pf-img-url').value = p?.image || '';
+  previewUrl(p?.image || '', 'pf-preview');
+  openModal('product-modal');
+}
+async function handleProdImg(input) {
+  if (!input.files[0]) return;
+  const b64 = await CMS.fileToBase64(input.files[0]);
+  document.getElementById('pf-img-url').value = b64;
+  previewUrl(b64, 'pf-preview');
+}
+function saveProduct() {
+  const name  = document.getElementById('pf-name').value.trim();
+  const price = parseFloat(document.getElementById('pf-price').value);
+  if (!name || isNaN(price)) { toast('Vul naam en prijs in.', false); return; }
+  const ps = CMS.getProducts();
+  const p  = {
+    id:    _editId || (Math.max(0, ...ps.map(x => x.id)) + 1),
+    name, price,
+    cat:   document.getElementById('pf-cat').value,
+    badge: document.getElementById('pf-badge').value.trim(),
+    desc:  document.getElementById('pf-desc').value.trim(),
+    image: document.getElementById('pf-img-url').value.trim(),
+  };
+  if (_editId) { const i = ps.findIndex(x => x.id === _editId); if (i >= 0) ps[i] = p; }
+  else ps.push(p);
+  CMS.saveProducts(ps);
+  closeModal('product-modal'); renderProducts(); renderDashboard();
+  toast('"' + name + '" opgeslagen');
+}
+function deleteProd(id) {
+  if (!confirm('Product verwijderen?')) return;
+  CMS.saveProducts(CMS.getProducts().filter(p => p.id !== id));
+  renderProducts(); renderDashboard(); toast('Product verwijderd');
+}
+
+/* ─── SETTINGS ──────────────────────────────────────────── */
+function loadSettings() {
+  const s = CMS.getSettings();
+  document.querySelectorAll('[data-key]').forEach(el => { if (s[el.dataset.key] !== undefined) el.value = s[el.dataset.key]; });
+  try {
+    const odoo = JSON.parse(localStorage.getItem('sb_odoo_config') || '{}');
+    document.getElementById('set-odoo-url').value  = odoo.url    || '';
+    document.getElementById('set-odoo-db').value   = odoo.db     || '';
+    document.getElementById('set-odoo-user').value = odoo.user   || '';
+    document.getElementById('set-odoo-key').value  = odoo.apiKey || '';
+    const m = JSON.parse(localStorage.getItem('sb_mollie_config') || '{}');
+    document.getElementById('set-mollie-link').value = m.defaultLink || '';
+  } catch(e) {}
+}
+function saveSettings() {
+  const s = CMS.getSettings();
+  document.querySelectorAll('[data-key]').forEach(el => { s[el.dataset.key] = el.value; });
+  CMS.saveSettings(s); toast('Instellingen opgeslagen');
+}
+function saveOdooSettings() {
+  localStorage.setItem('sb_odoo_config', JSON.stringify({
+    url: document.getElementById('set-odoo-url').value.trim(),
+    db:  document.getElementById('set-odoo-db').value.trim(),
+    user:document.getElementById('set-odoo-user').value.trim(),
+    apiKey:document.getElementById('set-odoo-key').value.trim(),
+  }));
+  toast('Odoo-instellingen opgeslagen');
+}
+function saveMollieSettings() {
+  localStorage.setItem('sb_mollie_config', JSON.stringify({ defaultLink: document.getElementById('set-mollie-link').value.trim() }));
+  toast('Mollie-instellingen opgeslagen');
+}
+
+/* ─── IMAGE PREVIEW ─────────────────────────────────────── */
+function previewUrl(url, id) {
+  const el = document.getElementById(id);
+  if (url) {
+    el.innerHTML = `<img src="${escA(url)}" alt="" onerror="this.parentElement.innerHTML='<span style=color:var(--red);font-size:.8125rem>Ongeldige URL</span>'">`;
+  } else {
+    el.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+  }
+}
+
+/* ─── JSON IMPORT ───────────────────────────────────────── */
+function importJSON(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      CMS.importJSON(e.target.result);
+      renderBlocks(); renderProducts(); renderImages(); loadSettings(); renderDashboard();
+      toast('Inhoud geïmporteerd');
+    } catch { toast('Ongeldig JSON-bestand', false); }
+  };
+  r.readAsText(input.files[0]);
+  input.value = '';
+}
+
+/* ─── INIT ──────────────────────────────────────────────── */
+function initApp() {
+  renderDashboard();
+  renderBlocks();
+  renderImages();
+  renderProducts();
+  loadSettings();
+}
+</script>
+</body>
+</html>

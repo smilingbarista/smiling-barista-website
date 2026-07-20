@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webshop — Smiling Barista</title>
+  <meta name="description" content="Bestel koffiebonen, accessoires en cadeaubonnen in de Smiling Barista webshop.">
+  <link rel="canonical" href="https://www.spreadingsmiles.be/">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <style>
+    .odoo-config-panel {
+      background: #EFF7FC; border: 1px solid #C8E4F0; border-radius: 12px;
+      padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: .9rem;
+    }
+    .odoo-config-panel summary { font-weight: 700; cursor: pointer; color: var(--text-light); }
+    .odoo-config-panel p { margin-top: .75rem; color: var(--text-light); line-height: 1.7; }
+    .odoo-config-panel code { background: #D6EEF8; padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+
+    /* ── Shop source tabs ─────────────────────────────── */
+    .shop-tabs { display: flex; gap: .5rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+    .shop-tab {
+      padding: .625rem 1.375rem; font-size: .9375rem; font-weight: 600;
+      background: none; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; color: var(--text-light); font-family: inherit;
+      transition: all .15s; border-radius: 6px 6px 0 0;
+    }
+    .shop-tab:hover { color: var(--caramel); background: var(--cream); }
+    .shop-tab.active { color: var(--caramel); border-bottom-color: var(--caramel); }
+
+    /* ── Barista Essentials section ───────────────────── */
+    .be-section { display: none; }
+    .be-section.active { display: block; }
+    .be-hero {
+      background: linear-gradient(135deg, var(--espresso) 0%, #003B6B 100%);
+      border-radius: 18px; padding: 3rem 2.5rem; color: #fff;
+      display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .be-hero__content { flex: 1; min-width: 280px; }
+    .be-hero__label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; opacity: .6; margin-bottom: .75rem; }
+    .be-hero__title { font-family: var(--font-head); font-size: 2rem; margin-bottom: .875rem; line-height: 1.2; }
+    .be-hero__sub { opacity: .8; line-height: 1.7; margin-bottom: 1.5rem; font-size: .9375rem; }
+    .be-hero__cta { display: inline-flex; align-items: center; gap: .5rem; padding: .875rem 1.75rem; background: #fff; color: var(--espresso); border-radius: 99px; font-weight: 700; text-decoration: none; font-size: .9375rem; transition: transform .15s, box-shadow .15s; }
+    .be-hero__cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+    .be-hero__badge { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 1.5rem 2rem; text-align: center; min-width: 160px; flex-shrink: 0; }
+    .be-hero__badge-num { font-family: var(--font-head); font-size: 2.25rem; font-weight: 700; }
+    .be-hero__badge-lbl { font-size: .8125rem; opacity: .7; margin-top: .25rem; }
+
+    .be-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+    .be-cat-card {
+      background: var(--cream); border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 1.375rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+      text-decoration: none; color: var(--text); transition: all .15s;
+    }
+    .be-cat-card:hover { background: #fff; box-shadow: 0 4px 16px rgba(0,30,53,.1); transform: translateY(-2px); border-color: var(--caramel); }
+    .be-cat-icon { width: 2.75rem; height: 2.75rem; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.375rem; }
+    .be-cat-name { font-weight: 600; font-size: .9375rem; }
+    .be-cat-sub  { font-size: .8125rem; color: var(--text-light); margin-top: .15rem; }
+
+    .be-disclaimer { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 10px; padding: .875rem 1.125rem; font-size: .8125rem; color: #5D4037; line-height: 1.6; }
+    .be-disclaimer a { color: var(--caramel); font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .be-hero { padding: 2rem 1.5rem; }
+      .be-hero__title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__logo">☕ Smiling Barista</a>
+    <ul class="nav__links">
+      <li><a href="index.html"        class="nav__link">Home</a></li>
+      <li><a href="events.html"       class="nav__link">Events</a></li>
+      <li><a href="workshops.html"    class="nav__link">Workshops</a></li>
+      <li><a href="teambuilding.html" class="nav__link">Teambuilding</a></li>
+      <li><a href="shop.html"         class="nav__link active">Shop</a></li>
+      <li><a href="goede-doelen.html" class="nav__link">Goede Doelen</a></li>
+      <li><a href="contact.html"      class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" data-open-cart aria-label="Winkelwagen">
+        🛒 <span class="nav__cart-count">0</span>
+      </button>
+      <a href="contact.html" class="btn btn--primary btn--sm">Boek nu</a>
+    </div>
+    <button class="nav__burger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav">
+  <button class="mobile-nav__close">✕</button>
+  <a href="index.html"        class="mobile-nav__link">Home</a>
+  <a href="events.html"       class="mobile-nav__link">Events</a>
+  <a href="workshops.html"    class="mobile-nav__link">Workshops</a>
+  <a href="teambuilding.html" class="mobile-nav__link">Teambuilding</a>
+  <a href="shop.html"         class="mobile-nav__link">Shop</a>
+  <a href="goede-doelen.html" class="mobile-nav__link">Goede Doelen</a>
+  <a href="contact.html"      class="mobile-nav__link">Contact</a>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero__label">Webshop</span>
+    <h1>Koffie & Accessoires</h1>
+    <p class="page-hero__sub">Onze producten — van vers geroosterde bonen tot workshops-cadeaubonnen — thuis bezorgd.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Shop source tabs -->
+    <div class="shop-tabs">
+      <button class="shop-tab active" id="tab-onze" onclick="switchShopTab('onze')">Onze producten</button>
+      <button class="shop-tab" id="tab-be" onclick="switchShopTab('be')">Barista Essentials</button>
+    </div>
+
+    <!-- Onze producten -->
+    <div id="shop-onze">
+
+    <!-- Odoo status + config info -->
+    <div id="odoo-status-bar">
+      <div class="odoo-status disconnected" id="odoo-status">
+        <span class="odoo-status__dot"></span>
+        <span id="odoo-status-text">Verbinding met Odoo controleren…</span>
+      </div>
+    </div>
+
+    <details class="odoo-config-panel" style="margin-top:1rem">
+      <summary>⚙️ Odoo koppeling instellen</summary>
+      <p>
+        Bewerk <code>odoo-config.js</code> en vul je Odoo-instantie in:<br>
+        — <code>url</code>: bijv. <code>https://jouwbedrijf.odoo.com</code><br>
+        — <code>db</code>: naam van je database<br>
+        — <code>apiKey</code>: maak aan via Odoo → Instellingen → Technisch → API-sleutels<br><br>
+        Zorg ook dat CORS ingeschakeld is op je Odoo-server
+        (<code>System Parameters → web.cors.origins = *</code>).<br>
+        Producten moeten de vlag <em>"Can be Sold"</em> hebben.
+        Wanneer de verbinding werkt, worden producten automatisch geladen.
+      </p>
+    </details>
+
+    <div class="shop-wrap" style="margin-top:2rem">
+      <!-- Sidebar -->
+      <aside class="shop-sidebar">
+        <div class="shop-filter">
+          <div class="shop-filter__head">Categorieën</div>
+          <ul class="shop-filter__list" id="category-list">
+            <li>
+              <button class="cat-btn active" data-cat="all">
+                Alles <span class="cat-count" id="count-all">—</span>
+              </button>
+            </li>
+            <li>
+              <button class="cat-btn" data-cat="koffie">
+                Koffie <span class="cat-count" id="count-koffie">—</span>
+              </button>
+            </li>
+            <li>
+              <button class="cat-btn" data-cat="accessoires">
+                Accessoires <span class="cat-count" id="count-acc">—</span>
+              </button>
+            </li>
+            <li>
+              <button class="cat-btn" data-cat="cadeaubon">
+                Cadeaubonnen <span class="cat-count" id="count-cad">—</span>
+              </button>
+            </li>
+            <li>
+              <button class="cat-btn" data-cat="workshops">
+                Workshop-spots <span class="cat-count" id="count-ws">—</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="shop-filter" style="margin-top:2rem">
+          <div class="shop-filter__head">Prijs</div>
+          <ul class="shop-filter__list">
+            <li><button class="cat-btn active" data-price="all">Alle prijzen</button></li>
+            <li><button class="cat-btn" data-price="0-20">Onder € 20</button></li>
+            <li><button class="cat-btn" data-price="20-50">€ 20 – € 50</button></li>
+            <li><button class="cat-btn" data-price="50+">Boven € 50</button></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Products area -->
+      <div>
+        <div class="shop-toolbar">
+          <span class="shop-toolbar__count" id="product-count">Producten laden…</span>
+          <select id="sort-select">
+            <option value="name asc">Naam A–Z</option>
+            <option value="name desc">Naam Z–A</option>
+            <option value="list_price asc">Prijs laag–hoog</option>
+            <option value="list_price desc">Prijs hoog–laag</option>
+          </select>
+        </div>
+        <div class="shop-products" id="product-grid">
+          <div style="grid-column:1/-1" class="spinner"></div>
+        </div>
+        <div style="text-align:center;margin-top:2rem;display:none" id="load-more-wrap">
+          <button class="btn btn--secondary" id="load-more">Meer laden</button>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /shop-onze -->
+
+    <!-- Barista Essentials partner section -->
+    <div id="shop-be" style="display:none">
+      <div class="be-hero">
+        <div class="be-hero__content">
+          <div class="be-hero__label">Partner</div>
+          <h2 class="be-hero__title">Barista Essentials</h2>
+          <p class="be-hero__sub">Alles wat je nodig hebt om thuis of in de zaak als een echte barista te werken. Van espressomachines en grinders tot melkkannetjes, tampers en filterpapier.</p>
+          <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-hero__cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 0 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Naar Barista Essentials
+          </a>
+        </div>
+        <div class="be-hero__badge">
+          <div class="be-hero__badge-num">Partner</div>
+          <div class="be-hero__badge-lbl">Aanbevolen<br>door Smiling Barista</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.25rem">
+        <h3 style="font-family:var(--font-head);font-size:1.125rem;margin-bottom:.5rem">Wat vind je er?</h3>
+        <p style="color:var(--text-light);font-size:.9375rem;line-height:1.7">Barista Essentials biedt een zorgvuldig geselecteerd assortiment voor thuisbarista's en professionelen. We werken samen omdat hun producten overeenkomen met wat wij tijdens onze workshops gebruiken.</p>
+      </div>
+
+      <div class="be-cats">
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">☕</div>
+          <div><div class="be-cat-name">Espressomachines</div><div class="be-cat-sub">Portafilter & automatisch</div></div>
+        </a>
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">⚙️</div>
+          <div><div class="be-cat-name">Koffiemolens</div><div class="be-cat-sub">Handmatig & elektrisch</div></div>
+        </a>
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">🥛</div>
+          <div><div class="be-cat-name">Melkkannetjes</div><div class="be-cat-sub">Voor latte art</div></div>
+        </a>
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">🧰</div>
+          <div><div class="be-cat-name">Accessoires</div><div class="be-cat-sub">Tampers, distributiegereedschap</div></div>
+        </a>
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">🫗</div>
+          <div><div class="be-cat-name">Filterkoffie</div><div class="be-cat-sub">Drippers, percolators, V60</div></div>
+        </a>
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener" class="be-cat-card">
+          <div class="be-cat-icon">🌿</div>
+          <div><div class="be-cat-name">Koffiebonen</div><div class="be-cat-sub">Specialty & blends</div></div>
+        </a>
+      </div>
+
+      <div class="be-disclaimer">
+        Dit is een partner-pagina. Wanneer je via deze link bestelt bij Barista Essentials, ontvangen wij een kleine vergoeding — zonder meerkost voor jou. Zo steunen we elkaar.
+        <a href="https://barista-essentials.com/?ref=smilingbarista" target="_blank" rel="noopener">barista-essentials.com</a>
+      </div>
+
+    </div><!-- /shop-be -->
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="index.html" class="footer__logo">☕ Smiling Barista</a>
+        <p class="footer__desc">Wij brengen warmte, glimlachen en uitstekende koffie naar jouw event — door heel België.</p>
+        <div class="footer__socials">
+          <a href="#" class="footer__social" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__head">Menu</div>
+        <ul class="footer__links">
+          <li><a href="index.html"    class="footer__link">Home</a></li>
+          <li><a href="events.html"   class="footer__link">Events</a></li>
+          <li><a href="workshops.html" class="footer__link">Workshops</a></li>
+          <li><a href="shop.html"     class="footer__link">Shop</a></li>
+          <li><a href="contact.html"  class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Diensten</div>
+        <ul class="footer__links">
+          <li><a href="events.html" class="footer__link">Brand Activation</a></li>
+          <li><a href="events.html" class="footer__link">Bedrijfscatering</a></li>
+          <li><a href="workshops.html" class="footer__link">Latte Art Workshop</a></li>
+          <li><a href="workshops.html" class="footer__link">Espresso Workshop</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Contact</div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18a19.5 19.5 0 0 1-5-5 19.79 19.79 0 0 1-3.93-8.5A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+32 468 49 16 15</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>didi@smilingbarista.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2025 Smiling Barista — spreadingsmiles.be · smilingbarista.com</span>
+      <div class="footer__legal">
+        <a href="#">Privacybeleid</a>
+        <a href="#">Algemene voorwaarden</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart drawer -->
+<div class="cart-overlay"></div>
+<div class="cart-drawer">
+  <div class="cart-drawer__head">
+    <h3>Winkelwagen</h3>
+    <button class="cart-drawer__close">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal">
+      <span>Subtotaal</span>
+      <span data-cart-total>€ 0,00</span>
+    </div>
+    <p class="cart-note">Verzendkosten worden berekend bij afrekenen.</p>
+    <div class="cart-btns">
+      <button class="btn btn--primary btn--full" data-open-checkout>Afrekenen</button>
+      <button class="btn btn--secondary btn--full" data-open-cart style="display:none">Verder winkelen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout modal -->
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal__head">
+      <h3>Bestelling afronden</h3>
+      <button data-close-checkout style="font-size:1.25rem;padding:.5rem">✕</button>
+    </div>
+    <div class="modal__body">
+      <div id="order-summary"></div>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group"><label>Naam *</label><input type="text" name="name" required placeholder="Jan Janssen"></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" name="email" required placeholder="jan@email.be"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Telefoon</label><input type="tel" name="phone" placeholder="+32 4xx xx xx xx"></div>
+          <div class="form-group"><label>Straat + nr *</label><input type="text" name="street" required placeholder="Koffiestraat 12"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Postcode *</label><input type="text" name="zip" required placeholder="2000"></div>
+          <div class="form-group"><label>Gemeente *</label><input type="text" name="city" required placeholder="Antwerpen"></div>
+        </div>
+        <div class="form-group"><label>Opmerking</label><textarea name="note" placeholder="Eventuele opmerkingen…"></textarea></div>
+        <button type="submit" class="btn btn--primary btn--full">Bestelling bevestigen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="js/cms.js"></script>
+<script src="odoo-config.js"></script>
+<script src="js/odoo.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+let currentProducts = [...CMS.getProducts()];
+let currentCat   = 'all';
+let currentPrice = 'all';
+let odooConnected = false;
+
+async function initShop() {
+  const statusEl   = document.getElementById('odoo-status');
+  const statusText = document.getElementById('odoo-status-text');
+
+  try {
+    const alive = await OdooAPI.ping();
+    if (alive) {
+      await OdooAPI.authenticate();
+      const products = await OdooAPI.getProducts();
+      if (products.length > 0) {
+        currentProducts = products.map(p => ({
+          id:    p.id,
+          name:  p.name,
+          price: p.list_price,
+          desc:  p.description_sale || '',
+          image: p.image_512 ? `data:image/png;base64,${p.image_512}` : null,
+          emoji: '☕',
+          cat:   (p.categ_id?.[1] || '').toLowerCase(),
+        }));
+        odooConnected = true;
+        statusEl.className = 'odoo-status connected';
+        statusText.textContent = `Verbonden met Odoo (${products.length} producten)`;
+      } else {
+        throw new Error('Geen producten');
+      }
+    } else { throw new Error('Niet bereikbaar'); }
+  } catch {
+    statusEl.className = 'odoo-status error';
+    statusText.textContent = 'Odoo niet verbonden — demo-producten worden getoond';
+    currentProducts = [...CMS.getProducts()];
+  }
+
+  updateCounts();
+  renderProducts();
+  bindFilters();
+}
+
+function filterProducts() {
+  let list = [...currentProducts];
+  if (currentCat !== 'all') list = list.filter(p => p.cat === currentCat);
+  if (currentPrice !== 'all') {
+    if (currentPrice === '0-20')  list = list.filter(p => p.price < 20);
+    if (currentPrice === '20-50') list = list.filter(p => p.price >= 20 && p.price <= 50);
+    if (currentPrice === '50+')   list = list.filter(p => p.price > 50);
+  }
+  const sort = document.getElementById('sort-select').value;
+  const [field, dir] = sort.split(' ');
+  list.sort((a, b) => {
+    const isPrice = field === 'list_price' || field === 'price';
+    const va = isPrice ? a.price : a.name.toLowerCase();
+    const vb = isPrice ? b.price : b.name.toLowerCase();
+    return dir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+  });
+  return list;
+}
+
+function renderProducts() {
+  const grid  = document.getElementById('product-grid');
+  const count = document.getElementById('product-count');
+  const list  = filterProducts();
+  count.textContent = `${list.length} product${list.length !== 1 ? 'en' : ''}`;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<p style="grid-column:1/-1;color:var(--text-light);padding:2rem 0">Geen producten gevonden in deze categorie.</p>';
+    return;
+  }
+
+  grid.innerHTML = list.map(p => `
+    <div class="prod-card">
+      <div class="prod-card__img">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : p.emoji || '☕'}
+        ${p.badge ? `<span class="prod-card__badge">${p.badge}</span>` : ''}
+      </div>
+      <div class="prod-card__body">
+        <div class="prod-card__name">${p.name}</div>
+        <div class="prod-card__desc">${p.desc}</div>
+        <div class="prod-card__foot">
+          <span class="prod-card__price">€ ${p.price.toFixed(2).replace('.',',')}</span>
+          <button class="prod-card__add" data-pid="${p.id}" aria-label="In winkelwagen">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('[data-pid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = currentProducts.find(x => x.id === +btn.dataset.pid);
+      if (!p) return;
+      Cart.add({ id: p.id, name: p.name, price: p.price, image: p.image || null, emoji: p.emoji || '☕' });
+      Toast.show(`${p.name} toegevoegd ✓`, 'success');
+    });
+  });
+}
+
+function updateCounts() {
+  const cats = { all: currentProducts.length };
+  currentProducts.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
+  document.getElementById('count-all').textContent    = cats.all || 0;
+  document.getElementById('count-koffie').textContent = cats.koffie || 0;
+  document.getElementById('count-acc').textContent    = cats.accessoires || 0;
+  document.getElementById('count-cad').textContent    = cats.cadeaubon || 0;
+  document.getElementById('count-ws').textContent     = cats.workshops || 0;
+}
+
+function bindFilters() {
+  document.querySelectorAll('[data-cat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCat = btn.dataset.cat;
+      renderProducts();
+    });
+  });
+  document.querySelectorAll('[data-price]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-price]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPrice = btn.dataset.price;
+      renderProducts();
+    });
+  });
+  document.getElementById('sort-select').addEventListener('change', renderProducts);
+}
+
+document.addEventListener('DOMContentLoaded', initShop);
+
+function switchShopTab(tab) {
+  document.getElementById('shop-onze').style.display = tab === 'onze' ? '' : 'none';
+  document.getElementById('shop-be').style.display   = tab === 'be'   ? '' : 'none';
+  document.getElementById('tab-onze').classList.toggle('active', tab === 'onze');
+  document.getElementById('tab-be').classList.toggle('active',   tab === 'be');
+}
+</script>
+</body>
+</html>

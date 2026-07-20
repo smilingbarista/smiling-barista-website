@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "lang": "es",
+    "label": "Español",
+    "status": "todo",
+    "note": "Las cadenas vacías vuelven al HTML neerlandés. Rellene las traducciones al español."
+  },
+
+  "nav": {
+    "home":      "Inicio",
+    "events":    "Eventos",
+    "workshops": "Talleres",
+    "shop":      "Tienda",
+    "contact":   "Contacto",
+    "book":      "Reservar"
+  },
+
+  "hero": {
+    "badge":    "🚲 La única bicicleta de café que muele granos con la fuerza de los pedales",
+    "title":    "Café pedaleado<br>con una <em>sonrisa</em>",
+    "subtitle": "En nuestras bicicletas de café Velopresso molemos nuestros granos pedaleando y servimos capuchinos, lattes, chai y té — con mucha pasión. ¡El punto de atracción en tu evento!",
+    "cta1":     "Descubrir nuestros servicios",
+    "cta2":     "Taller Latte Art"
+  },
+
+  "about": {
+    "label":     "¿Quiénes somos?",
+    "title":     "Smiling Baristas en un Velopresso",
+    "text1":     "Somos Didi y sus Smiling Baristas — y pedaleamos café con una sonrisa. En nuestras bicicletas de café molemos nuestros granos pedaleando y servimos capuchinos, lattes, chai y té, ¡con mucha pasión!",
+    "text2":     "Animamos tu evento, somos el punto de atracción en tu fiesta de empresa y el rompe-hielos en tu stand. El Velopresso es la única bicicleta de café completamente móvil donde mueles los granos con la fuerza de los pedales.",
+    "cta":       "Ponerse en contacto",
+    "stat1val":  "4",
+    "stat1lbl":  "Velopressos",
+    "stat2val":  "~50",
+    "stat2lbl":  "Bebidas por hora",
+    "stat3val":  "5",
+    "stat3lbl":  "Idiomas"
+  },
+
+  "services": {
+    "label":    "Lo que hacemos",
+    "title":    "Experiencias de café a medida",
+    "subtitle": "Desde team building hasta activación de marca — ofrecemos momentos de café inolvidables para todo tipo de evento.",
+    "svc1title": "Spreading Smiles",
+    "svc1text":  "Nuestras bicicletas de café Velopresso llevan el ambiente a tu evento, fiesta de empresa o stand. Completamente autónomas — venimos a ti.",
+    "svc1link":  "Más info →",
+    "svc2title": "Smiling Marketista",
+    "svc2text":  "Pon tu marca en el centro de atención con un Velopresso completamente personalizado. Decoración de bicicleta con tu logo, vasos sellados y menú a medida.",
+    "svc2link":  "Activación de marca →",
+    "svc3title": "Taller Latte Art",
+    "svc3text":  "De principiante a artista — aprende a vaporizar la leche perfectamente y dibuja corazones en un capuchino del que todos se enamorarán.",
+    "svc3link":  "Ver talleres →"
+  },
+
+  "products": {
+    "label":    "Destacados",
+    "title":    "Productos populares",
+    "subtitle": "Nuestros cafés, accesorios y vales de regalo más vendidos.",
+    "more":     "Ver todos los productos"
+  },
+
+  "reviews": {
+    "label":    "Lo que dicen los clientes",
+    "title":    "Experiencias que perduran",
+    "moreBtn":  "Ver todas las reseñas de Google"
+  },
+
+  "cta": {
+    "title":    "¿Listo para empezar?",
+    "subtitle": "Cuéntanos sobre tu evento y prepararemos una propuesta a medida.",
+    "btn1":     "Solicitar presupuesto",
+    "btn2":     "Reservar un taller"
+  },
+
+  "events": {
+    "pageLabel":   "Eventos & Catering",
+    "pageTitle":   "Café móvil para cada evento",
+    "pageSubtitle":"El Velopresso va a tu fiesta, feria o momento de empresa — completamente autónomo.",
+    "menu": {
+      "title": "Nuestro menú",
+      "hot":   "Caliente",
+      "cold":  "Frío",
+      "extra": "Extras"
+    },
+    "practical": {
+      "title": "Práctico"
+    }
+  },
+
+  "workshops": {
+    "pageLabel":   "Talleres",
+    "pageTitle":   "De principiante a artista",
+    "pageSubtitle":"Aprende los secretos del barista en un taller práctico. ¡Ideal como team building, actividad de empresa o simplemente por diversión!",
+    "bookBtn":     "Reservar",
+    "quoteBtn":    "Solicitar presupuesto",
+    "formTitle":   "Inscripción al taller",
+    "formSubtitle":"Rellena el formulario y nos pondremos en contacto contigo."
+  },
+
+  "shop": {
+    "pageLabel":   "Tienda",
+    "pageTitle":   "Café & Accesorios",
+    "pageSubtitle":"Nuestros productos — desde granos recién tostados hasta vales de regalo para talleres — entregados en tu puerta.",
+    "filterCat":   "Categorías",
+    "filterPrice": "Precio",
+    "catAll":      "Todo",
+    "catKoffie":   "Café",
+    "catAcc":      "Accesorios",
+    "catCadeau":   "Vales de regalo",
+    "catWs":       "Plazas de taller",
+    "priceAll":    "Todos los precios",
+    "price020":    "Menos de € 20",
+    "price2050":   "€ 20 – € 50",
+    "price50":     "Más de € 50",
+    "sortNameAsc": "Nombre A–Z",
+    "sortNameDesc":"Nombre Z–A",
+    "sortPriceLow":"Precio más bajo",
+    "sortPriceHigh":"Precio más alto",
+    "addToCart":   "Añadir al carrito",
+    "loadMore":    "Cargar más"
+  },
+
+  "cart": {
+    "title":       "Carrito",
+    "empty":       "Tu carrito está vacío",
+    "subtotal":    "Subtotal",
+    "shippingNote":"Los gastos de envío se calculan al pagar.",
+    "checkout":    "Pagar",
+    "continueShopping": "Seguir comprando",
+    "added":       "Añadido al carrito ✓"
+  },
+
+  "checkout": {
+    "title":       "Finalizar pedido",
+    "summary":     "Resumen del pedido",
+    "name":        "Nombre",
+    "email":       "Correo electrónico",
+    "phone":       "Teléfono",
+    "street":      "Calle + n°",
+    "zip":         "Código postal",
+    "city":        "Ciudad",
+    "note":        "Comentario",
+    "notePlaceholder": "Posibles comentarios sobre tu pedido…",
+    "confirm":     "Confirmar pedido",
+    "processing":  "Procesando…",
+    "successMsg":  "¡Pedido realizado! Nos pondremos en contacto contigo pronto.",
+    "errorMsg":    "Algo salió mal. Por favor inténtalo de nuevo o contáctanos."
+  },
+
+  "contact": {
+    "pageLabel":   "Contacto",
+    "pageTitle":   "Ponerse en contacto",
+    "pageSubtitle":"¿Tienes una pregunta, quieres un presupuesto o simplemente quieres hablar de café? Envíanos un mensaje.",
+    "formTitle":   "Enviar un mensaje",
+    "infoTitle":   "Datos de contacto",
+    "faqTitle":    "Preguntas frecuentes"
+  },
+
+  "footer": {
+    "tagline":  "Llevamos calidez, sonrisas y excelente café a tu evento — por toda Bélgica.",
+    "menu":     "Menú",
+    "services": "Servicios",
+    "contact":  "Contacto",
+    "privacy":  "Política de privacidad",
+    "terms":    "Términos y condiciones",
+    "admin":    "Administración"
+  }
+}

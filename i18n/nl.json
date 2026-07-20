@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "lang": "nl",
+    "label": "Nederlands",
+    "status": "volledig",
+    "note": "Dit is het bronbestand. Kopieer de sleutels naar de andere talen en vertaal de waarden."
+  },
+
+  "nav": {
+    "home":      "Home",
+    "events":    "Events",
+    "workshops": "Workshops",
+    "shop":      "Shop",
+    "contact":   "Contact",
+    "book":      "Boek nu"
+  },
+
+  "hero": {
+    "badge":    "🚲 De enige koffiefiets die bonen maalt met trapkracht",
+    "title":    "Koffie trappen<br>met de <em>glimlach</em>",
+    "subtitle": "Op onze Velopresso koffiefietsen malen we al trappend onze bonen en schenken we cappuccino's, latte's, chaï en thee — met heel veel goesting. De blikvanger op jouw event!",
+    "cta1":     "Onze diensten ontdekken",
+    "cta2":     "Latte Art Workshop"
+  },
+
+  "about": {
+    "label":     "Wie zijn wij?",
+    "title":     "Smiling Barista's op een Velopresso",
+    "text1":     "Wij zijn Didi en zijn Smiling Barista's — en we trappen koffie met de glimlach. Op onze koffiefietsen malen we al trappend onze bonen en schenken we cappuccino's, latte's, chaï en thee, met heel veel goesting!",
+    "text2":     "Wij maken mee de sfeer op jullie event, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand. De Velopresso is de enige volledig mobiele koffiefiets waarmee je de bonen met trapkracht maalt.",
+    "cta":       "Neem contact op",
+    "stat1val":  "4",
+    "stat1lbl":  "Velopresso's",
+    "stat2val":  "~50",
+    "stat2lbl":  "Dranken per uur",
+    "stat3val":  "5",
+    "stat3lbl":  "Talen"
+  },
+
+  "services": {
+    "label":    "Wat we doen",
+    "title":    "Koffie-ervaringen op maat",
+    "subtitle": "Van teambuilding tot brand activation — we leveren onvergetelijke koffiemomenten voor elk type event.",
+    "svc1title": "Spreading Smiles",
+    "svc1text":  "Onze Velopresso koffiefietsen brengen de sfeer naar jouw event, bedrijfsfeest of beursstand. Volledig zelfvoorzienend — wij komen naar jou toe.",
+    "svc1link":  "Meer info →",
+    "svc2title": "Smiling Marketista",
+    "svc2text":  "Zet jouw merk in de kijker met een volledig gebrandmerkte Velopresso. Fietsdecor met jouw logo, gestempelde bekers en een menukaart op maat.",
+    "svc2link":  "Brand activation →",
+    "svc3title": "Latte Art Workshop",
+    "svc3text":  "Van stuntelaar naar kunstenaar — leer melk perfect stomen en giet hartjes in een cappuccino waar iedereen van in zwijm valt.",
+    "svc3link":  "Bekijk workshops →"
+  },
+
+  "products": {
+    "label":    "Uitgelicht",
+    "title":    "Populaire producten",
+    "subtitle": "Onze bestverkochte koffies, accessoires en cadeaubonnen.",
+    "more":     "Bekijk alle producten"
+  },
+
+  "reviews": {
+    "label":    "Wat klanten zeggen",
+    "title":    "Ervaringen die bijblijven",
+    "moreBtn":  "Alle Google Reviews bekijken"
+  },
+
+  "cta": {
+    "title":    "Klaar om te starten?",
+    "subtitle": "Vertel ons over jouw event en we stellen een voorstel op maat voor je samen.",
+    "btn1":     "Vraag een offerte",
+    "btn2":     "Workshop boeken"
+  },
+
+  "events": {
+    "pageLabel":   "Events & Catering",
+    "pageTitle":   "Mobiele koffie voor elk event",
+    "pageSubtitle":"De Velopresso rijdt naar jouw feest, beurs of bedrijfsmoment — helemaal zelfvoorzienend.",
+    "menu": {
+      "title": "Ons menu",
+      "hot":   "Warm",
+      "cold":  "Koud",
+      "extra": "Extra's"
+    },
+    "practical": {
+      "title": "Praktisch"
+    }
+  },
+
+  "workshops": {
+    "pageLabel":   "Workshops",
+    "pageTitle":   "Van stuntelaar naar kunstenaar",
+    "pageSubtitle":"Leer de geheimen van de barista in een hands-on workshop. Ideaal als teambuilding, bedrijfsactiviteit of gewoon voor de fun!",
+    "bookBtn":     "Boek nu",
+    "quoteBtn":    "Vraag offerte",
+    "formTitle":   "Workshop inschrijven",
+    "formSubtitle":"Vul het formulier in en we nemen contact met je op."
+  },
+
+  "shop": {
+    "pageLabel":   "Webshop",
+    "pageTitle":   "Koffie & Accessoires",
+    "pageSubtitle":"Onze producten — van vers geroosterde bonen tot workshop-cadeaubonnen — thuis bezorgd.",
+    "filterCat":   "Categorieën",
+    "filterPrice": "Prijs",
+    "catAll":      "Alles",
+    "catKoffie":   "Koffie",
+    "catAcc":      "Accessoires",
+    "catCadeau":   "Cadeaubonnen",
+    "catWs":       "Workshop-spots",
+    "priceAll":    "Alle prijzen",
+    "price020":    "Onder € 20",
+    "price2050":   "€ 20 – € 50",
+    "price50":     "Boven € 50",
+    "sortNameAsc": "Naam A–Z",
+    "sortNameDesc":"Naam Z–A",
+    "sortPriceLow":"Prijs laag–hoog",
+    "sortPriceHigh":"Prijs hoog–laag",
+    "addToCart":   "In winkelwagen",
+    "loadMore":    "Meer laden"
+  },
+
+  "cart": {
+    "title":       "Winkelwagen",
+    "empty":       "Je winkelwagen is leeg",
+    "subtotal":    "Subtotaal",
+    "shippingNote":"Verzendkosten worden berekend bij afrekenen.",
+    "checkout":    "Afrekenen",
+    "continueShopping": "Verder winkelen",
+    "added":       "Toegevoegd aan winkelwagen ✓"
+  },
+
+  "checkout": {
+    "title":       "Bestelling afronden",
+    "summary":     "Bestelling overzicht",
+    "name":        "Naam",
+    "email":       "E-mail",
+    "phone":       "Telefoon",
+    "street":      "Straat + nr.",
+    "zip":         "Postcode",
+    "city":        "Gemeente",
+    "note":        "Opmerking",
+    "notePlaceholder": "Eventuele opmerkingen bij je bestelling…",
+    "confirm":     "Bestelling bevestigen",
+    "processing":  "Verwerken…",
+    "successMsg":  "Bestelling geplaatst! We nemen spoedig contact op.",
+    "errorMsg":    "Er ging iets mis. Probeer opnieuw of neem contact op."
+  },
+
+  "contact": {
+    "pageLabel":   "Contact",
+    "pageTitle":   "Neem contact op",
+    "pageSubtitle":"Heb je een vraag, wil je een offerte of wil je gewoon eens babbelen over koffie? Stuur ons een bericht.",
+    "formTitle":   "Stuur een bericht",
+    "infoTitle":   "Contactgegevens",
+    "faqTitle":    "Veelgestelde vragen"
+  },
+
+  "footer": {
+    "tagline":  "Wij brengen warmte, glimlachen en uitstekende koffie naar jouw event — door heel België.",
+    "menu":     "Menu",
+    "services": "Diensten",
+    "contact":  "Contact",
+    "privacy":  "Privacybeleid",
+    "terms":    "Algemene voorwaarden",
+    "admin":    "Beheer"
+  }
+}

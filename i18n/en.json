@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "lang": "en",
+    "label": "English",
+    "status": "todo",
+    "note": "Empty strings fall back to the Dutch HTML. Fill in the English translations and set status to 'volledig'."
+  },
+
+  "nav": {
+    "home":      "Home",
+    "events":    "Events",
+    "workshops": "Workshops",
+    "shop":      "Shop",
+    "contact":   "Contact",
+    "book":      "Book now"
+  },
+
+  "hero": {
+    "badge":    "🚲 The only coffee bike that grinds beans by pedal power",
+    "title":    "Cycling coffee<br>with a <em>smile</em>",
+    "subtitle": "On our Velopresso coffee bikes we grind our beans by pedalling and pour cappuccinos, lattes, chai and tea — with lots of passion. The eye-catcher at your event!",
+    "cta1":     "Discover our services",
+    "cta2":     "Latte Art Workshop"
+  },
+
+  "about": {
+    "label":     "Who are we?",
+    "title":     "Smiling Baristas on a Velopresso",
+    "text1":     "We are Didi and his Smiling Baristas — and we pedal coffee with a smile. On our coffee bikes we grind our beans by pedalling and pour cappuccinos, lattes, chai and tea, with lots of passion!",
+    "text2":     "We bring the atmosphere to your event, are the eye-catcher at your company party and the icebreaker at your trade stand. The Velopresso is the only fully mobile coffee bike where you grind the beans by pedal power.",
+    "cta":       "Get in touch",
+    "stat1val":  "4",
+    "stat1lbl":  "Velopressos",
+    "stat2val":  "~50",
+    "stat2lbl":  "Drinks per hour",
+    "stat3val":  "5",
+    "stat3lbl":  "Languages"
+  },
+
+  "services": {
+    "label":    "What we do",
+    "title":    "Tailor-made coffee experiences",
+    "subtitle": "From team building to brand activation — we deliver unforgettable coffee moments for every type of event.",
+    "svc1title": "Spreading Smiles",
+    "svc1text":  "Our Velopresso coffee bikes bring the atmosphere to your event, company party or trade stand. Fully self-sufficient — we come to you.",
+    "svc1link":  "More info →",
+    "svc2title": "Smiling Marketista",
+    "svc2text":  "Put your brand in the spotlight with a fully branded Velopresso. Bike decor with your logo, stamped cups and a custom menu card.",
+    "svc2link":  "Brand activation →",
+    "svc3title": "Latte Art Workshop",
+    "svc3text":  "From beginner to artist — learn to steam milk perfectly and pour hearts into a cappuccino that everyone will fall in love with.",
+    "svc3link":  "View workshops →"
+  },
+
+  "products": {
+    "label":    "Featured",
+    "title":    "Popular products",
+    "subtitle": "Our best-selling coffees, accessories and gift vouchers.",
+    "more":     "View all products"
+  },
+
+  "reviews": {
+    "label":    "What customers say",
+    "title":    "Experiences that last",
+    "moreBtn":  "View all Google Reviews"
+  },
+
+  "cta": {
+    "title":    "Ready to get started?",
+    "subtitle": "Tell us about your event and we'll put together a tailor-made proposal.",
+    "btn1":     "Request a quote",
+    "btn2":     "Book a workshop"
+  },
+
+  "events": {
+    "pageLabel":   "Events & Catering",
+    "pageTitle":   "Mobile coffee for every event",
+    "pageSubtitle":"The Velopresso rides to your party, fair or company moment — fully self-sufficient.",
+    "menu": {
+      "title": "Our menu",
+      "hot":   "Hot",
+      "cold":  "Cold",
+      "extra": "Extras"
+    },
+    "practical": {
+      "title": "Practical"
+    }
+  },
+
+  "workshops": {
+    "pageLabel":   "Workshops",
+    "pageTitle":   "From beginner to artist",
+    "pageSubtitle":"Learn the secrets of the barista in a hands-on workshop. Ideal as team building, company activity or just for fun!",
+    "bookBtn":     "Book now",
+    "quoteBtn":    "Request quote",
+    "formTitle":   "Workshop registration",
+    "formSubtitle":"Fill in the form and we will contact you."
+  },
+
+  "shop": {
+    "pageLabel":   "Webshop",
+    "pageTitle":   "Coffee & Accessories",
+    "pageSubtitle":"Our products — from freshly roasted beans to workshop gift vouchers — delivered to your door.",
+    "filterCat":   "Categories",
+    "filterPrice": "Price",
+    "catAll":      "All",
+    "catKoffie":   "Coffee",
+    "catAcc":      "Accessories",
+    "catCadeau":   "Gift vouchers",
+    "catWs":       "Workshop spots",
+    "priceAll":    "All prices",
+    "price020":    "Under € 20",
+    "price2050":   "€ 20 – € 50",
+    "price50":     "Above € 50",
+    "sortNameAsc": "Name A–Z",
+    "sortNameDesc":"Name Z–A",
+    "sortPriceLow":"Price low–high",
+    "sortPriceHigh":"Price high–low",
+    "addToCart":   "Add to cart",
+    "loadMore":    "Load more"
+  },
+
+  "cart": {
+    "title":       "Shopping cart",
+    "empty":       "Your cart is empty",
+    "subtotal":    "Subtotal",
+    "shippingNote":"Shipping costs are calculated at checkout.",
+    "checkout":    "Checkout",
+    "continueShopping": "Continue shopping",
+    "added":       "Added to cart ✓"
+  },
+
+  "checkout": {
+    "title":       "Complete order",
+    "summary":     "Order summary",
+    "name":        "Name",
+    "email":       "Email",
+    "phone":       "Phone",
+    "street":      "Street + no.",
+    "zip":         "Postcode",
+    "city":        "City",
+    "note":        "Comment",
+    "notePlaceholder": "Any comments about your order…",
+    "confirm":     "Confirm order",
+    "processing":  "Processing…",
+    "successMsg":  "Order placed! We will contact you shortly.",
+    "errorMsg":    "Something went wrong. Please try again or contact us."
+  },
+
+  "contact": {
+    "pageLabel":   "Contact",
+    "pageTitle":   "Get in touch",
+    "pageSubtitle":"Do you have a question, want a quote or just want to chat about coffee? Send us a message.",
+    "formTitle":   "Send a message",
+    "infoTitle":   "Contact details",
+    "faqTitle":    "Frequently asked questions"
+  },
+
+  "footer": {
+    "tagline":  "We bring warmth, smiles and excellent coffee to your event — throughout Belgium.",
+    "menu":     "Menu",
+    "services": "Services",
+    "contact":  "Contact",
+    "privacy":  "Privacy policy",
+    "terms":    "Terms & conditions",
+    "admin":    "Admin"
+  }
+}

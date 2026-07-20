@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobiele koffie voor jullie event — Smiling Barista</title>
+  <meta name="description" content="We rijden met onze Velopresso naar jullie event en schenken verse cappuccino, latte, chaï en thee. Volledig mobiel en zelfvoorzienend, door heel België. Vraag een offerte.">
+  <link rel="canonical" href="https://www.spreadingsmiles.be/events">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>S</text></svg>">
+  <style>
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+      margin-top: 1.5rem;
+    }
+    .menu-item {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      padding: .625rem .875rem;
+      font-size: .9rem;
+      color: #fff;
+      text-align: center;
+    }
+    .practical-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .practical-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.5rem;
+    }
+    .practical-card__label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: .5rem;
+    }
+    .practical-card h4 {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+    .practical-card p {
+      font-size: .9rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+    .highlight-box {
+      background: var(--caramel);
+      color: #fff;
+      border-radius: var(--r-xl);
+      padding: 1.75rem 2.25rem;
+      margin-top: 2rem;
+    }
+    .highlight-box p {
+      font-size: .9375rem;
+      line-height: 1.8;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .step-card {
+      background: var(--white);
+      border-radius: var(--r-xl);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .step-card__num {
+      width: 2.5rem; height: 2.5rem;
+      background: var(--cream);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--caramel);
+      margin-bottom: 1rem;
+    }
+    .step-card h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .step-card p  { font-size: .9rem; color: var(--text-light); line-height: 1.6; }
+    @media (max-width: 768px) {
+      .menu-grid { grid-template-columns: repeat(2, 1fr); }
+      .practical-grid { grid-template-columns: 1fr; }
+      .step-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__logo">Smiling Barista</a>
+    <ul class="nav__links">
+      <li><a href="index.html"     class="nav__link">Home</a></li>
+      <li><a href="events.html"    class="nav__link active">Events</a></li>
+      <li><a href="workshops.html"    class="nav__link">Workshops</a></li>
+      <li><a href="teambuilding.html" class="nav__link">Teambuilding</a></li>
+      <li><a href="shop.html"         class="nav__link">Shop</a></li>
+      <li><a href="goede-doelen.html" class="nav__link">Goede Doelen</a></li>
+      <li><a href="contact.html"      class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" data-open-cart aria-label="Winkelwagen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="nav__cart-count">0</span>
+      </button>
+      <a href="#offerte" class="btn btn--primary btn--sm">Offerte aanvragen</a>
+    </div>
+    <button class="nav__burger" aria-label="Menu openen"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav">
+  <button class="mobile-nav__close">&#x2715;</button>
+  <a href="index.html"     class="mobile-nav__link">Home</a>
+  <a href="events.html"    class="mobile-nav__link">Events</a>
+  <a href="workshops.html"    class="mobile-nav__link">Workshops</a>
+  <a href="teambuilding.html" class="mobile-nav__link">Teambuilding</a>
+  <a href="shop.html"         class="mobile-nav__link">Shop</a>
+  <a href="goede-doelen.html" class="mobile-nav__link">Goede Doelen</a>
+  <a href="contact.html"      class="mobile-nav__link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero__label">Mobiele koffie</span>
+    <h1>We rijden met verse koffie naar jullie event</h1>
+    <p class="page-hero__sub">Op onze Velopresso's malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï en thee. Volledig zelfvoorzienend, de blikvanger op jullie event.</p>
+  </div>
+</section>
+
+<!-- VELOPRESSO -->
+<section class="section">
+  <div class="container">
+    <div class="about__grid">
+      <div class="img-ph img-ph--portrait" data-img-block="ev_velo" data-cms-img-key="img_ev_velo">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe</span>
+        </div>
+      </div>
+      <div class="about__content">
+        <p class="about__label">De Velopresso</p>
+        <h2 class="about__title">De enige koffiefiets die bonen maalt met trapkracht</h2>
+        <p class="about__text">De Velopresso is de enige volledig mobiele koffiefiets waarmee je de bonen met trapkracht maalt. We zijn nooit stil. We maken de sfeer op jullie event, zijn de blikvanger op jullie bedrijfsfeest en de ijsbreker op jullie beursstand.</p>
+        <p class="about__text">Wij puzzelen mee over de beste opstelling en zorgen dat alles vlot loopt. Van opbouw tot opruiming regelen we zelf. Jullie hoeven niets te voorzien.</p>
+        <div style="display:flex;gap:.625rem;flex-wrap:wrap;margin-top:1.25rem;margin-bottom:1.5rem">
+          <span class="tag">Bedrijfsfeesten</span>
+          <span class="tag">Beurstands</span>
+          <span class="tag">Productlanceringen</span>
+          <span class="tag">Straatcampagnes</span>
+          <span class="tag">Winkelopeningen</span>
+          <span class="tag">Privéfeesten</span>
+        </div>
+        <a href="#offerte" class="btn btn--primary">Offerte aanvragen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="section" style="background: linear-gradient(135deg, var(--espresso), #0366C5); padding: 4rem 0;">
+  <div class="container">
+    <div class="sec-head" style="color:#fff; margin-bottom:2rem;">
+      <span class="sec-head__label" style="color:var(--latte)">Op het menu</span>
+      <h2 style="color:#fff">Reken op 50 verse warme dranken per uur</h2>
+      <p style="color:rgba(255,255,255,.75)">Hoe meer gasten, hoe groter we het aanpakken. Bij grote events voorzien we tot vier Velopresso's. We werken altijd met plantaardige melk.</p>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-item">Espresso</div>
+      <div class="menu-item">Americano</div>
+      <div class="menu-item">Cappuccino</div>
+      <div class="menu-item">Latte</div>
+      <div class="menu-item">Chaï latte</div>
+      <div class="menu-item">Choco</div>
+      <div class="menu-item">Matcha vanille</div>
+      <div class="menu-item">Zwarte thee</div>
+      <div class="menu-item">Groene thee</div>
+      <div class="menu-item">Gemberthee</div>
+      <div class="menu-item">Fruitthee</div>
+      <div class="menu-item">Kleine koekjes</div>
+    </div>
+    <p style="color:rgba(255,255,255,.6); font-size:.875rem; margin-top:1.25rem; text-align:center;">
+      Iced menu beschikbaar als supplement · Zelfgebakken cakes en koffiekoeken op aanvraag
+    </p>
+  </div>
+</section>
+
+<!-- SMILING MARKETISTA -->
+<section class="section section--cream" id="marketista">
+  <div class="container">
+    <div class="about__grid">
+      <div class="about__content">
+        <p class="about__label">Smiling Marketista</p>
+        <h2 class="about__title">Jullie merk op onze Velopresso</h2>
+        <p class="about__text">We toveren onze Velopresso om tot één groot mobiel promotieplatform voor jullie merk. Fietsdecor met jullie logo, gestempelde bekers en een menukaart op maat. Iedereen die langsloopt blijft met een koffie in de hand hangen.</p>
+        <p class="about__text">Ideaal voor campagnes, beurzen, winkelopeningen en straatacties. We puzzelen mee over de beste aanpak en zorgen dat de boodschap aankomt.</p>
+        <div style="display:flex;gap:.625rem;flex-wrap:wrap;margin-top:1.25rem;margin-bottom:1rem">
+          <span class="tag">Logo op de fiets</span>
+          <span class="tag">Gestempelde bekers</span>
+          <span class="tag">Menukaart op maat</span>
+          <span class="tag">Campagnes en beurzen</span>
+          <span class="tag">Winkelopeningen</span>
+        </div>
+        <p style="font-size:.875rem; color:var(--text-light); margin-bottom:1.5rem;">
+          Vectorbestanden voor de ontwerpen dienen minstens 3 weken op voorhand aangeleverd te worden.
+        </p>
+        <a href="#offerte" class="btn btn--primary">Offerte aanvragen</a>
+      </div>
+      <div class="img-ph img-ph--portrait" data-img-block="ev_mkt" data-cms-img-key="img_ev_mkt">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRAKTISCH -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">Praktisch</span>
+      <h2>Wat jullie moeten weten</h2>
+      <p>Onze Velopresso's zijn volledig zelfvoorzienend. We regelen alles. Hieronder vinden jullie wat we nodig hebben.</p>
+    </div>
+    <div class="practical-grid">
+      <div class="practical-card">
+        <div class="practical-card__label">Zelfvoorzienend</div>
+        <h4>Water en energie</h4>
+        <p>Onze Velopresso's hebben elk een eigen gefilterde watervoorraad en het afval wordt intern opgeslagen. De machine werkt op gas of op elektriciteit als er een stopcontact in de buurt is.</p>
+      </div>
+      <div class="practical-card">
+        <div class="practical-card__label">Planning</div>
+        <h4>Op- en afbouw</h4>
+        <p>We hebben ongeveer een uur nodig om op te stellen en een 40-tal minuten om alles netjes op te ruimen. Voorzien wat marge voor en na het event.</p>
+      </div>
+      <div class="practical-card">
+        <div class="practical-card__label">Vervoer</div>
+        <h4>Transport</h4>
+        <p>Korte etappes kunnen we fietsen. Langere afstanden doen we met een aanhangwagen of camionette. Een lossings- en parkeerplaats in de buurt is handig.</p>
+      </div>
+      <div class="practical-card">
+        <div class="practical-card__label">Ruimte</div>
+        <h4>Afmetingen</h4>
+        <p>Onze fietsen zijn <strong>120 cm breed</strong> en <strong>250 cm lang</strong>. Zorg dat we door alle deuren en in alle liften passen. Treden zijn niet haalbaar.</p>
+      </div>
+      <div class="practical-card">
+        <div class="practical-card__label">Opstelling</div>
+        <h4>Serveerruimte</h4>
+        <p>Reken voor het serveren op <strong>1,20 × 2,50 meter</strong> per fiets. We overleggen altijd op voorhand over de beste locatie op jullie event.</p>
+      </div>
+      <div class="practical-card">
+        <div class="practical-card__label">Capaciteit</div>
+        <h4>Aantal dranken</h4>
+        <p>Reken op <strong>50 verse dranken per uur</strong> per fiets. Bij grote evenementen voorzien we tot <strong>4 Velopresso's</strong> voor extra capaciteit.</p>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <p><strong>Tip:</strong> Onze fietsen zijn 120 cm breed en 250 cm lang. Even overleggen over de locatie, dan zijn we voorbereid. We komen altijd met een plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOE RESERVEREN -->
+<section class="section section--cream">
+  <div class="container" style="max-width:900px">
+    <div class="sec-head">
+      <span class="sec-head__label">Hoe werkt het?</span>
+      <h2>In 3 stappen geregeld</h2>
+      <p>We starten met een voorschotfactuur van 50%. Na het event volgt de slotfactuur binnen 14 dagen.</p>
+    </div>
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-card__num">1</div>
+        <h3>Stuur ons een bericht</h3>
+        <p>Vertel ons over jullie event: datum, locatie, verwacht aantal bezoekers en gewenste duur. We reageren binnen 24 uur.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-card__num">2</div>
+        <h3>Voorstel op maat</h3>
+        <p>We stellen een offerte op maat samen. Voor het Marketista-pakket, vectorbestanden minstens 3 weken op voorhand aanleveren.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-card__num">3</div>
+        <h3>Wij komen naar jullie</h3>
+        <p>Op de dag zelf stellen we alles op, schenken we met de glimlach en ruimen we netjes op. Jullie genieten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFERTE FORM -->
+<section class="section" id="offerte">
+  <div class="container" style="max-width:800px">
+    <div class="tally-box">
+      <h3>Offerte aanvragen</h3>
+      <p>Vertel ons over jullie event. We sturen binnen 24 uur een voorstel op maat.</p>
+      <div class="tally-iframe-wrap">
+        <iframe
+          data-tally-src="https://tally.so/embed/obgKPV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Event offerte aanvragen">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>We zien jullie event graag verschijnen</h2>
+    <p>Snel geregeld, concreet en zonder gedoe. Didi en zijn Smiling Barista's.</p>
+    <div class="cta-banner__btns">
+      <a href="contact.html"   class="btn btn--primary">Direct contact</a>
+      <a href="workshops.html" class="btn btn--light">Latte Art Workshop</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="index.html" class="footer__logo">Smiling Barista</a>
+        <p class="footer__desc">We brengen verse koffie naar jullie event. Door heel België.</p>
+        <div class="footer__socials">
+          <a href="#" class="footer__social" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__head">Menu</div>
+        <ul class="footer__links">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="events.html"    class="footer__link">Events</a></li>
+          <li><a href="workshops.html" class="footer__link">Workshops</a></li>
+          <li><a href="shop.html"      class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Diensten</div>
+        <ul class="footer__links">
+          <li><a href="events.html"            class="footer__link">Mobiele koffie-catering</a></li>
+          <li><a href="events.html#marketista" class="footer__link">Smiling Marketista</a></li>
+          <li><a href="workshops.html"         class="footer__link">Latte Art Workshop</a></li>
+          <li><a href="teambuilding.html"         class="footer__link">Teambuilding</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Contact</div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18a19.5 19.5 0 0 1-5-5 19.79 19.79 0 0 1-3.93-8.5A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+32 468 49 16 15</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>smilingbarista@spreadingsmiles.be</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Dambruggestraat 267C, 2060 Antwerpen</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Center Stage BV · BE0566.931.049</span>
+      <div class="footer__legal">
+        <a href="#" class="footer__legal-link">Privacybeleid</a>
+        <a href="#" class="footer__legal-link">Algemene voorwaarden</a>
+        <a href="admin.html" class="footer__legal-link" style="opacity:.35">Beheer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart -->
+<div class="cart-overlay"></div>
+<div class="cart-drawer">
+  <div class="cart-drawer__head"><h3>Winkelwagen</h3><button class="cart-drawer__close">&#x2715;</button></div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span>Subtotaal</span><span data-cart-total>€ 0,00</span></div>
+    <p class="cart-note">Verzendkosten worden berekend bij afrekenen.</p>
+    <div class="cart-btns">
+      <button class="btn btn--primary btn--full" data-open-checkout>Afrekenen</button>
+      <a href="shop.html" class="btn btn--secondary btn--full">Verder winkelen</a>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal__head"><h3>Bestelling afronden</h3><button data-close-checkout style="font-size:1.25rem;padding:.5rem">&#x2715;</button></div>
+    <div class="modal__body">
+      <div id="order-summary"></div>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group"><label>Naam *</label><input type="text" name="name" required placeholder="Jan Janssen"></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" name="email" required placeholder="jan@email.be"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Telefoon</label><input type="tel" name="phone" placeholder="+32 4xx xx xx xx"></div>
+          <div class="form-group"><label>Straat + nummer *</label><input type="text" name="street" required placeholder="Koffiestraat 12"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Postcode *</label><input type="text" name="zip" required placeholder="2000"></div>
+          <div class="form-group"><label>Gemeente *</label><input type="text" name="city" required placeholder="Antwerpen"></div>
+        </div>
+        <div class="form-group"><label>Opmerking</label><textarea name="note" placeholder="Eventuele opmerkingen…"></textarea></div>
+        <button type="submit" class="btn btn--primary btn--full">Bestelling bevestigen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="js/cms.js"></script>
+<script src="odoo-config.js"></script>
+<script src="js/odoo.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+var d=document,w="https://tally.so/widgets/embed.js",
+v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(i){i.src=i.dataset.tallySrc})};
+if("undefined"!=typeof Tally)v();
+else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w;s.onload=v;s.onerror=v;d.body.appendChild(s)}
+</script>
+</body>
+</html>

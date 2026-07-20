@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workshops — Smiling Barista</title>
+  <meta name="description" content="Leer latte art tekenen, espresso zetten of filterkoffie brouwen. Workshops voor beginners en gevorderden. Boek rechtstreeks een datum en betaal online.">
+  <link rel="canonical" href="https://www.spreadingsmiles.be/workshops">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>S</text></svg>">
+  <style>
+    /* ── Workshop cards ─────────────────────────────── */
+    .ws-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+    .ws-card-new {
+      background: var(--white);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--t), transform var(--t);
+    }
+    .ws-card-new:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .ws-card-new__img { position: relative; }
+    .ws-card-new__badge {
+      position: absolute; top: .875rem; left: .875rem;
+      background: var(--caramel); color: #fff;
+      font-size: .75rem; font-weight: 700;
+      padding: .25rem .75rem; border-radius: var(--r-full);
+      letter-spacing: .04em;
+    }
+    .ws-card-new__body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+    .ws-card-new__title { font-size: 1.25rem; margin-bottom: .5rem; }
+    .ws-card-new__desc { font-size: .9375rem; color: var(--text-light); line-height: 1.65; margin-bottom: 1rem; flex: 1; }
+    .ws-card-new__meta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      font-size: .8125rem; color: var(--text-light);
+      margin-bottom: 1.25rem; padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .ws-card-new__meta span { display: flex; align-items: center; gap: .35rem; }
+    .ws-card-new__meta svg { flex-shrink: 0; }
+    .ws-card-new__foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .ws-price-new { font-family: var(--font-head); font-size: 1.5rem; color: var(--espresso); }
+    .ws-price-new small { font-size: .875rem; font-family: var(--font-body); color: var(--text-light); }
+    .ws-includes {
+      list-style: none; margin: 0 0 1.25rem; padding: 0;
+      display: flex; flex-direction: column; gap: .4rem;
+    }
+    .ws-includes li {
+      font-size: .875rem; color: var(--text-light);
+      display: flex; align-items: flex-start; gap: .5rem;
+    }
+    .ws-includes li::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--caramel); flex-shrink: 0; margin-top: .45rem;
+    }
+
+    /* ── Boeking modal ──────────────────────────────── */
+    .booking-overlay {
+      position: fixed; inset: 0; background: rgba(0,20,40,.55);
+      z-index: 500; display: none; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .booking-overlay.open { display: flex; }
+    .booking-modal {
+      background: var(--white); border-radius: var(--r-xl);
+      max-width: 680px; width: 100%; max-height: 90vh;
+      overflow-y: auto; box-shadow: var(--shadow-xl);
+      position: relative;
+    }
+    .booking-modal__head {
+      padding: 1.5rem 1.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      position: sticky; top: 0; background: var(--white); z-index: 2;
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .booking-modal__head h3 { font-size: 1.25rem; margin: 0; }
+    .booking-modal__price { font-size: .9375rem; color: var(--caramel); font-weight: 600; margin-top: .2rem; }
+    .booking-modal__close {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: var(--cream); border: none; cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .booking-modal__body { padding: 1.75rem; }
+
+    /* date picker */
+    .bk-section-label {
+      font-size: .75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text-light); margin-bottom: .75rem;
+    }
+    .bk-dates {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: .75rem; margin-bottom: 1.75rem;
+    }
+    .bk-date-card {
+      border: 2px solid var(--border); border-radius: var(--r-lg);
+      padding: .875rem .75rem; cursor: pointer; text-align: center;
+      transition: all var(--t); background: var(--white);
+    }
+    .bk-date-card:hover:not(.bk-date-card--full) { border-color: var(--caramel); background: var(--cream); }
+    .bk-date-card.selected { border-color: var(--caramel); background: var(--cream); }
+    .bk-date-card__day { font-weight: 700; font-size: .9375rem; color: var(--espresso); }
+    .bk-date-card__time { font-size: .8125rem; color: var(--text-light); margin-top: .2rem; }
+    .bk-date-card__spots { font-size: .75rem; margin-top: .35rem; color: var(--caramel); font-weight: 600; }
+    .bk-date-card--full { opacity: .45; cursor: not-allowed; }
+    .bk-date-card--full .bk-date-card__spots { color: var(--error); }
+
+    /* spots stepper */
+    .bk-spots-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; background: var(--cream);
+      border-radius: var(--r-lg); margin-bottom: 1.75rem;
+    }
+    .bk-spots-label { font-weight: 600; font-size: .9375rem; }
+    .bk-spots-sub { font-size: .8125rem; color: var(--text-light); }
+    .bk-stepper { display: flex; align-items: center; gap: .875rem; }
+    .bk-stepper button {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: var(--caramel); color: #fff;
+      font-size: 1.125rem; display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer; line-height: 1;
+      transition: background var(--t);
+    }
+    .bk-stepper button:hover { background: var(--brown); }
+    .bk-stepper button:disabled { background: var(--border); cursor: not-allowed; }
+    .bk-spots-count { font-size: 1.25rem; font-weight: 700; min-width: 1.5rem; text-align: center; }
+    .bk-total {
+      text-align: right; font-size: .875rem; color: var(--text-light);
+      margin-bottom: 1.75rem; margin-top: -.75rem;
+    }
+    .bk-total strong { font-size: 1.125rem; color: var(--espresso); }
+
+    /* personal info */
+    .bk-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .bk-form .form-group { display: flex; flex-direction: column; gap: .375rem; }
+    .bk-form label { font-size: .8125rem; font-weight: 600; color: var(--text); }
+    .bk-form input {
+      padding: .625rem .875rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-md); font-size: .9375rem;
+      outline: none; transition: border-color var(--t);
+    }
+    .bk-form input:focus { border-color: var(--caramel); }
+
+    /* states */
+    .bk-state { display: none; }
+    .bk-state.active { display: block; }
+    .bk-loading { text-align: center; padding: 2.5rem 1rem; color: var(--text-light); }
+    .bk-loading svg { animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .bk-no-dates {
+      text-align: center; padding: 2rem; background: var(--cream);
+      border-radius: var(--r-lg); margin-bottom: 1.75rem; font-size: .9375rem;
+      color: var(--text-light); line-height: 1.6;
+    }
+    .bk-no-dates a { color: var(--caramel); font-weight: 600; }
+    .bk-success { text-align: center; padding: 2.5rem 1.5rem; }
+    .bk-success__icon {
+      width: 4rem; height: 4rem; border-radius: 50%;
+      background: #dcfce7; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem; color: #16a34a;
+    }
+    .bk-success h4 { font-size: 1.25rem; margin-bottom: .625rem; }
+    .bk-success p { color: var(--text-light); line-height: 1.7; margin-bottom: 1.5rem; }
+    .bk-error-msg {
+      background: #fee2e2; color: #991b1b; border-radius: var(--r-md);
+      padding: .875rem 1rem; font-size: .9rem; margin-bottom: 1rem;
+      display: none;
+    }
+    .bk-error-msg.visible { display: block; }
+
+    /* ── Calendar in modal ──────────────────────────── */
+    .bk-cal { background: #fff; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; border: 1.5px solid var(--border); }
+    .bk-cal-head { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1rem; background: var(--espresso); color: #fff; }
+    .bk-cal-head h4 { font-family: var(--font-head); font-size: .9375rem; }
+    .bk-cal-nav { width: 1.875rem; height: 1.875rem; background: rgba(255,255,255,.12); border: none; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .bk-cal-nav:hover { background: rgba(255,255,255,.22); }
+    .bk-cal-wdays { display: grid; grid-template-columns: repeat(7,1fr); background: var(--cream); }
+    .bk-cal-wday { text-align: center; font-size: .625rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-light); padding: .4rem 0; }
+    .bk-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); padding: .375rem; gap: 2px; }
+    .bk-cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; font-size: .8125rem; position: relative; transition: background .12s; min-height: 34px; }
+    .bk-cal-day:hover:not(.bk-cd-empty):not(.bk-cd-past) { background: var(--cream); }
+    .bk-cd-empty { cursor: default; }
+    .bk-cd-past  { color: #b0c8da; cursor: default; }
+    .bk-cd-today { font-weight: 700; color: var(--caramel); }
+    .bk-cd-has   { font-weight: 600; }
+    .bk-cd-sel   { background: var(--caramel) !important; color: #fff !important; }
+    .bk-cal-dots { display: flex; gap: 2px; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); }
+    .bk-cal-dot  { width: 4px; height: 4px; border-radius: 50%; display: block; }
+    .bk-cd-sel .bk-cal-dot { background: rgba(255,255,255,.7) !important; }
+
+    /* Sessions on selected date */
+    .bk-day-sessions { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.5rem; }
+    .bk-sess-btn {
+      display: flex; align-items: center; gap: .875rem;
+      border: 2px solid var(--border); border-radius: 10px;
+      padding: .75rem 1rem; cursor: pointer; background: #fff;
+      text-align: left; transition: all .12s; width: 100%;
+    }
+    .bk-sess-btn:hover:not(:disabled) { border-color: var(--caramel); background: var(--cream); }
+    .bk-sess-btn.sel { border-color: var(--caramel); background: var(--cream); }
+    .bk-sess-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .bk-sess-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .bk-sess-info { flex: 1; }
+    .bk-sess-name { font-weight: 600; font-size: .875rem; }
+    .bk-sess-meta { font-size: .8125rem; color: var(--text-light); }
+    .bk-sess-spots { font-size: .8125rem; font-weight: 600; white-space: nowrap; }
+
+    @media (max-width: 860px) { .ws-grid-4 { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) {
+      .bk-dates { grid-template-columns: 1fr 1fr; }
+      .bk-form .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 400px) { .bk-dates { grid-template-columns: 1fr; } }
+
+    /* sfeer grid */
+    .sfeer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    @media (max-width: 640px) { .sfeer-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__logo">Smiling Barista</a>
+    <ul class="nav__links">
+      <li><a href="index.html"     class="nav__link">Home</a></li>
+      <li><a href="events.html"    class="nav__link">Events</a></li>
+      <li><a href="workshops.html"    class="nav__link active">Workshops</a></li>
+      <li><a href="teambuilding.html" class="nav__link">Teambuilding</a></li>
+      <li><a href="shop.html"         class="nav__link">Shop</a></li>
+      <li><a href="goede-doelen.html" class="nav__link">Goede Doelen</a></li>
+      <li><a href="contact.html"      class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" data-open-cart aria-label="Winkelwagen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="nav__cart-count">0</span>
+      </button>
+      <a href="#workshops" class="btn btn--primary btn--sm">Workshop boeken</a>
+    </div>
+    <button class="nav__burger" aria-label="Menu openen"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav">
+  <button class="mobile-nav__close">&#x2715;</button>
+  <a href="index.html"     class="mobile-nav__link">Home</a>
+  <a href="events.html"    class="mobile-nav__link">Events</a>
+  <a href="workshops.html"    class="mobile-nav__link">Workshops</a>
+  <a href="teambuilding.html" class="mobile-nav__link">Teambuilding</a>
+  <a href="shop.html"         class="mobile-nav__link">Shop</a>
+  <a href="goede-doelen.html" class="mobile-nav__link">Goede Doelen</a>
+  <a href="contact.html"      class="mobile-nav__link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero__label">Workshops</span>
+    <h1>Van nul naar cappuccino met hartje in één sessie</h1>
+    <p class="page-hero__sub">Jij, een espressomachine en een kannetje melk. Tijdens onze workshops leer je latte art tekenen, espresso zetten of filterkoffie brouwen. Praktisch, lachwekkend en verrassend verslavend.</p>
+  </div>
+</section>
+
+<!-- WORKSHOP CARDS -->
+<section class="section" id="workshops">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">Ons aanbod</span>
+      <h2>Kies jullie workshop</h2>
+      <p>Alle workshops worden gegeven door Didi in kleine groepen. Geen voorkennis nodig, alles wordt voorzien.</p>
+    </div>
+
+    <div class="ws-grid-4">
+
+      <!-- Latte Art Level 1 -->
+      <div class="ws-card-new">
+        <div class="ws-card-new__img">
+          <div class="img-ph img-ph--landscape" data-img-block="ws_la1" data-cms-img-key="img_ws_la1">
+            <div class="img-ph__inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </div>
+          <span class="ws-card-new__badge">Meest populair</span>
+        </div>
+        <div class="ws-card-new__body">
+          <h3 class="ws-card-new__title">Latte Art Level 1 — Sweet Hearts</h3>
+          <p class="ws-card-new__desc">We beginnen bij het begin: hoe werkt een espressomachine, hoe schuim je melk op en hoe zet je een cappuccino? Je leert een hartje tekenen en vertrekt met genoeg kennis om thuis te blijven oefenen.</p>
+          <div class="ws-card-new__meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              2,5 uur
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Max 8 personen
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Voor beginners
+            </span>
+          </div>
+          <ul class="ws-includes">
+            <li>Melk opschuimen als een pro</li>
+            <li>Hartje, rozet en tulp tekenen</li>
+            <li>Espresso-extractie begrijpen</li>
+            <li>Oefenen op echte machines</li>
+            <li>Koffie en snacks inbegrepen</li>
+          </ul>
+          <div class="ws-card-new__foot">
+            <div class="ws-price-new">€ 99 <small>/ persoon</small></div>
+            <button class="btn btn--primary" onclick="BookingModal.open('latte-art-1')">Kies een datum</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Home Barista -->
+      <div class="ws-card-new">
+        <div class="ws-card-new__img">
+          <div class="img-ph img-ph--landscape" data-img-block="ws_hb" data-cms-img-key="img_ws_hb">
+            <div class="img-ph__inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="ws-card-new__body">
+          <h3 class="ws-card-new__title">Home Barista</h3>
+          <p class="ws-card-new__desc">Je hebt thuis een espressomachine maar weet niet goed hoe je er het beste uit haalt. Na deze workshop ken je de basis: van malen en tampen tot melk opschuimen en de eerste latte art-pogingen.</p>
+          <div class="ws-card-new__meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              3 uur
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Max 8 personen
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Voor beginners
+            </span>
+          </div>
+          <ul class="ws-includes">
+            <li>Malen, tampen en extractie</li>
+            <li>Eerste latte art stappen</li>
+            <li>Tips voor thuis</li>
+            <li>Werken met Sage-machines</li>
+            <li>Koffie en snacks inbegrepen</li>
+          </ul>
+          <div class="ws-card-new__foot">
+            <div class="ws-price-new">€ 99 <small>/ persoon</small></div>
+            <button class="btn btn--primary" onclick="BookingModal.open('home-barista')">Kies een datum</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brewing -->
+      <div class="ws-card-new">
+        <div class="ws-card-new__img">
+          <div class="img-ph img-ph--landscape" data-img-block="ws_brew" data-cms-img-key="img_ws_brew">
+            <div class="img-ph__inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="ws-card-new__body">
+          <h3 class="ws-card-new__title">Brewing — Slow Brew</h3>
+          <p class="ws-card-new__desc">Filterkoffie kent een wereld op zichzelf. We verkennen de V60, French Press en Chemex. Je leert hoe malen, watertemperatuur en giettechniek de smaak bepalen. Rustiger dan espresso, al even verslavend.</p>
+          <div class="ws-card-new__meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              2 uur
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Max 8 personen
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Voor beginners
+            </span>
+          </div>
+          <ul class="ws-includes">
+            <li>V60, French Press en Chemex</li>
+            <li>Malen en watertemperatuur</li>
+            <li>Giettechniek per methode</li>
+            <li>Smaakproeverij</li>
+            <li>Koffie en snacks inbegrepen</li>
+          </ul>
+          <div class="ws-card-new__foot">
+            <div class="ws-price-new">€ 69 <small>/ persoon</small></div>
+            <button class="btn btn--primary" onclick="BookingModal.open('brewing')">Kies een datum</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Latte Art Level 2 -->
+      <div class="ws-card-new">
+        <div class="ws-card-new__img">
+          <div class="img-ph img-ph--landscape" data-img-block="ws_la2" data-cms-img-key="img_ws_la2">
+            <div class="img-ph__inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </div>
+          <span class="ws-card-new__badge" style="background:var(--espresso)">Gevorderd</span>
+        </div>
+        <div class="ws-card-new__body">
+          <h3 class="ws-card-new__title">Latte Art Level 2 — Masterclass</h3>
+          <p class="ws-card-new__desc">Je tekent al een hartje maar wil meer. We gaan verder met complexe patronen, etching en free pour op kleine bekers. Vereist dat je level 1 al gedaan hebt of thuis al regelmatig oefent.</p>
+          <div class="ws-card-new__meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              3,5 uur
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Max 6 personen
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Niveau: gevorderd
+            </span>
+          </div>
+          <ul class="ws-includes">
+            <li>Complexe patronen en etching</li>
+            <li>Free pour op kleine bekers</li>
+            <li>Espresso-kalibratie verfijnen</li>
+            <li>Intensieve begeleiding</li>
+            <li>Koffie en snacks inbegrepen</li>
+          </ul>
+          <div class="ws-card-new__foot">
+            <div class="ws-price-new">€ 149 <small>/ persoon</small></div>
+            <button class="btn btn--primary" onclick="BookingModal.open('latte-art-2')">Kies een datum</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ws-grid-4 -->
+  </div>
+</section>
+
+<!-- SFEER -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">Sfeer</span>
+      <h2>Zo ziet een workshop eruit</h2>
+    </div>
+    <div class="sfeer-grid">
+      <div class="img-ph img-ph--landscape" data-img-block="ws_sfeer1" data-cms-img-key="img_ws_sfeer1">
+        <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      </div>
+      <div class="img-ph img-ph--landscape" data-img-block="ws_sfeer2" data-cms-img-key="img_ws_sfeer2">
+        <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      </div>
+      <div class="img-ph img-ph--landscape" data-img-block="ws_sfeer3" data-cms-img-key="img_ws_sfeer3">
+        <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOE WERKT HET -->
+<section class="section">
+  <div class="container" style="max-width:900px">
+    <div class="sec-head">
+      <span class="sec-head__label">Hoe werkt het?</span>
+      <h2>Boeken in 3 stappen</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem">
+      <div style="background:var(--cream);border-radius:var(--r-xl);padding:1.75rem">
+        <div style="width:2.5rem;height:2.5rem;background:var(--caramel);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;margin-bottom:1rem">1</div>
+        <h3 style="font-family:var(--font-body);font-size:1rem;font-weight:700;margin-bottom:.5rem">Kies een workshop en datum</h3>
+        <p style="font-size:.9rem;color:var(--text-light);line-height:1.6">Klik op "Kies een datum", selecteer een beschikbare sessie en het aantal plaatsen.</p>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--r-xl);padding:1.75rem">
+        <div style="width:2.5rem;height:2.5rem;background:var(--caramel);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;margin-bottom:1rem">2</div>
+        <h3 style="font-family:var(--font-body);font-size:1rem;font-weight:700;margin-bottom:.5rem">Vul je gegevens in</h3>
+        <p style="font-size:.9rem;color:var(--text-light);line-height:1.6">Naam, e-mail en telefoon. We sturen een bevestiging zodra de betaling verwerkt is.</p>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--r-xl);padding:1.75rem">
+        <div style="width:2.5rem;height:2.5rem;background:var(--caramel);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;margin-bottom:1rem">3</div>
+        <h3 style="font-family:var(--font-body);font-size:1rem;font-weight:700;margin-bottom:.5rem">Betaal en bevestig</h3>
+        <p style="font-size:.9rem;color:var(--text-light);line-height:1.6">Betaling via Mollie of Bancontact. Na betaling ontvang je een bevestigingsmail met alle details.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>Liever een privégroep of teambuilding?</h2>
+    <p>We puzzelen mee over een formule op maat. Op aanvraag.</p>
+    <div class="cta-banner__btns">
+      <a href="contact.html" class="btn btn--primary">Contact opnemen</a>
+      <a href="shop.html"    class="btn btn--light">Cadeaubon kopen</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="index.html" class="footer__logo">Smiling Barista</a>
+        <p class="footer__desc">We brengen verse koffie naar jullie event. Door heel België.</p>
+        <div class="footer__socials">
+          <a href="#" class="footer__social" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__head">Menu</div>
+        <ul class="footer__links">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="events.html"    class="footer__link">Events</a></li>
+          <li><a href="workshops.html" class="footer__link">Workshops</a></li>
+          <li><a href="shop.html"      class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Workshops</div>
+        <ul class="footer__links">
+          <li><a href="workshops.html" class="footer__link">Latte Art Level 1</a></li>
+          <li><a href="workshops.html" class="footer__link">Home Barista</a></li>
+          <li><a href="workshops.html" class="footer__link">Brewing</a></li>
+          <li><a href="workshops.html" class="footer__link">Latte Art Level 2</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Contact</div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18a19.5 19.5 0 0 1-5-5 19.79 19.79 0 0 1-3.93-8.5A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+32 468 49 16 15</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>smilingbarista@spreadingsmiles.be</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Center Stage BV · BE0566.931.049</span>
+      <div class="footer__legal">
+        <a href="#" class="footer__legal-link">Privacybeleid</a>
+        <a href="#" class="footer__legal-link">Algemene voorwaarden</a>
+        <a href="admin.html" class="footer__legal-link" style="opacity:.35">Beheer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart -->
+<div class="cart-overlay"></div>
+<div class="cart-drawer">
+  <div class="cart-drawer__head"><h3>Winkelwagen</h3><button class="cart-drawer__close">&#x2715;</button></div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span>Subtotaal</span><span data-cart-total>€ 0,00</span></div>
+    <p class="cart-note">Verzendkosten worden berekend bij afrekenen.</p>
+    <div class="cart-btns">
+      <button class="btn btn--primary btn--full" data-open-checkout>Afrekenen</button>
+      <a href="shop.html" class="btn btn--secondary btn--full">Verder winkelen</a>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal__head"><h3>Bestelling afronden</h3><button data-close-checkout style="font-size:1.25rem;padding:.5rem">&#x2715;</button></div>
+    <div class="modal__body">
+      <div id="order-summary"></div>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group"><label>Naam *</label><input type="text" name="name" required placeholder="Jan Janssen"></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" name="email" required placeholder="jan@email.be"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Telefoon</label><input type="tel" name="phone" placeholder="+32 4xx xx xx xx"></div>
+          <div class="form-group"><label>Straat + nummer *</label><input type="text" name="street" required placeholder="Koffiestraat 12"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Postcode *</label><input type="text" name="zip" required placeholder="2000"></div>
+          <div class="form-group"><label>Gemeente *</label><input type="text" name="city" required placeholder="Antwerpen"></div>
+        </div>
+        <div class="form-group"><label>Opmerking</label><textarea name="note" placeholder="Eventuele opmerkingen…"></textarea></div>
+        <button type="submit" class="btn btn--primary btn--full">Bestelling bevestigen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     WORKSHOP BOOKING MODAL — kalendergestuurde versie
+     Gebruikt js/sessions.js (localStorage sb_sessions)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="booking-overlay" id="booking-overlay" role="dialog" aria-modal="true">
+  <div class="booking-modal" id="booking-modal">
+
+    <div class="booking-modal__head">
+      <div>
+        <h3 id="bk-title">Workshop</h3>
+        <div class="booking-modal__price" id="bk-price-head"></div>
+      </div>
+      <button class="booking-modal__close" onclick="BookingModal.close()" aria-label="Sluiten">&#x2715;</button>
+    </div>
+
+    <div class="booking-modal__body">
+
+      <!-- State: kalender (kies datum + sessie) -->
+      <div class="bk-state active" id="bk-state-cal">
+        <div id="bk-no-dates" class="bk-no-dates" style="display:none">
+          Er zijn momenteel geen geplande sessies.
+          <a href="contact.html">Neem contact op</a> en we plannen iets in.
+        </div>
+        <div class="bk-cal" id="bk-cal">
+          <div class="bk-cal-head">
+            <button class="bk-cal-nav" id="bk-cal-prev" onclick="BookingModal.calNav(-1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <h4 id="bk-cal-label"></h4>
+            <button class="bk-cal-nav" id="bk-cal-next" onclick="BookingModal.calNav(1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+          <div class="bk-cal-wdays" id="bk-cal-wdays"></div>
+          <div class="bk-cal-grid" id="bk-cal-grid"></div>
+        </div>
+        <div id="bk-day-label" class="bk-section-label" style="display:none;margin-top:1.25rem;margin-bottom:.75rem"></div>
+        <div class="bk-day-sessions" id="bk-day-sessions"></div>
+      </div>
+
+      <!-- State: spots + gegevens -->
+      <div class="bk-state" id="bk-state-form">
+        <div id="bk-error-msg" class="bk-error-msg"></div>
+
+        <div id="bk-sel-summary" style="background:var(--cream);border-radius:10px;padding:.875rem 1rem;margin-bottom:1.5rem;font-size:.875rem"></div>
+
+        <div class="bk-spots-row">
+          <div>
+            <div class="bk-spots-label">Aantal plaatsen</div>
+            <div class="bk-spots-sub" id="bk-spots-sub"></div>
+          </div>
+          <div class="bk-stepper">
+            <button id="bk-minus" onclick="BookingModal.changeSpots(-1)" aria-label="Minder">&#8722;</button>
+            <span class="bk-spots-count" id="bk-spots-count">1</span>
+            <button id="bk-plus" onclick="BookingModal.changeSpots(1)" aria-label="Meer">&#43;</button>
+          </div>
+        </div>
+        <div class="bk-total" id="bk-total">
+          Totaal: <strong id="bk-total-price"></strong>
+        </div>
+
+        <div class="bk-section-label" style="margin-top:1.5rem">Jouw gegevens</div>
+        <form class="bk-form" id="bk-form" onsubmit="BookingModal.submit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bk-name">Naam *</label>
+              <input type="text" id="bk-name" required placeholder="Jan Janssen">
+            </div>
+            <div class="form-group">
+              <label for="bk-email">E-mail *</label>
+              <input type="email" id="bk-email" required placeholder="jan@email.be">
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:1.5rem">
+            <div class="form-group">
+              <label for="bk-phone">Telefoon</label>
+              <input type="tel" id="bk-phone" placeholder="+32 4xx xx xx xx">
+            </div>
+          </div>
+          <button type="submit" class="btn btn--primary btn--full" id="bk-submit-btn">
+            Bevestigen en betalen
+          </button>
+          <p style="font-size:.8125rem;color:var(--text-light);text-align:center;margin-top:.75rem" id="bk-pay-hint"></p>
+        </form>
+        <button onclick="BookingModal.backToCal()" style="display:block;margin-top:.75rem;background:none;border:none;color:var(--caramel);font-size:.875rem;cursor:pointer;font-family:inherit;padding:0">&#8592; Andere datum kiezen</button>
+      </div>
+
+      <!-- State: succes -->
+      <div class="bk-state" id="bk-state-success">
+        <div class="bk-success">
+          <div class="bk-success__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h4>Reservatie bevestigd!</h4>
+          <p id="bk-success-msg"></p>
+          <a id="bk-pay-action" href="#" class="btn btn--primary" target="_blank" rel="noopener">Naar betaalpagina</a>
+        </div>
+      </div>
+
+    </div><!-- /booking-modal__body -->
+  </div>
+</div>
+
+<script src="js/sessions.js"></script>
+<script src="js/cms.js"></script>
+<script src="odoo-config.js"></script>
+<script src="js/odoo.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+const WS_COLORS = {'latte-art-1':'#0366C5','home-barista':'#00508C','brewing':'#2E7D9F','latte-art-2':'#001E35'};
+
+const BookingModal = (() => {
+  let wsKey = null, selSess = null, spots = 1, calY = 0, calM = 0;
+  const $ = id => document.getElementById(id);
+  const fmtEur = n => '€ ' + Number(n).toFixed(2).replace('.', ',');
+
+  function setState(name) {
+    ['bk-state-cal','bk-state-form','bk-state-success'].forEach(id => {
+      $(id).classList.toggle('active', id === 'bk-state-' + name);
+    });
+  }
+
+  function renderCal() {
+    const MN = Sessions.NL_MONTHS;
+    const DN = Sessions.NL_DAYS_SHORT;
+    $('bk-cal-label').textContent = MN[calM] + ' ' + calY;
+    $('bk-cal-wdays').innerHTML = DN.map(d => '<div class="bk-cal-wday">' + d + '</div>').join('');
+    const sessMap = Sessions.getDatesWithSessions(wsKey, calY, calM);
+    const offset  = (new Date(calY, calM, 1).getDay() + 6) % 7;
+    const days    = new Date(calY, calM + 1, 0).getDate();
+    const today   = new Date(); today.setHours(0,0,0,0);
+    let html = '<div class="bk-cal-day bk-cd-empty"></div>'.repeat(offset);
+    for (let d = 1; d <= days; d++) {
+      const ds   = calY + '-' + String(calM+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      const dt   = new Date(calY, calM, d);
+      const past = dt < today;
+      const isT  = dt.getTime() === today.getTime();
+      const has  = !!sessMap[ds];
+      const cls  = ['bk-cal-day', past?'bk-cd-past':'', isT?'bk-cd-today':'', has?'bk-cd-has':''].filter(Boolean).join(' ');
+      const dots = has ? '<div class="bk-cal-dots">' + sessMap[ds].slice(0,3).map(s => '<span class="bk-cal-dot" style="background:' + WS_COLORS[s.workshopKey] + '"></span>').join('') + '</div>' : '';
+      html += '<div class="' + cls + '"' + (past ? '' : ' onclick="BookingModal.selectDay(\'' + ds + '\')"') + '>' + d + dots + '</div>';
+    }
+    $('bk-cal-grid').innerHTML = html;
+    const upcoming = Sessions.getUpcoming(wsKey);
+    $('bk-no-dates').style.display = upcoming.length ? 'none' : 'block';
+    $('bk-cal').style.display = upcoming.length ? '' : 'none';
+  }
+
+  function selectDay(ds) {
+    document.querySelectorAll('.bk-cal-day.bk-cd-sel').forEach(el => el.classList.remove('bk-cd-sel'));
+    document.querySelectorAll('.bk-cal-day:not(.bk-cd-empty):not(.bk-cd-past)').forEach(el => {
+      const n = parseInt(el.textContent.trim());
+      if (!isNaN(n)) {
+        const elDs = calY + '-' + String(calM+1).padStart(2,'0') + '-' + String(n).padStart(2,'0');
+        if (elDs === ds) el.classList.add('bk-cd-sel');
+      }
+    });
+    const list = Sessions.getAll().filter(s => s.date === ds && s.workshopKey === wsKey);
+    const lblEl = $('bk-day-label'), listEl = $('bk-day-sessions');
+    if (!list.length) { lblEl.style.display = 'none'; listEl.innerHTML = ''; return; }
+    const dObj = new Date(ds + 'T00:00:00');
+    const dn = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+    const mn = Sessions.NL_MONTHS;
+    lblEl.style.display = '';
+    lblEl.textContent = dn[dObj.getDay()].charAt(0).toUpperCase() + dn[dObj.getDay()].slice(1) + ' ' + dObj.getDate() + ' ' + mn[dObj.getMonth()];
+    listEl.innerHTML = list.map(s => {
+      const ws   = Sessions.WORKSHOPS[s.workshopKey];
+      const left = Sessions.spotsLeft(s);
+      const full = left <= 0;
+      return '<button type="button" class="bk-sess-btn"' + (full?' disabled':'') + ' data-sess-id="' + s.id + '" onclick="BookingModal.selectSession(' + s.id + ')">' +
+        '<span class="bk-sess-dot" style="background:' + WS_COLORS[s.workshopKey] + '"></span>' +
+        '<div class="bk-sess-info"><div class="bk-sess-name">' + (ws?.name||s.workshopKey) + '</div><div class="bk-sess-meta">' + s.time + '</div></div>' +
+        '<div class="bk-sess-spots" style="color:' + (full?'var(--error)':left<=2?'#ea580c':'var(--caramel)') + '">' + (full?'Volzet':left+(left===1?' plaats vrij':' plaatsen vrij')) + '</div>' +
+        '</button>';
+    }).join('');
+  }
+
+  function selectSession(sessId) {
+    selSess = Sessions.getAll().find(s => s.id === sessId);
+    if (!selSess) return;
+    document.querySelectorAll('.bk-sess-btn').forEach(b => b.classList.toggle('sel', Number(b.dataset.sessId) === sessId));
+    const ws   = Sessions.WORKSHOPS[selSess.workshopKey];
+    const left = Sessions.spotsLeft(selSess);
+    const max  = Math.min(selSess.maxSpots || ws?.maxSpots || 8, left);
+    spots = 1;
+    const dObj = new Date(selSess.date + 'T00:00:00');
+    const dn2  = ['zo','ma','di','wo','do','vr','za'];
+    const mn2  = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+    $('bk-sel-summary').innerHTML =
+      '<strong>' + (ws?.name||selSess.workshopKey) + '</strong>' +
+      '<span style="float:right;color:var(--caramel);font-weight:700">' + fmtEur(ws?.price||0) + ' / pers.</span><br>' +
+      '<span style="color:var(--text-light)">' + dn2[dObj.getDay()] + ' ' + dObj.getDate() + ' ' + mn2[dObj.getMonth()] + ' ' + dObj.getFullYear() + ' · ' + selSess.time + '</span>';
+    $('bk-spots-sub').textContent = 'Max ' + max + ' per boeking';
+    $('bk-spots-count').textContent = '1';
+    $('bk-minus').disabled = true;
+    $('bk-plus').disabled  = max <= 1;
+    $('bk-minus').dataset.max = max;
+    $('bk-plus').dataset.max  = max;
+    updateTotal();
+    $('bk-pay-hint').textContent = selSess.paymentType === 'odoo' ? 'Betaling via Odoo · Bancontact en creditcard'
+      : selSess.paymentType === 'mollie' ? 'Betaling via Mollie · Bancontact en creditcard'
+      : 'We nemen contact op voor betaling';
+    $('bk-form').reset();
+    $('bk-error-msg').classList.remove('visible');
+    setState('form');
+    document.getElementById('booking-modal').scrollTop = 0;
+  }
+
+  function updateTotal() {
+    const ws = Sessions.WORKSHOPS[selSess?.workshopKey];
+    $('bk-total-price').textContent = fmtEur((ws?.price||0) * spots);
+  }
+
+  function open(workshopKeyArg) {
+    wsKey = workshopKeyArg; selSess = null; spots = 1;
+    const ws = Sessions.WORKSHOPS[wsKey]; if (!ws) return;
+    $('bk-title').textContent      = ws.name;
+    $('bk-price-head').textContent = fmtEur(ws.price) + ' / persoon';
+    $('bk-day-label').style.display = 'none';
+    $('bk-day-sessions').innerHTML  = '';
+    $('bk-error-msg').classList.remove('visible');
+    const n = new Date(); calY = n.getFullYear(); calM = n.getMonth();
+    renderCal(); setState('cal');
+    $('booking-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    $('booking-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function backToCal() {
+    selSess = null; setState('cal');
+    document.getElementById('booking-modal').scrollTop = 0;
+  }
+
+  function calNav(dir) {
+    calM += dir;
+    if (calM > 11) { calM = 0; calY++; }
+    if (calM < 0)  { calM = 11; calY--; }
+    $('bk-day-label').style.display = 'none';
+    $('bk-day-sessions').innerHTML  = '';
+    renderCal();
+  }
+
+  function changeSpots(delta) {
+    const max = parseInt($('bk-plus').dataset.max || 8, 10);
+    spots = Math.max(1, Math.min(max, spots + delta));
+    $('bk-spots-count').textContent = spots;
+    $('bk-minus').disabled = spots <= 1;
+    $('bk-plus').disabled  = spots >= max;
+    updateTotal();
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    $('bk-error-msg').classList.remove('visible');
+    if (!selSess) { showErr('Kies eerst een sessie.'); return; }
+    const name  = $('bk-name').value.trim();
+    const email = $('bk-email').value.trim();
+    const phone = $('bk-phone').value.trim();
+    const btn   = $('bk-submit-btn');
+    btn.disabled = true; btn.textContent = 'Even geduld…';
+    const ws = Sessions.WORKSHOPS[selSess.workshopKey];
+    try {
+      if (selSess.paymentType === 'mollie' && selSess.mollieLink) {
+        Sessions.incrementBooked(selSess.id, spots);
+        $('bk-success-msg').textContent = 'Klik hieronder om veilig te betalen via Mollie.';
+        $('bk-pay-action').href = selSess.mollieLink;
+        $('bk-pay-action').textContent = 'Betalen via Mollie';
+        setState('success');
+        setTimeout(() => window.open(selSess.mollieLink, '_blank'), 1500);
+      } else if (selSess.paymentType === 'odoo' && typeof OdooAPI !== 'undefined' && OdooAPI.isConfigured() && selSess.odooEventId) {
+        const regId = await OdooAPI.createEventRegistration({ eventId: selSess.odooEventId, name, email, phone, qty: spots });
+        const payUrl = regId
+          ? ODOO_CONFIG.url + '/event/' + selSess.odooEventId + '/registration/' + regId + '/confirm'
+          : ODOO_CONFIG.url + '/event/' + selSess.odooEventId + '/register';
+        Sessions.incrementBooked(selSess.id, spots);
+        $('bk-success-msg').textContent = 'Registratie aangemaakt. Je wordt doorgestuurd.';
+        $('bk-pay-action').href = payUrl;
+        $('bk-pay-action').textContent = 'Naar betaalpagina';
+        setState('success');
+        setTimeout(() => window.open(payUrl, '_blank'), 2000);
+      } else {
+        const body = 'Naam: ' + name + '\nE-mail: ' + email + '\nTelefoon: ' + phone +
+          '\nWorkshop: ' + (ws?.name||wsKey) + '\nDatum: ' + selSess.date + ' ' + selSess.time + '\nAantal: ' + spots;
+        const mailto = 'mailto:smilingbarista@spreadingsmiles.be?subject=' +
+          encodeURIComponent('Workshop boeking — ' + (ws?.name||wsKey)) + '&body=' + encodeURIComponent(body);
+        $('bk-success-msg').textContent = 'Stuur ons een e-mail om de boeking te bevestigen.';
+        $('bk-pay-action').href = mailto;
+        $('bk-pay-action').textContent = 'Stuur ons een e-mail';
+        $('bk-pay-action').removeAttribute('target');
+        setState('success');
+      }
+    } catch(err) {
+      btn.disabled = false; btn.textContent = 'Bevestigen en betalen';
+      showErr('Er ging iets mis: ' + (err.message || 'Probeer opnieuw.'));
+    }
+  }
+
+  function showErr(msg) { const el = $('bk-error-msg'); el.textContent = msg; el.classList.add('visible'); }
+
+  $('booking-overlay').addEventListener('click', function(e) { if (e.target === this) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  return { open, close, backToCal, calNav, selectDay, selectSession, changeSpots, submit };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teambuilding met Latte Art — Smiling Barista</title>
+  <meta name="description" content="Breng jullie team samen rond de espressomachine. We begeleiden groepen bij een interactieve barista teambuilding in Antwerpen of op locatie. Tarieven op aanvraag.">
+  <link rel="canonical" href="https://www.spreadingsmiles.be/teambuilding">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>S</text></svg>">
+  <style>
+    .tb-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .tb-step {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 1.75rem;
+    }
+    .tb-step__num {
+      width: 2.5rem; height: 2.5rem;
+      background: var(--cream);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem; color: var(--caramel);
+      margin-bottom: 1rem;
+    }
+    .tb-step h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .tb-step p  { font-size: .9rem; color: var(--text-light); line-height: 1.6; }
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    .format-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 1.75rem;
+      position: relative;
+    }
+    .format-card--featured {
+      background: var(--espresso);
+      color: #fff;
+      border-color: transparent;
+    }
+    .format-card--featured p,
+    .format-card--featured li { color: rgba(255,255,255,.75); }
+    .format-card__tag {
+      display: inline-block;
+      background: var(--cream); color: var(--caramel);
+      font-size: .6875rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      padding: .2rem .625rem; border-radius: var(--r-full);
+      margin-bottom: 1rem;
+    }
+    .format-card--featured .format-card__tag {
+      background: rgba(255,255,255,.15); color: var(--latte);
+    }
+    .format-card h3 { font-size: 1.125rem; margin-bottom: .625rem; }
+    .format-card p  { font-size: .9rem; line-height: 1.7; margin-bottom: 1rem; }
+    .format-card ul { padding-left: 1.125rem; }
+    .format-card li { font-size: .9rem; margin-bottom: .35rem; color: var(--text-light); line-height: 1.5; }
+    .format-card--featured li { color: rgba(255,255,255,.75); }
+    .price-note {
+      display: inline-block;
+      margin-top: 1.25rem;
+      background: var(--cream); color: var(--caramel);
+      font-weight: 600; font-size: .875rem;
+      padding: .4rem .875rem; border-radius: var(--r-full);
+    }
+    .format-card--featured .price-note {
+      background: rgba(255,255,255,.15); color: #fff;
+    }
+    .incl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .incl-item {
+      display: flex; gap: .75rem; align-items: flex-start;
+    }
+    .incl-dot {
+      width: .5rem; height: .5rem; border-radius: 50%;
+      background: var(--caramel); margin-top: .45rem; flex-shrink: 0;
+    }
+    .incl-item p { font-size: .9rem; line-height: 1.5; }
+    @media (max-width: 768px) {
+      .tb-steps     { grid-template-columns: 1fr; }
+      .formats-grid { grid-template-columns: 1fr; }
+      .incl-grid    { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .incl-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__logo">Smiling Barista</a>
+    <ul class="nav__links">
+      <li><a href="index.html"        class="nav__link">Home</a></li>
+      <li><a href="events.html"       class="nav__link">Events</a></li>
+      <li><a href="workshops.html"    class="nav__link">Workshops</a></li>
+      <li><a href="teambuilding.html" class="nav__link active">Teambuilding</a></li>
+      <li><a href="shop.html"         class="nav__link">Shop</a></li>
+      <li><a href="goede-doelen.html" class="nav__link">Goede Doelen</a></li>
+      <li><a href="contact.html"      class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" data-open-cart aria-label="Winkelwagen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="nav__cart-count">0</span>
+      </button>
+      <a href="#offerte" class="btn btn--primary btn--sm">Offerte aanvragen</a>
+    </div>
+    <button class="nav__burger" aria-label="Menu openen"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav">
+  <button class="mobile-nav__close">&#x2715;</button>
+  <a href="index.html"        class="mobile-nav__link">Home</a>
+  <a href="events.html"       class="mobile-nav__link">Events</a>
+  <a href="workshops.html"    class="mobile-nav__link">Workshops</a>
+  <a href="teambuilding.html" class="mobile-nav__link">Teambuilding</a>
+  <a href="shop.html"         class="mobile-nav__link">Shop</a>
+  <a href="goede-doelen.html" class="mobile-nav__link">Goede Doelen</a>
+  <a href="contact.html"      class="mobile-nav__link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero__label">Teambuilding</span>
+    <h1>Verbind jullie team rond een kopje koffie</h1>
+    <p class="page-hero__sub">We begeleiden groepen van 8 tot 40 mensen bij een interactieve barista-ervaring. Latte Art tekenen, melk opschuimen en samen genieten van verse espresso. Concreet, actief en lekker.</p>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="section">
+  <div class="container">
+    <div class="about__grid">
+      <div class="img-ph img-ph--portrait" data-img-block="tb_intro" data-cms-img-key="img_tb_intro">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe</span>
+        </div>
+      </div>
+      <div class="about__content">
+        <p class="about__label">Wat is het?</p>
+        <h2 class="about__title">Een teambuilding die iedereen wakker maakt</h2>
+        <p class="about__text">We zetten een volledig uitgeruste barista-bar op bij jullie op kantoor, in een eventruimte of bij ons in Antwerpen. Jullie collega's leren melk opschuimen, Latte Art tekenen en een perfecte espresso trekken. Didi en zijn Smiling Barista's begeleiden elke groep stap voor stap.</p>
+        <p class="about__text">Geen ervaring nodig. Iedereen slaagt, iedereen lacht. De mooiste creaties maken we digitaal zodat jullie ze achteraf kunnen delen.</p>
+        <div style="display:flex;gap:.625rem;flex-wrap:wrap;margin-top:1.25rem;margin-bottom:1.5rem">
+          <span class="tag">8 tot 40 deelnemers</span>
+          <span class="tag">Op locatie of bij ons</span>
+          <span class="tag">Volledig begeleiding</span>
+          <span class="tag">Alles inbegrepen</span>
+        </div>
+        <a href="#offerte" class="btn btn--primary">Offerte aanvragen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">Formules</span>
+      <h2>Kies het formaat dat past</h2>
+      <p>Alle tarieven zijn op aanvraag. We stellen een voorstel op maat samen op basis van groepsgrootte, locatie en gewenste duur.</p>
+    </div>
+    <div class="formats-grid">
+      <div class="format-card">
+        <div class="format-card__tag">Populairste keuze</div>
+        <h3>Latte Art Teambuilding</h3>
+        <p>De groep leert melk opschuimen en tekent hartjes, rozetten en tulpen op espresso. Inclusief proeverij van specialty koffie en thee.</p>
+        <ul>
+          <li>2 tot 2,5 uur begeleiding</li>
+          <li>Maximaal 20 deelnemers per sessie</li>
+          <li>Meerdere sessies mogelijk bij grote groepen</li>
+          <li>Volledig materiaal inbegrepen</li>
+          <li>Foto-moment van de creaties</li>
+        </ul>
+        <span class="price-note">Op aanvraag</span>
+      </div>
+      <div class="format-card format-card--featured">
+        <div class="format-card__tag">Premium</div>
+        <h3>Barista Experience op maat</h3>
+        <p>Een uitgebreid programma op maat: koffie-quiz, blindproeven, latte art en optioneel ons Smiling Marketista-concept met jullie logo op de fiets.</p>
+        <ul>
+          <li>3 tot 4 uur, op locatie of bij ons</li>
+          <li>Tot 40 deelnemers</li>
+          <li>Aangepast programma op maat</li>
+          <li>Optioneel: branded Velopresso</li>
+          <li>Catering inclusief</li>
+        </ul>
+        <span class="price-note">Op aanvraag</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAT IS INBEGREPEN -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">Inbegrepen</span>
+      <h2>Jullie hoeven niets te voorzien</h2>
+      <p>We regelen alles van materiaal tot opruiming. Jullie focussen op jullie team.</p>
+    </div>
+    <div class="incl-grid">
+      <div class="incl-item"><span class="incl-dot"></span><p>Professionele espressomachine en molen</p></div>
+      <div class="incl-item"><span class="incl-dot"></span><p>Specialty koffiebonen, thee en plantaardige melk</p></div>
+      <div class="incl-item"><span class="incl-dot"></span><p>Bekers, lepels en servet voor elke deelnemer</p></div>
+      <div class="incl-item"><span class="incl-dot"></span><p>Stap-voor-stap begeleiding door Didi of een Smiling Barista</p></div>
+      <div class="incl-item"><span class="incl-dot"></span><p>Op- en afbouw inbegrepen, geen rommel achter</p></div>
+      <div class="incl-item"><span class="incl-dot"></span><p>Foto-moment van de mooiste latte art creaties</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOE WERKT HET -->
+<section class="section section--cream">
+  <div class="container" style="max-width:900px">
+    <div class="sec-head">
+      <span class="sec-head__label">Hoe werkt het?</span>
+      <h2>In 3 stappen geregeld</h2>
+    </div>
+    <div class="tb-steps">
+      <div class="tb-step">
+        <div class="tb-step__num">1</div>
+        <h3>Vraag een offerte aan</h3>
+        <p>Vul het formulier in met jullie groepsgrootte, gewenste datum en locatie. We reageren binnen 24 uur met een concreet voorstel.</p>
+      </div>
+      <div class="tb-step">
+        <div class="tb-step__num">2</div>
+        <h3>We werken alles uit</h3>
+        <p>We overleggen over het programma op maat. Jullie kiezen het formaat, de locatie en de extra opties. Wij regelen de rest.</p>
+      </div>
+      <div class="tb-step">
+        <div class="tb-step__num">3</div>
+        <h3>Jullie team gaat los</h3>
+        <p>Op de dag zelf staan we klaar met alle materiaal. We begeleiden de groep, zorgen voor sfeer en ruimen alles netjes op.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFERTE FORMULIER -->
+<section class="section" id="offerte">
+  <div class="container" style="max-width:800px">
+    <div class="tally-box">
+      <h3>Offerte aanvragen</h3>
+      <p>Vertel ons over jullie groep en de gewenste datum. We sturen binnen 24 uur een voorstel op maat. Tarieven worden nooit vermeld op de website, altijd op aanvraag.</p>
+      <div class="tally-iframe-wrap">
+        <iframe
+          data-tally-src="https://tally.so/embed/ODrkQ7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Teambuilding offerte aanvragen">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>Klaar om jullie team wakker te maken?</h2>
+    <p>We stellen een formule op maat voor. Didi en zijn Smiling Barista's zorgen voor de rest.</p>
+    <div class="cta-banner__btns">
+      <a href="#offerte"      class="btn btn--primary">Offerte aanvragen</a>
+      <a href="workshops.html" class="btn btn--light">Individuele workshops</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="index.html" class="footer__logo">Smiling Barista</a>
+        <p class="footer__desc">We brengen verse koffie naar jullie event. Door heel België.</p>
+        <div class="footer__socials">
+          <a href="#" class="footer__social" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__head">Menu</div>
+        <ul class="footer__links">
+          <li><a href="index.html"        class="footer__link">Home</a></li>
+          <li><a href="events.html"       class="footer__link">Events</a></li>
+          <li><a href="workshops.html"    class="footer__link">Workshops</a></li>
+          <li><a href="teambuilding.html" class="footer__link">Teambuilding</a></li>
+          <li><a href="shop.html"         class="footer__link">Shop</a></li>
+          <li><a href="goede-doelen.html" class="footer__link">Goede Doelen</a></li>
+          <li><a href="contact.html"      class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Diensten</div>
+        <ul class="footer__links">
+          <li><a href="events.html"       class="footer__link">Mobiele koffie-catering</a></li>
+          <li><a href="events.html#marketista" class="footer__link">Smiling Marketista</a></li>
+          <li><a href="teambuilding.html" class="footer__link">Teambuilding</a></li>
+          <li><a href="workshops.html"    class="footer__link">Latte Art Workshop</a></li>
+          <li><a href="shop.html"         class="footer__link">Webshop</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__head">Contact</div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18a19.5 19.5 0 0 1-5-5 19.79 19.79 0 0 1-3.93-8.5A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+32 468 49 16 15</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>smilingbarista@spreadingsmiles.be</span>
+        </div>
+        <div class="footer__contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Dambruggestraat 267C, 2060 Antwerpen</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Center Stage BV · BE0566.931.049</span>
+      <div class="footer__legal">
+        <a href="#" class="footer__legal-link">Privacybeleid</a>
+        <a href="#" class="footer__legal-link">Algemene voorwaarden</a>
+        <a href="admin.html" class="footer__legal-link" style="opacity:.35">Beheer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart -->
+<div class="cart-overlay"></div>
+<div class="cart-drawer">
+  <div class="cart-drawer__head"><h3>Winkelwagen</h3><button class="cart-drawer__close">&#x2715;</button></div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span>Subtotaal</span><span data-cart-total>€ 0,00</span></div>
+    <p class="cart-note">Verzendkosten worden berekend bij afrekenen.</p>
+    <div class="cart-btns">
+      <button class="btn btn--primary btn--full" data-open-checkout>Afrekenen</button>
+      <a href="shop.html" class="btn btn--secondary btn--full">Verder winkelen</a>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal__head"><h3>Bestelling afronden</h3><button data-close-checkout style="font-size:1.25rem;padding:.5rem">&#x2715;</button></div>
+    <div class="modal__body">
+      <div id="order-summary"></div>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group"><label>Naam *</label><input type="text" name="name" required placeholder="Jan Janssen"></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" name="email" required placeholder="jan@email.be"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Telefoon</label><input type="tel" name="phone" placeholder="+32 4xx xx xx xx"></div>
+          <div class="form-group"><label>Straat + nummer *</label><input type="text" name="street" required placeholder="Koffiestraat 12"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Postcode *</label><input type="text" name="zip" required placeholder="2000"></div>
+          <div class="form-group"><label>Gemeente *</label><input type="text" name="city" required placeholder="Antwerpen"></div>
+        </div>
+        <div class="form-group"><label>Opmerking</label><textarea name="note" placeholder="Eventuele opmerkingen…"></textarea></div>
+        <button type="submit" class="btn btn--primary btn--full">Bestelling bevestigen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="js/cms.js"></script>
+<script src="odoo-config.js"></script>
+<script src="js/odoo.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+var d=document,w="https://tally.so/widgets/embed.js",
+v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(i){i.src=i.dataset.tallySrc})};
+if("undefined"!=typeof Tally)v();
+else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w;s.onload=v;s.onerror=v;d.body.appendChild(s)}
+</script>
+</body>
+</html>
