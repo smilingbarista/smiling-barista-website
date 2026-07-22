@@ -6,9 +6,15 @@
   <title>Smiling Barista — Beheer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
   <style>
+    @font-face {
+      font-family: 'Jellee';
+      src: url('fonts/Jellee-Roman.otf') format('opentype');
+      font-weight: 400 800;
+      font-display: swap;
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --espresso: #001E35;
@@ -28,7 +34,7 @@
       --sh-md: 0 4px 16px rgba(0,30,53,.10);
       --sh-lg: 0 8px 32px rgba(0,30,53,.15);
     }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+    body { font-family: 'Raleway', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
 
     /* ── LOGIN ─────────────────────────────────────────── */
     #login-screen {
@@ -44,10 +50,10 @@
     .login-mark {
       width: 3.5rem; height: 3.5rem; border-radius: 50%;
       background: var(--blue); color: #fff;
-      font-family: 'Playfair Display', serif; font-size: 1.125rem; font-weight: 700;
+      font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1.125rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
     }
-    .login-card h1 { font-family: 'Playfair Display', serif; font-size: 1.375rem; margin-bottom: .25rem; }
+    .login-card h1 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1.375rem; margin-bottom: .25rem; }
     .login-card p  { color: var(--muted); font-size: .875rem; margin-bottom: 1.75rem; }
     .login-err     { color: var(--red); font-size: .8125rem; min-height: 1.2em; margin-bottom: .625rem; }
     .login-card input {
@@ -74,7 +80,7 @@
       padding: 1.375rem 1.5rem 1.125rem;
       border-bottom: 1px solid rgba(255,255,255,.07);
     }
-    .sb-logo-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: #fff; line-height: 1.2; }
+    .sb-logo-name { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1rem; color: #fff; line-height: 1.2; }
     .sb-logo-sub  { font-size: .6875rem; color: rgba(255,255,255,.38); letter-spacing: .08em; text-transform: uppercase; margin-top: .2rem; }
     .sb-nav { flex: 1; padding: .5rem 0; overflow-y: auto; }
     .sb-section { padding: 1rem 1.5rem .375rem; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.28); }
@@ -102,7 +108,7 @@
 
     .main { margin-left: 220px; padding: 2rem 2.25rem; min-height: 100vh; }
     .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
-    .page-head h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    .page-head h2 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1.5rem; font-weight: 700; }
     .page-head p  { color: var(--muted); font-size: .875rem; margin-top: .2rem; }
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
@@ -124,21 +130,21 @@
     /* ── CARD ──────────────────────────────────────────── */
     .card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); }
     .card-head { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .card-head h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
+    .card-head h3 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1rem; font-weight: 700; }
     .card-body { padding: 1.5rem; }
 
     /* ── STATS ─────────────────────────────────────────── */
     .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
     .stat-chip { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); padding: 1.125rem 1.25rem; display: flex; align-items: center; gap: .875rem; }
     .stat-icon { width: 2.25rem; height: 2.25rem; background: var(--cream); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--blue); }
-    .stat-val  { font-size: 1.5rem; font-weight: 700; line-height: 1; font-family: 'Playfair Display', serif; }
+    .stat-val  { font-size: 1.5rem; font-weight: 700; line-height: 1; font-family: 'Jellee', 'Raleway', sans-serif; }
     .stat-lbl  { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
 
     /* ── CALENDAR ──────────────────────────────────────── */
     .agenda-layout { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; }
     .cal { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); overflow: hidden; }
     .cal-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--espresso); color: #fff; }
-    .cal-head h3 { font-family: 'Playfair Display', serif; font-size: 1.0625rem; }
+    .cal-head h3 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1.0625rem; }
     .cal-nav { width: 2rem; height: 2rem; background: rgba(255,255,255,.12); border: none; border-radius: var(--r-md); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
     .cal-nav:hover { background: rgba(255,255,255,.22); }
     .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); background: var(--cream); padding: .5rem 0; }
@@ -216,7 +222,7 @@
 
     /* ── SETTINGS ──────────────────────────────────────── */
     .settings-sec { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-xl); padding: 1.75rem; max-width: 620px; margin-bottom: 1.5rem; }
-    .settings-sec h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 1.25rem; padding-bottom: .875rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .5rem; }
+    .settings-sec h3 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1rem; margin-bottom: 1.25rem; padding-bottom: .875rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .5rem; }
     .field     { margin-bottom: 1rem; }
     .field:last-of-type { margin-bottom: 0; }
     .field label{ font-weight: 500; display: block; margin-bottom: .375rem; font-size: .875rem; }
@@ -244,7 +250,7 @@
     }
     .modal-bg.open .modal-box { transform: none; }
     .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
-    .modal-head h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
+    .modal-head h3 { font-family: 'Jellee', 'Raleway', sans-serif; font-size: 1rem; font-weight: 700; }
     .modal-close { width: 1.875rem; height: 1.875rem; border-radius: 50%; background: var(--cream); border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; }
     .modal-close:hover { background: var(--border); }
     .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }

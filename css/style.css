@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap');
+
+@font-face {
+  font-family: 'Jellee';
+  src: url('../fonts/Jellee-Roman.otf') format('opentype');
+  font-weight: 400 800;
+  font-display: swap;
+}
 
 :root {
   --espresso:    #001E35;
@@ -13,8 +20,8 @@
   --success:     #16A34A;
   --error:       #DC2626;
 
-  --font-head: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-head: 'Jellee', 'Raleway', sans-serif;
+  --font-body: 'Raleway', -apple-system, sans-serif;
 
   --r-sm:   4px;
   --r-md:   8px;
