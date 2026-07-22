@@ -177,10 +177,6 @@
     .sess-time  { font-size: .8125rem; color: var(--muted); }
     .sess-name  { flex: 1; font-size: .875rem; font-weight: 500; }
     .sess-spots { font-size: .8125rem; font-weight: 600; min-width: 50px; text-align: right; }
-    .sess-pay   { font-size: .7rem; padding: .2rem .5rem; border-radius: var(--r-full); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
-    .pay-odoo   { background: #dbeafe; color: #1d4ed8; }
-    .pay-mollie { background: #fef3c7; color: #b45309; }
-    .pay-email  { background: var(--cream); color: var(--blue); }
     .spots-ok   { color: var(--green); }
     .spots-low  { color: #ea580c; }
     .spots-full { color: var(--red); }
@@ -494,10 +490,8 @@
         <div style="margin-top:1.25rem"><button class="btn btn-primary" onclick="saveOdooSettings()">Odoo opslaan</button></div>
       </div>
       <div class="settings-sec">
-        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Mollie (payment link)</h3>
-        <div class="info-chip" style="margin-bottom:1rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Maak per sessie een Mollie Payment Link aan in het Mollie-dashboard en plak die link bij het aanmaken van de sessie.</div>
-        <div class="field"><label>Standaard fallback-link (optioneel)</label><input id="set-mollie-link" type="url" placeholder="https://usepayment.mollie.com/..."></div>
-        <div style="margin-top:1rem"><button class="btn btn-primary" onclick="saveMollieSettings()">Mollie opslaan</button></div>
+        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Mollie (workshop-betalingen)</h3>
+        <div class="info-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Workshop-betalingen verlopen nu volledig automatisch via Mollie — een klant die een sessie boekt, krijgt meteen een betaallink. Dit vereist geen instelling hier: de Mollie API-sleutel staat als omgevingsvariabele (MOLLIE_API_KEY) in Vercel, nooit in de website zelf.</div>
       </div>
       <div class="settings-sec">
         <h3>Overig</h3>
@@ -517,10 +511,6 @@
       <div class="field"><label>Workshop *</label>
         <select id="sm-ws">
           <option value="">— Kies een workshop —</option>
-          <option value="latte-art-1">Latte Art Level 1 — Sweet Hearts (€99)</option>
-          <option value="home-barista">Home Barista (€99)</option>
-          <option value="brewing">Brewing — Slow Brew (€69)</option>
-          <option value="latte-art-2">Latte Art Level 2 — Masterclass (€149)</option>
         </select>
       </div>
       <div class="field-row">
@@ -529,17 +519,8 @@
       </div>
       <div class="field-row">
         <div class="field"><label>Max. plaatsen</label><input type="number" id="sm-max" min="1" max="20" placeholder="Standaard van workshop"><div class="field-hint">Leeg = standaard maximum.</div></div>
-        <div class="field"><label>Reeds geboekt</label><input type="number" id="sm-booked" min="0" value="0"></div>
+        <div class="field"><label>Reeds geboekt</label><input type="number" id="sm-booked" min="0" value="0"><div class="field-hint">Wordt automatisch bijgehouden bij Mollie-boekingen.</div></div>
       </div>
-      <div class="field"><label>Betaalmethode *</label>
-        <select id="sm-pay" onchange="togglePayFields()">
-          <option value="email">E-mail (geen online betaling)</option>
-          <option value="odoo">Odoo Event Planner</option>
-          <option value="mollie">Mollie payment link</option>
-        </select>
-      </div>
-      <div id="sm-odoo-wrap" style="display:none" class="field"><label>Odoo Event ID</label><input type="number" id="sm-odoo-id" placeholder="bijv. 42"><div class="field-hint">Het event-ID uit de Odoo Events module.</div></div>
-      <div id="sm-mollie-wrap" style="display:none" class="field"><label>Mollie Payment Link *</label><input type="url" id="sm-mollie" placeholder="https://usepayment.mollie.com/..."></div>
       <div class="field"><label>Notitie (intern)</label><textarea id="sm-notes" rows="2" placeholder="Bijv. privégroep, speciale locatie…"></textarea></div>
     </div>
     <div class="modal-foot">
@@ -594,21 +575,61 @@
   </div>
 </div>
 
-<script src="js/sessions.js"></script>
+<script src="supabase-config.js"></script>
+<script src="js/workshops-data.js"></script>
 <script src="js/cms.js"></script>
 <script>
 /* ─── LOGIN ─────────────────────────────────────────────── */
-const PASS = 'smiling2026';
-function doLogin() {
-  if (document.getElementById('login-pwd').value === PASS) {
+// Wachtwoord wordt server-side gecontroleerd (ADMIN_PASSWORD, Vercel env
+// var) — het token hierna is enkel geldig 12u en wordt HMAC-ondertekend
+// door /api/admin/login. Vervangt het oude, in de broncode zichtbare
+// wachtwoord.
+const ADMIN_TOKEN_KEY = 'sb_admin_token';
+function getAdminToken() { return localStorage.getItem(ADMIN_TOKEN_KEY); }
+
+async function adminFetch(path, opts) {
+  opts = opts || {};
+  const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers, {
+    Authorization: 'Bearer ' + getAdminToken(),
+  });
+  const res = await fetch(path, Object.assign({}, opts, { headers }));
+  if (res.status === 401) {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+    location.reload();
+    throw new Error('Sessie verlopen, log opnieuw in.');
+  }
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error((data && data.error) || 'Er ging iets mis.');
+  return data;
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('login-pwd').value;
+  document.getElementById('login-err').textContent = '';
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Fout wachtwoord.');
+    localStorage.setItem(ADMIN_TOKEN_KEY, data.token);
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     initApp();
-  } else {
-    document.getElementById('login-err').textContent = 'Fout wachtwoord.';
+  } catch (err) {
+    document.getElementById('login-err').textContent = err.message;
   }
 }
 document.getElementById('login-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// Al ingelogd (geldig token bewaard) — meteen doorschakelen.
+if (getAdminToken()) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
 
 /* ─── TABS ──────────────────────────────────────────────── */
 function showTab(name) {
@@ -638,36 +659,75 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 document.addEventListener('click', e => { if (e.target.classList.contains('modal-bg')) closeModal(e.target.id); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-bg.open').forEach(m => closeModal(m.id)); });
 
-const WS_COLORS = { 'latte-art-1':'#0366C5','home-barista':'#00508C','brewing':'#2E7D9F','latte-art-2':'#001E35' };
 function fmtDate(ds) {
   const d = new Date(ds + 'T00:00:00');
   const mn = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
   const dy = ['zo','ma','di','wo','do','vr','za'];
   return dy[d.getDay()] + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
 }
-function spotsClass(left) { return left === 0 ? 'spots-full' : left <= 2 ? 'spots-low' : 'spots-ok'; }
-function payLabel(type)   { return type === 'odoo' ? 'Odoo' : type === 'mollie' ? 'Mollie' : 'E-mail'; }
+function spotsClass(left) { return left <= 0 ? 'spots-full' : left <= 2 ? 'spots-low' : 'spots-ok'; }
+
+/* ─── AGENDA-DATA (Supabase i.p.v. localStorage) ────────── */
+let ADMIN_SESSIONS = [];   // alle sessies (verleden + toekomst), van /api/admin/sessions
+let ADMIN_WORKSHOPS = [];  // cursuscatalogus, publiek via WorkshopsData
+
+async function loadAgendaData() {
+  await WorkshopsData.load();
+  ADMIN_WORKSHOPS = WorkshopsData.getWorkshops();
+  populateWorkshopSelect();
+  ADMIN_SESSIONS = await adminFetch('/api/admin/sessions');
+}
+
+function populateWorkshopSelect() {
+  const sel = document.getElementById('sm-ws');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Kies een workshop —</option>' +
+    ADMIN_WORKSHOPS.map(w => `<option value="${w.id}">${esc(w.name)} (€${Number(w.price).toFixed(0)})</option>`).join('');
+  sel.value = current;
+}
+
+function sessionSpotsLeft(s) {
+  const max = s.max_spots ?? s.workshops?.max_spots ?? 8;
+  return max - s.booked_spots;
+}
+function upcomingSessions() {
+  const today = new Date().toISOString().slice(0, 10);
+  return ADMIN_SESSIONS
+    .filter(s => !s.cancelled && s.date >= today)
+    .sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+}
+function sessionsOnDate(ds) {
+  return ADMIN_SESSIONS.filter(s => s.date === ds && !s.cancelled);
+}
+function sessionsByDateInMonth(year, month) {
+  const prefix = year + '-' + String(month+1).padStart(2,'0');
+  const map = {};
+  for (const s of ADMIN_SESSIONS) {
+    if (s.cancelled || !s.date.startsWith(prefix)) continue;
+    (map[s.date] = map[s.date] || []).push(s);
+  }
+  return map;
+}
 
 /* ─── DASHBOARD ─────────────────────────────────────────── */
 function renderDashboard() {
-  const sessions = Sessions.getUpcoming();
+  const sessions = upcomingSessions();
   const products = CMS.getProducts();
   document.getElementById('dash-stats').innerHTML =
     stat('Komende sessies', sessions.length, '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>') +
-    stat('Geboekte plaatsen', sessions.reduce((a,s)=>a+(s.spotsBooked||0),0), '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>') +
+    stat('Geboekte plaatsen', sessions.reduce((a,s)=>a+(s.booked_spots||0),0), '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>') +
     stat('Producten', products.length, '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') +
-    stat('Workshop-types', Object.keys(Sessions.WORKSHOPS).length, '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>');
+    stat('Workshop-types', ADMIN_WORKSHOPS.length, '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>');
 
   const next = sessions.slice(0, 5);
   document.getElementById('dash-sessions').innerHTML = next.length
     ? next.map(s => {
-        const ws   = Sessions.WORKSHOPS[s.workshopKey];
-        const left = Sessions.spotsLeft(s);
-        const max  = s.maxSpots || ws?.maxSpots || 8;
+        const left = sessionSpotsLeft(s);
+        const max  = s.max_spots || s.workshops?.max_spots || 8;
         return `<div style="display:flex;align-items:center;gap:.875rem;padding:.875rem 1.25rem;border-bottom:1px solid var(--border)">
-          <div style="width:3px;height:2.5rem;background:${WS_COLORS[s.workshopKey]};border-radius:2px;flex-shrink:0"></div>
-          <div style="flex:1"><div style="font-weight:600;font-size:.875rem">${fmtDate(s.date)} · ${s.time}</div><div style="font-size:.8125rem;color:var(--muted)">${esc(ws?.shortName||s.workshopKey)}</div></div>
-          <div class="sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max}</div>
+          <div style="width:3px;height:2.5rem;background:${s.workshops?.color||'#0366C5'};border-radius:2px;flex-shrink:0"></div>
+          <div style="flex:1"><div style="font-weight:600;font-size:.875rem">${fmtDate(s.date)} · ${s.time}</div><div style="font-size:.8125rem;color:var(--muted)">${esc(s.workshops?.short_name||'')}</div></div>
+          <div class="sess-spots ${spotsClass(left)}">${s.booked_spots||0}/${max}</div>
         </div>`;
       }).join('')
     : '<p style="color:var(--muted);padding:1.25rem;font-size:.875rem">Nog geen sessies gepland.</p>';
@@ -689,12 +749,12 @@ function calNav(dir) {
   renderCalendar();
 }
 function renderCalendar() {
-  const MN = Sessions.NL_MONTHS;
-  const DN = Sessions.NL_DAYS_SHORT;
+  const MN = WorkshopsData.NL_MONTHS;
+  const DN = WorkshopsData.NL_DAYS_SHORT;
   document.getElementById('cal-label').textContent = MN[calMonth] + ' ' + calYear;
   document.getElementById('cal-wd').innerHTML = DN.map(d => `<div class="cal-weekday">${d}</div>`).join('');
 
-  const sessMap = Sessions.getDatesWithSessions(null, calYear, calMonth);
+  const sessMap = sessionsByDateInMonth(calYear, calMonth);
   const first   = new Date(calYear, calMonth, 1);
   const offset  = (first.getDay() + 6) % 7;
   const days    = new Date(calYear, calMonth + 1, 0).getDate();
@@ -709,7 +769,7 @@ function renderCalendar() {
     const has  = !!sessMap[ds];
     const sel  = calSel === ds;
     const cls  = ['cal-day', past?'cal-past':'', isT?'cal-today':'', has?'cal-has':'', sel?'cal-sel':''].filter(Boolean).join(' ');
-    const dots = has ? '<div class="cal-dots">' + sessMap[ds].slice(0,3).map(s=>`<span class="cal-dot" style="background:${WS_COLORS[s.workshopKey]}"></span>`).join('') + '</div>' : '';
+    const dots = has ? '<div class="cal-dots">' + sessMap[ds].slice(0,3).map(s=>`<span class="cal-dot" style="background:${s.workshops?.color||'#0366C5'}"></span>`).join('') + '</div>' : '';
     html += `<div class="${cls}"${past?'':` onclick="selectDay('${ds}')"`}>${d}${dots}</div>`;
   }
   document.getElementById('cal-grid').innerHTML = html;
@@ -724,114 +784,112 @@ function selectDay(ds) {
 
   const d  = new Date(ds + 'T00:00:00');
   const dn = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
-  const mn = Sessions.NL_MONTHS;
+  const mn = WorkshopsData.NL_MONTHS;
   document.getElementById('day-title').textContent =
     dn[d.getDay()].charAt(0).toUpperCase() + dn[d.getDay()].slice(1) + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
 
-  const list = Sessions.getAll().filter(s => s.date === ds);
+  const list = sessionsOnDate(ds);
   const body = document.getElementById('day-body');
   if (!list.length) {
     body.innerHTML = '<p style="color:var(--muted);font-size:.875rem">Geen sessies op deze dag.</p>';
     return;
   }
   body.innerHTML = '<div class="day-sess">' + list.map(s => {
-    const ws   = Sessions.WORKSHOPS[s.workshopKey];
-    const left = Sessions.spotsLeft(s);
-    const max  = s.maxSpots || ws?.maxSpots || 8;
+    const left = sessionSpotsLeft(s);
+    const max  = s.max_spots || s.workshops?.max_spots || 8;
     return `<div class="day-sess-card">
-      <div class="day-sess-bar" style="background:${WS_COLORS[s.workshopKey]}"></div>
+      <div class="day-sess-bar" style="background:${s.workshops?.color||'#0366C5'}"></div>
       <div class="day-sess-body">
-        <div class="day-sess-name">${esc(ws?.shortName||s.workshopKey)}</div>
-        <div class="day-sess-meta">${s.time} &nbsp;·&nbsp; <span class="sess-pay pay-${s.paymentType}">${payLabel(s.paymentType)}</span></div>
-        <div class="day-sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max} geboekt · ${left} vrij</div>
+        <div class="day-sess-name">${esc(s.workshops?.short_name||'')}</div>
+        <div class="day-sess-meta">${s.time}</div>
+        <div class="day-sess-spots ${spotsClass(left)}">${s.booked_spots||0}/${max} geboekt · ${left} vrij</div>
       </div>
       <div class="day-sess-acts">
-        <button class="btn-icon" onclick="openSessionModal(${s.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
-        <button class="btn-icon del" onclick="delSession(${s.id},'${ds}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <button class="btn-icon" onclick="openSessionModal('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+        <button class="btn-icon del" onclick="delSession('${s.id}','${ds}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
     </div>`;
   }).join('') + '</div>';
 }
 
 function renderSessionList() {
-  const list = Sessions.getUpcoming();
+  const list = upcomingSessions();
   const el   = document.getElementById('session-list');
   if (!list.length) {
     el.innerHTML = '<p style="color:var(--muted);font-size:.875rem;padding:.25rem 0">Nog geen sessies gepland.</p>';
     return;
   }
   el.innerHTML = list.map(s => {
-    const ws   = Sessions.WORKSHOPS[s.workshopKey];
-    const left = Sessions.spotsLeft(s);
-    const max  = s.maxSpots || ws?.maxSpots || 8;
+    const left = sessionSpotsLeft(s);
+    const max  = s.max_spots || s.workshops?.max_spots || 8;
     return `<div class="sess-row">
-      <div class="sess-bar" style="background:${WS_COLORS[s.workshopKey]}"></div>
+      <div class="sess-bar" style="background:${s.workshops?.color||'#0366C5'}"></div>
       <div><div class="sess-date">${fmtDate(s.date)}</div><div class="sess-time">${s.time}</div></div>
-      <div class="sess-name">${esc(ws?.name||s.workshopKey)}</div>
-      <span class="sess-pay pay-${s.paymentType}">${payLabel(s.paymentType)}</span>
-      <div class="sess-spots ${spotsClass(left)}">${s.spotsBooked||0}/${max}</div>
+      <div class="sess-name">${esc(s.workshops?.name||'')}</div>
+      <div class="sess-spots ${spotsClass(left)}">${s.booked_spots||0}/${max}</div>
       <div style="display:flex;gap:.3rem">
-        <button class="btn-icon" onclick="openSessionModal(${s.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
-        <button class="btn-icon del" onclick="delSession(${s.id},null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <button class="btn-icon" onclick="openSessionModal('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+        <button class="btn-icon del" onclick="delSession('${s.id}',null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
     </div>`;
   }).join('');
 }
 
 /* ─── SESSION MODAL ─────────────────────────────────────── */
-function togglePayFields() {
-  const v = document.getElementById('sm-pay').value;
-  document.getElementById('sm-odoo-wrap').style.display   = v === 'odoo'   ? '' : 'none';
-  document.getElementById('sm-mollie-wrap').style.display = v === 'mollie' ? '' : 'none';
-}
-
 function openSessionModal(id) {
   _editId = id || null;
-  const s = id ? Sessions.getAll().find(x => x.id === id) : null;
+  const s = id ? ADMIN_SESSIONS.find(x => x.id === id) : null;
   document.getElementById('sm-title').textContent    = s ? 'Sessie bewerken' : 'Nieuwe sessie';
-  document.getElementById('sm-ws').value             = s?.workshopKey  || '';
-  document.getElementById('sm-date').value           = s?.date         || (calSel || '');
-  document.getElementById('sm-time').value           = s?.time         || '10:00';
-  document.getElementById('sm-max').value            = s?.maxSpots     || '';
-  document.getElementById('sm-booked').value         = s?.spotsBooked  || 0;
-  document.getElementById('sm-pay').value            = s?.paymentType  || 'email';
-  document.getElementById('sm-odoo-id').value        = s?.odooEventId  || '';
-  document.getElementById('sm-mollie').value         = s?.mollieLink   || '';
-  document.getElementById('sm-notes').value          = s?.notes        || '';
-  togglePayFields();
+  document.getElementById('sm-ws').value             = s?.workshop_id   || '';
+  document.getElementById('sm-date').value           = s?.date          || (calSel || '');
+  document.getElementById('sm-time').value           = s?.time          || '10:00';
+  document.getElementById('sm-max').value            = s?.max_spots     || '';
+  document.getElementById('sm-booked').value         = s?.booked_spots  || 0;
+  document.getElementById('sm-notes').value          = s?.notes         || '';
   openModal('session-modal');
 }
 
-function saveSession() {
-  const workshopKey = document.getElementById('sm-ws').value;
-  const date        = document.getElementById('sm-date').value;
-  const time        = document.getElementById('sm-time').value;
-  const paymentType = document.getElementById('sm-pay').value;
-  if (!workshopKey || !date || !time) { toast('Vul workshop, datum en tijd in.', false); return; }
-  const ws = Sessions.WORKSHOPS[workshopKey];
+async function saveSession() {
+  const workshopId = document.getElementById('sm-ws').value;
+  const date       = document.getElementById('sm-date').value;
+  const time       = document.getElementById('sm-time').value;
+  if (!workshopId || !date || !time) { toast('Vul workshop, datum en tijd in.', false); return; }
   const data = {
-    workshopKey, date, time, paymentType,
-    maxSpots:    parseInt(document.getElementById('sm-max').value)    || ws?.maxSpots || 8,
-    spotsBooked: parseInt(document.getElementById('sm-booked').value) || 0,
-    odooEventId: paymentType === 'odoo'   ? (parseInt(document.getElementById('sm-odoo-id').value) || null) : null,
-    mollieLink:  paymentType === 'mollie' ? document.getElementById('sm-mollie').value.trim()                : '',
+    date, time,
+    maxSpots:    parseInt(document.getElementById('sm-max').value) || null,
+    bookedSpots: parseInt(document.getElementById('sm-booked').value) || 0,
     notes:       document.getElementById('sm-notes').value.trim(),
   };
-  if (_editId) { Sessions.update(_editId, data); toast('Sessie bijgewerkt'); }
-  else         { Sessions.add(data);             toast('Sessie aangemaakt'); }
-  closeModal('session-modal');
-  renderCalendar();
-  if (calSel) selectDay(calSel);
-  renderDashboard();
+  try {
+    if (_editId) {
+      await adminFetch('/api/admin/sessions/' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
+      toast('Sessie bijgewerkt');
+    } else {
+      await adminFetch('/api/admin/sessions', { method: 'POST', body: JSON.stringify(Object.assign({ workshopId }, data)) });
+      toast('Sessie aangemaakt');
+    }
+    closeModal('session-modal');
+    await loadAgendaData();
+    renderCalendar();
+    if (calSel) selectDay(calSel);
+    renderDashboard();
+  } catch (err) {
+    toast(err.message, false);
+  }
 }
 
-function delSession(id, ds) {
+async function delSession(id, ds) {
   if (!confirm('Sessie definitief verwijderen?')) return;
-  Sessions.remove(id);
-  renderCalendar();
-  if (ds) selectDay(ds);
-  renderDashboard();
-  toast('Sessie verwijderd');
+  try {
+    await adminFetch('/api/admin/sessions/' + id, { method: 'DELETE' });
+    await loadAgendaData();
+    renderCalendar();
+    if (ds) selectDay(ds);
+    renderDashboard();
+    toast('Sessie verwijderd');
+  } catch (err) {
+    toast(err.message, false);
+  }
 }
 
 /* ─── BLOCKS ────────────────────────────────────────────── */
@@ -1002,8 +1060,6 @@ function loadSettings() {
     document.getElementById('set-odoo-db').value   = odoo.db     || '';
     document.getElementById('set-odoo-user').value = odoo.user   || '';
     document.getElementById('set-odoo-key').value  = odoo.apiKey || '';
-    const m = JSON.parse(localStorage.getItem('sb_mollie_config') || '{}');
-    document.getElementById('set-mollie-link').value = m.defaultLink || '';
   } catch(e) {}
 }
 function saveSettings() {
@@ -1020,11 +1076,6 @@ function saveOdooSettings() {
   }));
   toast('Odoo-instellingen opgeslagen');
 }
-function saveMollieSettings() {
-  localStorage.setItem('sb_mollie_config', JSON.stringify({ defaultLink: document.getElementById('set-mollie-link').value.trim() }));
-  toast('Mollie-instellingen opgeslagen');
-}
-
 /* ─── IMAGE PREVIEW ─────────────────────────────────────── */
 function previewUrl(url, id) {
   const el = document.getElementById(id);
@@ -1051,12 +1102,13 @@ function importJSON(input) {
 }
 
 /* ─── INIT ──────────────────────────────────────────────── */
-function initApp() {
-  renderDashboard();
+async function initApp() {
   renderBlocks();
   renderImages();
   renderProducts();
   loadSettings();
+  await loadAgendaData();
+  renderDashboard();
 }
 </script>
 </body>
