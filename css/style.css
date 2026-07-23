@@ -323,8 +323,12 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 }
 .hero-card__actions { display: flex; gap: .875rem; flex-wrap: wrap; }
 .hero-card__video .video-wrap { border-radius: var(--r-lg); }
+.hero-card__video .video-wrap--portrait {
+  padding-top: 177.78%; max-width: 260px; margin: 0 auto;
+}
 @media (max-width: 900px) {
   .hero-card__top { grid-template-columns: 1fr; }
+  .hero-card__video .video-wrap--portrait { max-width: 220px; }
 }
 .hero-card__img {
   position: relative; margin-top: 2rem; height: min(46vh, 340px);
