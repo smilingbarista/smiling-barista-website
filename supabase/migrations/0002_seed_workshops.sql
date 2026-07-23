@@ -32,7 +32,7 @@ insert into workshops (id, name, short_name, description, bullets, price, durati
 ('latte-art-2', 'Latte Art Level 2 — Flower Power', 'Latte Art L2',
  'Rozetten en tulpen gieten, stap voor stap. Je pitcher precies onder controle, met aandacht voor contrast en symmetrie in je patroon.',
  E'Rozetten en tulpen gieten, stap voor stap\nJe pitcher precies onder controle\nContrast en symmetrie in je patroon\nVereist Sweet Hearts',
- 149, '3,5 uur', 6, '#0366C5', 'latte-art', 2, 21),
+ 99, '3,5 uur', 6, '#0366C5', 'latte-art', 2, 21),
 
 ('latte-art-3', 'Latte Art Masterclass — Swan Master', 'Latte Art L3',
  'Zwaantjes, zeepaardjes, phoenix en konijntjes. Gelaagde hartjes en complexe figuren, begeleid door een tweevoudig NL kampioen.',
@@ -42,7 +42,7 @@ insert into workshops (id, name, short_name, description, bullets, price, durati
 ('slow-brew-1', 'Slow Brew Beginnings', 'Slow Brew L1',
  'Filterkoffie kent een wereld op zichzelf. We verkennen de V60, French Press en Chemex, en hoe malen, watertemperatuur en giettechniek de smaak bepalen.',
  E'V60, Aeropress, Chemex, French Press\nDe juiste koffie-waterverhouding\nCold brew zetten\nSmaakproeverij',
- 69, '2 uur', 8, '#2E7D9F', 'slow-brew', 1, 30),
+ 99, '2 uur', 10, '#2E7D9F', 'slow-brew', 1, 30),
 
 ('slow-brew-2', 'Slow Brew Masterclass', 'Slow Brew L2',
  'Zeldzame en single-origin koffies zetten, je zetmethode afstemmen op de oorsprong, en verschillende brewers met elkaar vergelijken.',

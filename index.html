@@ -12,7 +12,7 @@
 <body>
 
 <!-- ── NAV ── -->
-<nav class="nav" id="nav">
+<nav class="nav light-page" id="nav">
   <div class="container nav__inner">
     <a href="index.html" class="nav__logo">Smiling Barista</a>
     <ul class="nav__links">
@@ -51,55 +51,32 @@
 </div>
 
 <!-- ── HERO ── -->
-<section class="hero hero--split" data-block="hero">
-  <div class="hero__text-side">
-    <div class="hero__inner">
-      <p class="hero__label" data-cms="hero_label">Mobiele specialty koffie · Antwerpen</p>
-      <h1 class="hero__title" data-cms="hero_title">We fietsen met verse koffie naar jullie event</h1>
-      <p class="hero__sub" data-cms="hero_sub">Op onze Velopresso's malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï en thee. Reken op 50 vers bereide dranken per uur. De blikvanger op jullie event.</p>
-      <div class="hero__actions">
-        <a href="events.html"    class="btn btn--primary">Ontdek wat we doen</a>
-        <a href="contact.html"   class="btn btn--light">Vraag een offerte</a>
+<section class="hero-card-wrap" data-block="hero">
+  <div class="hero-card">
+    <div class="hero-card__text">
+      <p class="hero-card__label">Mobiele koffie op de trappers</p>
+      <h1 data-cms="hero_title">Koffie trappen met de glimlach</h1>
+      <p data-cms="hero_sub">Op onze Velopresso's malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï, matcha latte en thee met heel veel goesting.</p>
+      <div class="hero-card__actions">
+        <a href="contact.html" class="btn btn--light">Vraag een offerte aan</a>
+        <a href="#diensten" class="btn" style="background:transparent;border:1.5px solid rgba(255,255,255,.6);color:#fff;">Bekijk onze diensten</a>
+        <a href="workshops.html" class="btn btn--primary">Van Stuntelaar tot Kunstenaar</a>
+        <a href="teambuilding.html" class="btn btn--primary">Uw Volgende Teamervaring</a>
       </div>
     </div>
-  </div>
-  <div class="hero__img-side">
-    <div class="img-ph img-ph--hero" data-img-block="hero" data-cms-img-key="img_hero">
-      <div class="img-ph__inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        <span>Voeg een foto toe via het beheerpaneel</span>
+    <div class="hero-card__img">
+      <div class="img-ph img-ph--hero" data-img-block="hero" data-cms-img-key="img_hero">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe via het beheerpaneel</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── STATS BAR ── -->
-<div class="stats-bar" data-block="stats">
-  <div class="container stats-bar__inner">
-    <div class="stats-bar__item">
-      <strong>4</strong>
-      <span>Velopresso's</span>
-    </div>
-    <div class="stats-bar__divider"></div>
-    <div class="stats-bar__item">
-      <strong>~50</strong>
-      <span>Verse dranken per uur</span>
-    </div>
-    <div class="stats-bar__divider"></div>
-    <div class="stats-bar__item">
-      <strong>5</strong>
-      <span>Talen</span>
-    </div>
-    <div class="stats-bar__divider"></div>
-    <div class="stats-bar__item">
-      <strong>100%</strong>
-      <span>Mobiel, zelfvoorzienend</span>
-    </div>
-  </div>
-</div>
-
 <!-- ── ABOUT ── -->
-<section class="about section" data-block="about">
+<section id="about" class="about section" data-block="about">
   <div class="container">
     <div class="about__grid">
       <div class="img-ph img-ph--portrait" data-img-block="about" data-cms-img-key="img_about">
@@ -109,13 +86,13 @@
         </div>
       </div>
       <div class="about__content">
-        <p class="about__label">Wie zijn we?</p>
-        <h2 class="about__title" data-cms="about_title">Koffie die mensen samenbrengt</h2>
+        <p class="about__label">Wie zijn wij?</p>
+        <h2 class="about__title" data-cms="about_title">Smiling Barista's: koffie trappen met de glimlach</h2>
         <p class="about__text" data-cms="about_text1">
-          Didi en zijn Smiling Barista's rijden op Velopresso's en schenken verse koffie met goesting. We komen naar jullie event, bedrijfsfeest of beursstand en zorgen dat iedereen met een koffie in de hand blijft hangen.
+          Wij ontvangen jullie gasten met een glimlach en een lekkere warme drank, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand. Dat blijft hangen bij je bezoekers… op de tofste manier!
         </p>
         <p class="about__text" data-cms="about_text2">
-          We ontvangen jullie gasten met een glimlach. We puzzelen mee om de perfecte opstelling te vinden en zorgen dat alles vlot loopt. Snel geregeld, concreet en zonder gedoe.
+          De Velopresso is de enige volledig mobiele koffiefiets waarmee we de bonen met trapkracht malen. Onze Smiling Barista's zitten nooit stil!
         </p>
         <a href="contact.html" class="btn btn--primary">Vertel ons over jullie event</a>
       </div>
@@ -124,12 +101,11 @@
 </section>
 
 <!-- ── DIENSTEN ── -->
-<section class="section section--cream" data-block="services">
+<section id="diensten" class="section section--cream" data-block="services">
   <div class="container">
     <div class="sec-head">
       <span class="sec-head__label">Wat we doen</span>
-      <h2>Van catering tot workshop</h2>
-      <p>We komen met onze Velopresso naar jullie event, zetten jullie merk in de kijker of leren jullie team latte art tekenen. Kies wat past.</p>
+      <h2>Onze diensten</h2>
     </div>
     <div class="services-grid services-grid--img">
 
@@ -140,8 +116,8 @@
           </div>
         </div>
         <div class="svc-card__body">
-          <h3>Mobiele koffie-catering</h3>
-          <p>We komen met onze Velopresso naar jullie event en schenken cappuccino, latte, chaï en thee. Volledig zelfvoorzienend, we komen naar jullie toe. Reken op 50 vers bereide dranken per uur.</p>
+          <h3>Koffie die Mensen Samenbrengt</h3>
+          <p>Vaste forfaits op basis van de duurtijd van jullie opdracht. Reken op een 50-tal vers bereide dranken per uur, met tot vier setups als het nodig is. Espresso, cappuccino, latte, chaï, choco, matcha en thee — altijd met plantaardige melk, en een koekje erbij.</p>
           <a href="events.html" class="svc-card__link">Meer over events</a>
         </div>
       </div>
@@ -154,7 +130,7 @@
         </div>
         <div class="svc-card__body">
           <h3>Smiling Marketista</h3>
-          <p>Jullie merk op onze Velopresso. Fietsdecor met jullie logo, gestempelde bekers en een menukaart op maat. De blikvanger op jullie stand of campagne. We puzzelen mee over de beste aanpak.</p>
+          <p>We toveren onze Velopresso's om tot een mobiel promotieplatform voor jullie merk: gepersonaliseerde cover, gestempelde bekers en een menukaart op maat. Ideaal voor campagnes, beurzen en winkelopeningen.</p>
           <a href="events.html" class="svc-card__link">Meer over brand activation</a>
         </div>
       </div>
@@ -166,9 +142,9 @@
           </div>
         </div>
         <div class="svc-card__body">
-          <h3>Latte Art Workshop</h3>
-          <p>Jij, een espressomachine en een kannetje melk. Tijdens onze workshop leer je van nul naar cappuccino met hartje in één sessie. Praktisch, lachwekkend en verrassend verslavend.</p>
-          <a href="workshops.html" class="svc-card__link">Meer over workshops</a>
+          <h3>Latte Art Teambuildings</h3>
+          <p>Leer melk zijdezacht stomen en een latte art-hartje gieten waar iedereen van in zwijm valt. Een plezante, interactieve activiteit voor jullie team — met een kleine uitdaging voor de competitiebeesten.</p>
+          <a href="workshops.html" class="svc-card__link">Meer over uw volgende teambuilding</a>
         </div>
       </div>
 
@@ -176,123 +152,144 @@
   </div>
 </section>
 
-<!-- ── VIDEO ── -->
-<section class="section" data-block="video">
+<!-- ── TEAMBUILDING ── -->
+<section id="teambuilding" class="split-section" data-block="teambuilding">
   <div class="container">
-    <div class="sec-head">
-      <span class="sec-head__label">Zie het in actie</span>
-      <h2>De Velopresso in beweging</h2>
-      <p>Bekijk hoe we werken op events en wat onze workshops inhouden.</p>
-    </div>
-    <div class="video-grid">
-      <!-- Vervang YOUTUBE_VIDEO_ID_1 door het echte YouTube-ID, bijv. dQw4w9WgXcQ -->
-      <div class="video-wrap">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/YOUTUBE_VIDEO_ID_1?rel=0&modestbranding=1&color=white"
-          title="Smiling Barista op events"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-        <div class="video-ph" id="video-ph-1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
-          <span>Vul YouTube video ID in</span>
+    <div class="split-grid reverse">
+      <div class="split-visual img-ph" data-img-block="teambuilding" data-cms-img-key="img_teambuilding">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe via het beheerpaneel</span>
         </div>
       </div>
-      <!-- Vervang YOUTUBE_VIDEO_ID_2 door het echte YouTube-ID -->
-      <div class="video-wrap">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/YOUTUBE_VIDEO_ID_2?rel=0&modestbranding=1&color=white"
-          title="Latte Art Workshop"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-        <div class="video-ph" id="video-ph-2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
-          <span>Vul YouTube video ID in</span>
-        </div>
+      <div class="split-content">
+        <p class="split-label">Teambuildings</p>
+        <h2>Uw Koers?</h2>
+        <a href="workshops.html" class="split-content__link">Kies hier uw barista-route! →</a>
+        <p>Wij fietsen mee met jullie bedrijfsuitje, personeelsfeest of beursstand — een mobiele koffiebar die het ijs breekt en de sfeer erin brengt. Elke koers stellen we op maat samen, van klein en informeel tot een volledige dag vol koffie en goesting.</p>
+        <p>Op zoek naar een interactieve workshop? Onze barista's leren jullie zelf de kunst van het stomen en de latte art.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── UITGELICHTE PRODUCTEN ── -->
-<section class="section section--cream" data-block="products">
+<!-- ── WORKSHOPS TEASER ── -->
+<section class="split-section" data-block="workshopteaser">
+  <div class="container">
+    <div class="split-grid">
+      <div class="split-visual img-ph" data-img-block="wsteaser" data-cms-img-key="img_wsteaser">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe via het beheerpaneel</span>
+        </div>
+      </div>
+      <div class="split-content">
+        <p class="split-label">Workshops</p>
+        <h2>Van Stuntelaar tot Kunstenaar</h2>
+        <a href="workshops.html" class="split-content__link">Bekijk alle workshops →</a>
+        <p>We werken in groepjes tot 10 deelnemers per begeleidende Smiling Barista. De workshop duurt anderhalf tot drie uur — hoe meer jullie kunnen oefenen, hoe mooier het resultaat. Bij grotere groepen splitsen we jullie graag op met een tweede barista erbij.</p>
+        <p>We komen volledig uitgerust: een espressotoestel, extra stoommachines, spoelbakken, melkkannetjes en een ruim aanbod van koffie, chaï en matcha. Ook te geven in het Engels, Frans, Duits en Spaans.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRAKTISCH ── -->
+<section id="praktisch" class="praktisch" data-block="praktisch">
+  <div class="container section">
+    <div class="sec-head" style="max-width:640px">
+      <span class="sec-head__label" style="color:var(--latte)">Wij komen bij jullie koffie trappen</span>
+      <h2 style="color:#fff">Praktisch — hoe?</h2>
+    </div>
+    <div class="praktisch-grid">
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">120 × 250 cm</div>
+        <div class="praktisch-item__body">Zo groot is een Velopresso. Zorg dat we door alle deuren en in alle liften passen — treden zijn helaas niet haalbaar.</div>
+      </div>
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">1u opstellen, 40 min opruimen</div>
+        <div class="praktisch-item__body">Reken op ongeveer een uurtje om alles klaar te zetten, en veertig minuten om nadien weer alles op te ruimen.</div>
+      </div>
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">Gas of stroom</div>
+        <div class="praktisch-item__body">De machine werkt op gas, of op elektriciteit als er een stopcontact in de buurt is.</div>
+      </div>
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">Eigen watervoorraad</div>
+        <div class="praktisch-item__body">Elke Velopresso heeft een eigen gefilterde watervoorraad, het afval slaan we intern op.</div>
+      </div>
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">1,20 × 2,50 m</div>
+        <div class="praktisch-item__body">Reken op deze ruimte om te kunnen serveren, plus een handige losplaats om te parkeren.</div>
+      </div>
+      <div class="praktisch-item">
+        <div class="praktisch-item__title">Korte of lange afstanden</div>
+        <div class="praktisch-item__body">Korte etappes fietsen we zelf, langere afstanden overbruggen we met een aanhangwagen of camionette.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TARIEVEN ── -->
+<section id="tarieven" class="section" data-block="tarieven">
   <div class="container">
     <div class="sec-head">
-      <span class="sec-head__label">Webshop</span>
-      <h2>Koffie, accessoires en cadeaubonnen</h2>
-      <p>Onze bestverkochte producten, thuis bezorgd.</p>
+      <span class="sec-head__label">Tarieven</span>
+      <h2>De rekening — wat en hoeveel?</h2>
     </div>
-    <div class="products-grid">
-      <div class="prod-card">
-        <div class="prod-card__img prod-card__img--ph">
-          <div class="img-ph img-ph--square" data-img-block="prod1" data-cms-img-key="img_prod1">
-            <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-          </div>
-          <span class="prod-card__badge">Bestseller</span>
-        </div>
-        <div class="prod-card__body">
-          <div class="prod-card__name">Signature Espresso Blend</div>
-          <div class="prod-card__desc">Onze huismix, krachtig, romig en vol van smaak. 250g vers geroosterd.</div>
-          <div class="prod-card__foot">
-            <span class="prod-card__price">€ 14,50</span>
-            <button class="prod-card__add" onclick="Cart.add({id:1,name:'Signature Espresso Blend',price:14.50,image:''});Toast.show('Toegevoegd aan winkelwagen','success')">+</button>
-          </div>
-        </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-card__label">Tot 3 uur coffee &amp; smiles</div>
+        <div class="price-card__value">€749 excl. BTW</div>
+        <div class="price-card__sub">Minimumtarief · €906,29 incl. BTW</div>
       </div>
-      <div class="prod-card">
-        <div class="prod-card__img prod-card__img--ph">
-          <div class="img-ph img-ph--square" data-img-block="prod2" data-cms-img-key="img_prod2">
-            <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-          </div>
-        </div>
-        <div class="prod-card__body">
-          <div class="prod-card__name">Cadeaubon Workshop</div>
-          <div class="prod-card__desc">Geldig voor alle workshops. Ideaal cadeau voor een koffieliefhebber.</div>
-          <div class="prod-card__foot">
-            <span class="prod-card__price">€ 65,00</span>
-            <button class="prod-card__add" onclick="Cart.add({id:2,name:'Cadeaubon Workshop',price:65.00,image:''});Toast.show('Toegevoegd aan winkelwagen','success')">+</button>
-          </div>
-        </div>
+      <div class="price-card">
+        <div class="price-card__label">Extra uur</div>
+        <div class="price-card__value">€150 excl. BTW</div>
+        <div class="price-card__sub">€181,50 incl. BTW</div>
       </div>
-      <div class="prod-card">
-        <div class="prod-card__img prod-card__img--ph">
-          <div class="img-ph img-ph--square" data-img-block="prod3" data-cms-img-key="img_prod3">
-            <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-          </div>
-        </div>
-        <div class="prod-card__body">
-          <div class="prod-card__name">Latte Art Starter Kit</div>
-          <div class="prod-card__desc">Melkkan, thermometer en oefengids. Alles om thuis te oefenen.</div>
-          <div class="prod-card__foot">
-            <span class="prod-card__price">€ 32,00</span>
-            <button class="prod-card__add" onclick="Cart.add({id:3,name:'Latte Art Starter Kit',price:32.00,image:''});Toast.show('Toegevoegd aan winkelwagen','success')">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="prod-card">
-        <div class="prod-card__img prod-card__img--ph">
-          <div class="img-ph img-ph--square" data-img-block="prod4" data-cms-img-key="img_prod4">
-            <div class="img-ph__inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-          </div>
-          <span class="prod-card__badge">Nieuw</span>
-        </div>
-        <div class="prod-card__body">
-          <div class="prod-card__name">Single Origin Colombia</div>
-          <div class="prod-card__desc">Fruitig en licht, met tonen van karamel en citrus. 250g speciality.</div>
-          <div class="prod-card__foot">
-            <span class="prod-card__price">€ 17,50</span>
-            <button class="prod-card__add" onclick="Cart.add({id:4,name:'Single Origin Colombia',price:17.50,image:''});Toast.show('Toegevoegd aan winkelwagen','success')">+</button>
-          </div>
-        </div>
+      <div class="price-card">
+        <div class="price-card__label">Dagtarief</div>
+        <div class="price-card__value">€1.200 excl. BTW</div>
+        <div class="price-card__sub">Tot acht uur service</div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:2.5rem">
-      <a href="shop.html" class="btn btn--secondary">Bekijk alle producten</a>
+    <div class="supplements-box">
+      <div class="supplements-box__title">Populaire supplementen</div>
+      <div class="supplements-box__list">
+        Brandingpakket: gepersonaliseerd zeil, gestempelde bekers en aangepaste menukaart — €500 excl. BTW (vectorbestanden minstens 3 weken op voorhand aanleveren)<br>
+        Runner voor mobiele straatcampagnes: €375 excl. BTW tot 3u service, €75 excl. BTW per extra uur<br>
+        Buitenlandse campagne: basis dagtarief vanaf €1.400 excl. BTW<br>
+        Iced menu: €100 excl. BTW<br>
+        Zelfgebakken cakes (citroen, framboos, stracciatella, appelsien): €18 per cake, ca. 12 porties<br>
+        Koffiekoeken en croissants: €3,5 per stuk (minimum 30 stuks)<br>
+        Transport buiten 25km van onze thuisbasis: +€1,25 excl. BTW per kilometer
+      </div>
+    </div>
+    <p class="tarieven-note">We demarreren meteen met een voorschotfactuur van 50%. Na de koers volgt het uitbollen: de rest binnen 14 dagen. Vol op de pedalen!</p>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section id="gallery" class="section section--cream" data-block="gallery">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-head__label">In actie</span>
+      <h2>Op pad met de Smiling Barista's</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-visual img-ph" data-img-block="gallery1" data-cms-img-key="img_gallery1">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe via het beheerpaneel</span>
+        </div>
+      </div>
+      <div class="gallery-visual img-ph" data-img-block="gallery2" data-cms-img-key="img_gallery2">
+        <div class="img-ph__inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Voeg een foto toe via het beheerpaneel</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>

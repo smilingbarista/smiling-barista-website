@@ -301,6 +301,71 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .page-hero h1 { color: var(--white); margin-bottom: 1rem; }
 .page-hero__sub { color: rgba(255,255,255,.7); max-width: 580px; margin: 0 auto; font-size: 1.0625rem; }
 
+/* ─── HERO CARD (home) ─── */
+.hero-card-wrap { max-width: 1200px; margin: 6.5rem auto 0; padding: 0 1.5rem; }
+.hero-card {
+  position: relative; background: var(--espresso); border-radius: var(--r-xl);
+  overflow: hidden; padding: clamp(2rem, 6vw, 3.5rem) clamp(1.5rem, 6vw, 3.5rem) 0;
+}
+.hero-card__text { max-width: 640px; position: relative; z-index: 1; }
+.hero-card__label {
+  color: var(--latte); font-weight: 700; font-size: .875rem; letter-spacing: .08em;
+  text-transform: uppercase; margin-bottom: 1.25rem;
+}
+.hero-card__text h1 { color: var(--white); margin-bottom: 1.125rem; }
+.hero-card__text p {
+  font-size: clamp(.9375rem, 1.6vw, 1.125rem); line-height: 1.6;
+  color: rgba(255,255,255,.88); margin-bottom: 1.75rem; max-width: 520px;
+}
+.hero-card__actions { display: flex; gap: .875rem; flex-wrap: wrap; padding-bottom: clamp(2rem, 6vw, 3.5rem); }
+.hero-card__img {
+  position: relative; margin-top: 2rem; height: min(46vh, 340px);
+  border-radius: var(--r-lg) var(--r-lg) 0 0; overflow: hidden;
+  border: 3px solid var(--white); border-bottom: none;
+}
+.hero-card__img .img-ph { position: absolute; inset: 0; border-radius: inherit; border: none; }
+
+/* ─── SPLIT SECTION (image + text, reused for teambuilding/workshop teaser) ─── */
+.split-section { padding: min(9vw, 6rem) 0; }
+.split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; }
+.split-grid.reverse .split-visual { order: -1; }
+.split-visual { position: relative; border-radius: var(--r-xl); aspect-ratio: 4/3; overflow: hidden; }
+.split-visual .img-ph { position: absolute; inset: 0; border-radius: inherit; }
+.split-label { font-size: .8125rem; font-weight: 700; color: var(--caramel); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .5rem; }
+.split-content h2 { margin-bottom: .875rem; }
+.split-content__link { display: inline-block; font-weight: 700; font-size: .9375rem; color: var(--caramel); margin-bottom: 1.25rem; }
+.split-content__link:hover { text-decoration: underline; }
+.split-content p { color: var(--text-light); line-height: 1.7; margin-bottom: .875rem; }
+.split-content p:last-child { margin-bottom: 0; }
+
+/* ─── PRAKTISCH ─── */
+.praktisch { background: var(--espresso); color: var(--white); }
+.praktisch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1.75rem; }
+.praktisch-item { border-top: 2px solid rgba(255,255,255,.2); padding-top: 1.125rem; }
+.praktisch-item__title { font-family: var(--font-head); font-weight: 700; font-size: 1.0625rem; margin-bottom: 1rem; color: var(--latte); }
+.praktisch-item__body { font-size: .9375rem; line-height: 1.65; color: rgba(255,255,255,.82); }
+
+/* ─── TARIEVEN ─── */
+.price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1.375rem; margin-bottom: 2.5rem; }
+.price-card { background: var(--cream); border-radius: var(--r-xl); padding: 1.75rem 1.625rem; }
+.price-card__label { font-size: .875rem; font-weight: 700; color: var(--text-light); margin-bottom: 1.125rem; }
+.price-card__value { font-family: var(--font-head); font-weight: 700; font-size: 1.625rem; color: var(--espresso); margin-bottom: 1.125rem; }
+.price-card__sub { font-size: .8438rem; line-height: 1.5; color: var(--text-light); }
+.supplements-box { background: var(--white); border: 2px solid var(--caramel); border-radius: var(--r-xl); padding: 2rem; }
+.supplements-box__title { font-family: var(--font-head); font-weight: 700; font-size: 1.125rem; margin-bottom: 1rem; color: var(--espresso); }
+.supplements-box__list { font-size: .9063rem; line-height: 1.9; color: var(--text-light); }
+.tarieven-note { text-align: center; font-size: .9063rem; color: var(--text-light); margin: 1.75rem 0 0; font-style: italic; }
+
+/* ─── GALLERY ─── */
+.gallery-grid { display: flex; gap: 1.375rem; flex-wrap: wrap; }
+.gallery-visual { position: relative; flex: 1 1 380px; min-width: 280px; height: 380px; border-radius: var(--r-lg); overflow: hidden; }
+.gallery-visual .img-ph { position: absolute; inset: 0; border-radius: inherit; }
+
+@media (max-width: 900px) {
+  .split-grid { grid-template-columns: 1fr; }
+  .split-grid.reverse .split-visual { order: 0; }
+}
+
 /* ─── SHOP ─── */
 .shop-wrap { display: grid; grid-template-columns: 220px 1fr; gap: 2.5rem; align-items: start; }
 .shop-sidebar { position: sticky; top: 100px; }

@@ -43,12 +43,16 @@ const CMS = (() => {
     ],
 
     blocks: [
-      { id:'hero',     label:'Hero banner',           icon:'🚀', visible:true },
-      { id:'about',    label:'Over ons',              icon:'☕', visible:true },
-      { id:'services', label:'Diensten overzicht',    icon:'📋', visible:true },
-      { id:'products', label:'Uitgelichte producten', icon:'🛒', visible:true },
-      { id:'reviews',  label:'Google Reviews',        icon:'⭐', visible:true },
-      { id:'cta',      label:'CTA banner',            icon:'📣', visible:true },
+      { id:'hero',          label:'Hero banner',           icon:'🚀', visible:true },
+      { id:'about',         label:'Over ons',              icon:'☕', visible:true },
+      { id:'services',      label:'Diensten overzicht',    icon:'📋', visible:true },
+      { id:'teambuilding',  label:'Teambuilding',          icon:'🚲', visible:true },
+      { id:'workshopteaser',label:'Workshops-teaser',      icon:'🎨', visible:true },
+      { id:'praktisch',     label:'Praktisch',             icon:'📐', visible:true },
+      { id:'tarieven',      label:'Tarieven',              icon:'💶', visible:true },
+      { id:'gallery',       label:'Gallery',               icon:'🖼️', visible:true },
+      { id:'reviews',       label:'Google Reviews',        icon:'⭐', visible:true },
+      { id:'cta',           label:'CTA banner',            icon:'📣', visible:true },
     ],
 
     settings: {
@@ -63,16 +67,16 @@ const CMS = (() => {
 
     content: {
       hero_badge:    '🚲 De enige koffiefiets die bonen maalt met trapkracht',
-      hero_title:    'Koffie trappen<br>met de <em>glimlach</em>',
-      hero_sub:      'Op onze Velopresso koffiefietsen malen we al trappend onze bonen en schenken we cappuccino\'s, latte\'s, chaï en thee — met heel veel goesting. De blikvanger op jouw event!',
+      hero_title:    'Koffie trappen met de glimlach',
+      hero_sub:      'Op onze Velopresso\'s malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï, matcha latte en thee met heel veel goesting.',
       hero_btn1:     'Onze diensten ontdekken',
       hero_btn2:     'Latte Art Workshop',
-      about_title:   'Smiling Barista\'s op een Velopresso',
-      about_text1:   'Wij zijn Didi en zijn Smiling Barista\'s — en we trappen koffie met de glimlach. Op onze koffiefietsen malen we al trappend onze bonen en schenken we cappuccino\'s, latte\'s, chaï en thee, met heel veel goesting!',
-      about_text2:   'Wij maken mee de sfeer op jullie event, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand.',
+      about_title:   'Smiling Barista\'s: koffie trappen met de glimlach',
+      about_text1:   'Wij ontvangen jullie gasten met een glimlach en een lekkere warme drank, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand. Dat blijft hangen bij je bezoekers… op de tofste manier!',
+      about_text2:   'De Velopresso is de enige volledig mobiele koffiefiets waarmee we de bonen met trapkracht malen. Onze Smiling Barista\'s zitten nooit stil!',
       about_image:   '',
-      cta_title:     'Klaar om te starten?',
-      cta_sub:       'Vertel ons over jouw event en we stellen een voorstel op maat voor je samen.',
+      cta_title:     'Klaar voor koffie op de trappers?',
+      cta_sub:       'Laat ons weten wat jullie plannen — we denken graag mee over het perfecte moment voor koffie met een glimlach.',
     },
   };
 
@@ -134,10 +138,17 @@ const CMS = (() => {
       const b = bMap[el.dataset.block];
       if (b) el.style.display = b.visible ? '' : 'none';
     });
-    // Order
+    // Order: reposition each block right after the previous one instead of
+    // appending to the very end of the parent — appending unconditionally
+    // would drag every managed block past unmanaged siblings that come
+    // after them in the markup (footer, cart/modal overlays, scripts),
+    // leaving those stranded above the content instead of below it.
+    let anchor = null;
     blocks.forEach(b => {
       const el = document.querySelector(`[data-block="${b.id}"]`);
-      if (el) parent.appendChild(el);
+      if (!el) return;
+      if (anchor) anchor.after(el);
+      anchor = el;
     });
   }
 
