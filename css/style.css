@@ -313,7 +313,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .hero-card-wrap { max-width: 1200px; margin: 6.5rem auto 0; padding: 0 1.5rem; }
 .hero-card {
   position: relative; border-radius: var(--r-xl); overflow: hidden;
-  min-height: min(78vh, 640px); display: flex; align-items: flex-end;
+  min-height: min(78vh, 640px); display: flex; align-items: flex-end; justify-content: space-between;
   background: var(--espresso);
 }
 .hero-card__bg.img-ph { position: absolute; inset: 0; z-index: 0; border-radius: inherit; border: none; }
@@ -346,13 +346,17 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .hero-card__cta-img.img-ph--filled img { border-radius: inherit; }
 
 .hero-card__video {
-  position: absolute; z-index: 2; top: clamp(1.25rem, 3vw, 2rem); right: clamp(1.25rem, 3vw, 2rem);
+  position: relative; z-index: 2; flex-shrink: 0;
+  padding: clamp(2rem, 6vw, 3.5rem) clamp(2rem, 6vw, 3.5rem) clamp(2rem, 6vw, 3.5rem) 0;
 }
 .hero-card__video .video-wrap { border-radius: var(--r-lg); box-shadow: var(--shadow-xl); }
 .hero-card__video iframe { pointer-events: none; }
-.hero-card__video .video-wrap--portrait { padding-top: 177.78%; width: 140px; }
-@media (max-width: 700px) {
-  .hero-card__video { display: none; }
+.hero-card__video .video-wrap--portrait { padding-top: 177.78%; width: clamp(200px, 22vw, 280px); }
+@media (max-width: 900px) {
+  .hero-card { flex-direction: column; align-items: center; justify-content: flex-start; }
+  .hero-card__content { padding-bottom: 1rem; }
+  .hero-card__video { padding: 0 clamp(1.5rem, 6vw, 3.5rem) clamp(2rem, 6vw, 3.5rem); }
+  .hero-card__video .video-wrap--portrait { width: min(220px, 55vw); margin: 0 auto; }
 }
 
 /* ─── SPLIT SECTION (image + text, reused for teambuilding/workshop teaser) ─── */
