@@ -517,20 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
   I18n.init();
   I18n.renderSwitcher('lang-switcher');
 
-  // Laad CMS-afbeeldingen in image placeholders
-  const imgs = CMS.getContent ? CMS.getContent() : {};
-  document.querySelectorAll('[data-cms-img-key]').forEach(block => {
-    const key = block.dataset.cmsImgKey;
-    const url = imgs[key];
-    if (url) {
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = '';
-      block.appendChild(img);
-      block.classList.add('img-ph--filled');
-    }
-  });
-
   // YouTube: verberg placeholder-overlay zodra iframe laadt
   document.querySelectorAll('.video-wrap iframe').forEach((iframe) => {
     const ph = iframe.parentElement.querySelector('.video-ph');

@@ -129,6 +129,27 @@ const CMS = (() => {
     _applyBlocks();
     _applyContent();
     _applySettings();
+    _applyImages();
+  }
+
+  // Vulde voorheen alleen index.html inline — op events/workshops/
+  // teambuilding/shop/goede-doelen/over-ons/contact (incl. het logo in de
+  // navbalk) verscheen een geüploade afbeelding daardoor nooit: enkel de
+  // lege placeholder. Nu onderdeel van applyToPage() zodat elke pagina die
+  // cms.js laadt dit automatisch krijgt.
+  function _applyImages() {
+    const imgs = getContent();
+    document.querySelectorAll('[data-cms-img-key]').forEach(block => {
+      const key = block.dataset.cmsImgKey;
+      const url = imgs[key];
+      if (url) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = '';
+        block.appendChild(img);
+        block.classList.add('img-ph--filled');
+      }
+    });
   }
 
   function _applyBlocks() {
