@@ -214,6 +214,15 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .about__stats { display: flex; gap: 2.5rem; margin-top: 2rem; }
 .about__stat h3 { font-size: 2.25rem; color: var(--caramel); }
 .about__stat p  { font-size: .875rem; color: var(--text-light); }
+.about__offer-card {
+  display: flex; align-items: center; gap: 1rem;
+  margin-top: 1.25rem; padding: 1.25rem 1.5rem;
+  background: var(--cream); border: 1px solid var(--border); border-radius: var(--r-lg);
+  text-decoration: none; color: var(--espresso); font-weight: 700; line-height: 1.4;
+  transition: background var(--t), transform var(--t);
+}
+.about__offer-card:hover { background: var(--latte); transform: translateY(-2px); }
+.about__offer-card svg { width: 1.75rem; height: 1.75rem; flex-shrink: 0; color: var(--caramel); }
 
 /* ─── SERVICES CARDS ─── */
 .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
