@@ -327,7 +327,15 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
   font-size: clamp(.9375rem, 1.6vw, 1.125rem); line-height: 1.6;
   color: rgba(255,255,255,.92); margin-bottom: 1.75rem; max-width: 520px;
 }
-.hero-card__actions { display: flex; gap: .875rem; flex-wrap: wrap; }
+.hero-card__actions { display: flex; align-items: center; gap: .875rem; flex-wrap: wrap; }
+.hero-card__cta-img {
+  display: block; width: 190px; height: 56px; border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+.hero-card__cta-img .img-ph__inner { flex-direction: row; gap: .5rem; padding: .5rem .875rem; }
+.hero-card__cta-img .img-ph__inner svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+.hero-card__cta-img .img-ph__inner span { font-size: .8125rem; font-weight: 600; white-space: nowrap; }
+.hero-card__cta-img.img-ph--filled img { border-radius: inherit; }
 
 .hero-card__video {
   position: absolute; z-index: 2; top: clamp(1.25rem, 3vw, 2rem); right: clamp(1.25rem, 3vw, 2rem);
