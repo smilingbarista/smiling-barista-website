@@ -184,14 +184,21 @@ const CMS = (() => {
   }
 
   // ── Image helper: bestand → base64 ──
-  // Alles wordt hier eerst herschaald/hercomprimeerd via canvas. Een foto
-  // rechtstreeks van een telefoon is al gauw 3-8MB — als data-URL nog
-  // groter — terwijl localStorage in de praktijk maar ~5-10MB per site
-  // toelaat. Zonder dit liep de opslag stil vast zodra iemand één grote
-  // foto uploadde (of na een paar kleinere), met een misleidende
-  // "opgeslagen"-melding tot gevolg (zie saveContent()/_set()).
+  // Alles wordt hier eerst herschaald via canvas als het groter is dan
+  // MAX_DIM. Een foto rechtstreeks van een telefoon is al gauw 3-8MB —
+  // als data-URL nog groter — terwijl localStorage in de praktijk maar
+  // ~5-10MB per site toelaat. Zonder dit liep de opslag stil vast zodra
+  // iemand één grote foto uploadde (of na een paar kleinere), met een
+  // misleidende "opgeslagen"-melding tot gevolg (zie saveContent()/_set()).
+  //
+  // PNG's (logo's, iconen — vaak scherpe randen/tekst/transparantie)
+  // blijven lossless PNG: een logo dat toch al klein is heeft de
+  // opslagwinst van lossy compressie niet nodig, en WebP q0.82 maakte
+  // scherpe randen zichtbaar wazig/"gepixeld". Foto's (jpeg e.d.) blijven
+  // wel naar WebP gaan, want daar is de compressiewinst wél nodig.
   const MAX_DIM = 1600;
   function fileToBase64(file) {
+    const lossless = file.type === 'image/png';
     return new Promise((res, rej) => {
       const img = new Image();
       const reader = new FileReader();
@@ -205,7 +212,7 @@ const CMS = (() => {
           const canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          res(canvas.toDataURL('image/webp', 0.82));
+          res(lossless ? canvas.toDataURL('image/png') : canvas.toDataURL('image/webp', 0.82));
         };
         img.src = e.target.result;
       };
