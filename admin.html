@@ -624,13 +624,6 @@ async function doLogin() {
 }
 document.getElementById('login-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-// Al ingelogd (geldig token bewaard) — meteen doorschakelen.
-if (getAdminToken()) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initApp();
-}
-
 /* ─── TABS ──────────────────────────────────────────────── */
 function showTab(name) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -980,7 +973,9 @@ async function handleImgUpload(input) {
 function saveImg() {
   if (!_imgKey) return;
   const url = document.getElementById('im-url').value.trim();
-  const c = CMS.getContent(); c[_imgKey] = url; CMS.saveContent(c);
+  const c = CMS.getContent(); c[_imgKey] = url;
+  const ok = CMS.saveContent(c);
+  if (!ok) { toast('Opslaan mislukt — afbeelding is te groot voor de browseropslag.', false); return; }
   closeModal('img-modal'); renderImages(); toast('Afbeelding opgeslagen');
 }
 function removeImg() {
@@ -1046,7 +1041,8 @@ function saveProduct() {
   };
   if (_editId) { const i = ps.findIndex(x => x.id === _editId); if (i >= 0) ps[i] = p; }
   else ps.push(p);
-  CMS.saveProducts(ps);
+  const ok = CMS.saveProducts(ps);
+  if (!ok) { toast('Opslaan mislukt — afbeelding is te groot voor de browseropslag.', false); return; }
   closeModal('product-modal'); renderProducts(); renderDashboard();
   toast('"' + name + '" opgeslagen');
 }
@@ -1115,6 +1111,18 @@ async function initApp() {
   loadSettings();
   await loadAgendaData();
   renderDashboard();
+}
+
+// Al ingelogd (geldig token bewaard) — meteen doorschakelen. Staat hier
+// pas na alle const/function-declaraties: hierboven aanroepen leek te
+// werken (functiedeclaraties zijn hoisted) maar crashte zodra initApp()
+// iets als IMG_BLOCKS aansprak dat pas verderop in het script wordt
+// geïnitialiseerd ("Cannot access before initialization") — de hele
+// app-init stopte daardoor stil, wat leek op "uploaden doet niks".
+if (getAdminToken()) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
 }
 </script>
 </body>

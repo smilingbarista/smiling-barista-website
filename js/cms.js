@@ -85,8 +85,12 @@ const CMS = (() => {
     try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; }
     catch { return def; }
   }
+  // Geeft true/false terug i.p.v. stil te falen — zonder dit leek een
+  // mislukte save (bv. localStorage-quotum vol door een te grote foto)
+  // altijd geslaagd, want de UI toonde sowieso "opgeslagen".
   function _set(key, val) {
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.error('CMS opslaan mislukt:', e); }
+    try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+    catch(e) { console.error('CMS opslaan mislukt:', e); return false; }
   }
 
   // ── Public getters/setters ──
@@ -179,11 +183,31 @@ const CMS = (() => {
   }
 
   // ── Image helper: bestand → base64 ──
+  // Alles wordt hier eerst herschaald/hercomprimeerd via canvas. Een foto
+  // rechtstreeks van een telefoon is al gauw 3-8MB — als data-URL nog
+  // groter — terwijl localStorage in de praktijk maar ~5-10MB per site
+  // toelaat. Zonder dit liep de opslag stil vast zodra iemand één grote
+  // foto uploadde (of na een paar kleinere), met een misleidende
+  // "opgeslagen"-melding tot gevolg (zie saveContent()/_set()).
+  const MAX_DIM = 1600;
   function fileToBase64(file) {
     return new Promise((res, rej) => {
+      const img = new Image();
       const reader = new FileReader();
-      reader.onload  = e => res(e.target.result);
       reader.onerror = rej;
+      reader.onload = (e) => {
+        img.onerror = rej;
+        img.onload = () => {
+          const scale = Math.min(1, MAX_DIM / Math.max(img.naturalWidth, img.naturalHeight));
+          const w = Math.max(1, Math.round(img.naturalWidth * scale));
+          const h = Math.max(1, Math.round(img.naturalHeight * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          res(canvas.toDataURL('image/webp', 0.82));
+        };
+        img.src = e.target.result;
+      };
       reader.readAsDataURL(file);
     });
   }
