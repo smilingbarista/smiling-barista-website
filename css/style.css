@@ -217,6 +217,8 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 
 /* ─── SERVICES CARDS ─── */
 .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+/* Aanbod-foto's 50% groter dan de standaard .img-ph--landscape (60% -> 90%). */
+.services-grid .img-ph--landscape { padding-top: 90%; }
 .svc-card {
   background: var(--white); border: 1px solid var(--border);
   border-radius: var(--r-xl); padding: 2rem;
