@@ -68,7 +68,8 @@ const CMS = (() => {
     content: {
       hero_badge:    '🚲 De enige koffiefiets die bonen maalt met trapkracht',
       hero_title:    'Koffie trappen met de glimlach',
-      hero_sub:      'Op onze Velopresso\'s malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï, matcha latte en thee met heel veel goesting.',
+      hero_sub:      'Wij ontvangen jullie gasten met een glimlach en een lekkere warme drank, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand. Dat blijft hangen bij je bezoekers… op de tofste manier!',
+      hero_sub2:     'De Velopresso is de enige volledig mobiele koffiefiets waarmee we de bonen met trapkracht malen. Onze Smiling Barista\'s zitten nooit stil!',
       hero_btn1:     'Ons aanbod ontdekken',
       hero_btn2:     'Latte Art Workshop',
       about_title:   'Smiling Barista\'s: koffie trappen met de glimlach',
