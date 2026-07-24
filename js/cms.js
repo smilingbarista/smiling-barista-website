@@ -45,7 +45,7 @@ const CMS = (() => {
     blocks: [
       { id:'hero',          label:'Hero banner',           icon:'🚀', visible:true },
       { id:'about',         label:'Over ons',              icon:'☕', visible:true },
-      { id:'services',      label:'Diensten overzicht',    icon:'📋', visible:true },
+      { id:'services',      label:'Aanbod overzicht',      icon:'📋', visible:true },
       { id:'teambuilding',  label:'Teambuilding',          icon:'🚲', visible:true },
       { id:'workshopteaser',label:'Workshops-teaser',      icon:'🎨', visible:true },
       { id:'praktisch',     label:'Praktisch',             icon:'📐', visible:true },
@@ -69,7 +69,7 @@ const CMS = (() => {
       hero_badge:    '🚲 De enige koffiefiets die bonen maalt met trapkracht',
       hero_title:    'Koffie trappen met de glimlach',
       hero_sub:      'Op onze Velopresso\'s malen we de bonen met onze pedalen en schenken we cappuccino, latte, chaï, matcha latte en thee met heel veel goesting.',
-      hero_btn1:     'Onze diensten ontdekken',
+      hero_btn1:     'Ons aanbod ontdekken',
       hero_btn2:     'Latte Art Workshop',
       about_title:   'Smiling Barista\'s: koffie trappen met de glimlach',
       about_text1:   'Wij ontvangen jullie gasten met een glimlach en een lekkere warme drank, zijn de blikvanger op jullie bedrijfsfeest en ijsbreker op jullie beursstand. Dat blijft hangen bij je bezoekers… op de tofste manier!',
