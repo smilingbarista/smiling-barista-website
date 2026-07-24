@@ -336,14 +336,24 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
   color: rgba(255,255,255,.92); margin-bottom: 1.75rem; max-width: 520px;
 }
 .hero-card__actions { display: flex; align-items: center; gap: .875rem; flex-wrap: wrap; }
-.hero-card__cta-img {
-  display: block; width: 190px; height: 56px; border-radius: var(--r-full);
-  flex-shrink: 0;
+
+.hero-card__badge {
+  position: absolute; z-index: 2; top: clamp(1.25rem, 3vw, 2rem); left: clamp(1.25rem, 3vw, 2rem);
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  text-decoration: none;
 }
-.hero-card__cta-img .img-ph__inner { flex-direction: row; gap: .5rem; padding: .5rem .875rem; }
-.hero-card__cta-img .img-ph__inner svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
-.hero-card__cta-img .img-ph__inner span { font-size: .8125rem; font-weight: 600; white-space: nowrap; }
-.hero-card__cta-img.img-ph--filled img { border-radius: inherit; }
+.hero-card__badge-img.img-ph {
+  display: block; width: 64px; height: 64px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.85); background: rgba(255,255,255,.15);
+}
+.hero-card__badge-img .img-ph__inner { padding: 0; }
+.hero-card__badge-img .img-ph__inner svg { width: 1.5rem; height: 1.5rem; color: rgba(255,255,255,.85); }
+.hero-card__badge-img.img-ph--filled img { border-radius: inherit; }
+.hero-card__badge-label {
+  font-size: .75rem; font-weight: 700; color: var(--white); text-align: center; white-space: nowrap;
+  background: rgba(0,30,53,.55); padding: .25rem .75rem; border-radius: var(--r-full);
+  backdrop-filter: blur(4px);
+}
 
 .hero-card__video {
   position: relative; z-index: 2; flex-shrink: 0;
@@ -354,7 +364,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .hero-card__video .video-wrap--portrait { padding-top: 177.78%; width: clamp(200px, 22vw, 280px); }
 @media (max-width: 900px) {
   .hero-card { flex-direction: column; align-items: center; justify-content: flex-start; }
-  .hero-card__content { padding-bottom: 1rem; }
+  .hero-card__content { padding-bottom: 1rem; padding-top: 8.5rem; }
   .hero-card__video { padding: 0 clamp(1.5rem, 6vw, 3.5rem) clamp(2rem, 6vw, 3.5rem); }
   .hero-card__video .video-wrap--portrait { width: min(220px, 55vw); margin: 0 auto; }
 }
