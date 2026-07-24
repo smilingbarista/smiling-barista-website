@@ -892,7 +892,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--t), transform var(--t);
-  padding: 2px;
+  padding: 5px;
 }
 .svc-card--img:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
 .svc-card__body { padding: 10px 1.5rem 1.5rem; }
