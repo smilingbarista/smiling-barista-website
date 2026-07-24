@@ -44,7 +44,6 @@ const CMS = (() => {
 
     blocks: [
       { id:'hero',          label:'Hero banner',           icon:'🚀', visible:true },
-      { id:'about',         label:'Over ons',              icon:'☕', visible:true },
       { id:'services',      label:'Aanbod overzicht',      icon:'📋', visible:true },
       { id:'teambuilding',  label:'Teambuilding',          icon:'🚲', visible:true },
       { id:'workshopteaser',label:'Workshops-teaser',      icon:'🎨', visible:true },
