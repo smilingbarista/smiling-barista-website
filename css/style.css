@@ -291,7 +291,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .testi-card { background: var(--cream); border-radius: var(--r-xl); padding: 1.75rem; }
 .testi-stars { color: var(--caramel); font-size: 1rem; margin-bottom: 1rem; letter-spacing: .1em; }
-.testi-text { font-style: italic; line-height: 1.8; margin-bottom: 1.25rem; }
+.testi-text { font-style: italic; line-height: 1.8; margin-bottom: 1.25rem; color: #0366C5; }
 .testi-author { display: flex; align-items: center; gap: .875rem; }
 .testi-avatar {
   width: 42px; height: 42px; border-radius: 50%;
@@ -409,7 +409,6 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .section--blue { background: var(--brown); color: rgba(255,255,255,.9); }
 .section--blue .sec-head__label { color: var(--latte); }
 .section--blue .sec-head h2 { color: var(--white); }
-.section--blue .sec-head h2.reviews-title { color: #0366C5; }
 .section--blue .sec-head p { color: rgba(255,255,255,.75); }
 .section--blue .btn--secondary { border-color: rgba(255,255,255,.7); color: var(--white); }
 .section--blue .btn--secondary:hover { background: var(--white); color: var(--brown); }
