@@ -409,6 +409,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .section--blue { background: var(--brown); color: rgba(255,255,255,.9); }
 .section--blue .sec-head__label { color: var(--latte); }
 .section--blue .sec-head h2 { color: var(--white); }
+.section--blue .sec-head h2.reviews-title { color: #0366C5; }
 .section--blue .sec-head p { color: rgba(255,255,255,.75); }
 .section--blue .btn--secondary { border-color: rgba(255,255,255,.7); color: var(--white); }
 .section--blue .btn--secondary:hover { background: var(--white); color: var(--brown); }
