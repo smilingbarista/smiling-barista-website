@@ -451,7 +451,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
 .supplements-box { background: var(--white); border: 2px solid var(--caramel); border-radius: var(--r-xl); padding: 2rem; }
 .supplements-box__title { font-family: var(--font-head); font-weight: 700; font-size: 1.125rem; margin-bottom: 1rem; color: var(--espresso); }
 .supplements-box__list { font-size: .9063rem; line-height: 1.9; color: var(--text-light); }
-.tarieven-note { text-align: center; font-size: .9063rem; color: var(--text-light); margin: 1.75rem 0 0; font-style: italic; }
+.tarieven-note { text-align: center; font-size: .9063rem; color: var(--white); margin: 1.75rem 0 0; font-style: italic; }
 
 /* ─── GALLERY ─── */
 .gallery-grid { display: flex; gap: 1.375rem; flex-wrap: wrap; }
