@@ -563,6 +563,22 @@
 <script>
 const ICON_PLACEHOLDER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 const fmtEur = n => '€ ' + Number(n).toFixed(2).replace('.', ',');
+// "09:30" + "12:30" -> "3 uur" / "09:30" + "12:00" -> "2,5 uur". Geeft ''
+// terug als er geen (geldige) eindtijd is, zodat oudere sessies zonder
+// eindtijd gewoon enkel de starttijd blijven tonen.
+function sessDuration(time, endTime) {
+  if (!time || !endTime) return '';
+  const [h1, m1] = time.split(':').map(Number);
+  const [h2, m2] = endTime.split(':').map(Number);
+  const mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+  if (!(mins > 0)) return '';
+  const hours = mins / 60;
+  return (Number.isInteger(hours) ? String(hours) : hours.toFixed(1).replace('.', ',')) + ' uur';
+}
+function fmtSessTime(s) {
+  const dur = sessDuration(s.time, s.end_time);
+  return s.time + (s.end_time ? ' – ' + s.end_time : '') + (dur ? ' · ' + dur : '');
+}
 const LEVEL_BADGE = { 1: null, 2: 'Vervolg', 3: 'Gevorderd' };
 
 function renderWorkshopCards() {
@@ -659,7 +675,7 @@ const BookingModal = (() => {
       const full = left <= 0;
       return '<button type="button" class="bk-sess-btn"' + (full?' disabled':'') + ' data-sess-id="' + s.id + '" onclick="BookingModal.selectSession(\'' + s.id + '\')">' +
         '<span class="bk-sess-dot" style="background:' + (ws?.color||'#0366C5') + '"></span>' +
-        '<div class="bk-sess-info"><div class="bk-sess-name">' + (ws?.name||wsKey) + '</div><div class="bk-sess-meta">' + s.time + '</div></div>' +
+        '<div class="bk-sess-info"><div class="bk-sess-name">' + (ws?.name||wsKey) + '</div><div class="bk-sess-meta">' + fmtSessTime(s) + '</div></div>' +
         '<div class="bk-sess-spots" style="color:' + (full?'var(--error)':left<=2?'#ea580c':'var(--caramel)') + '">' + (full?'Volzet':left+(left===1?' plaats vrij':' plaatsen vrij')) + '</div>' +
         '</button>';
     }).join('');
@@ -679,7 +695,7 @@ const BookingModal = (() => {
     $('bk-sel-summary').innerHTML =
       '<strong>' + (ws?.name||wsKey) + '</strong>' +
       '<span style="float:right;color:var(--caramel);font-weight:700">' + fmtEur(ws?.price||0) + ' / pers.</span><br>' +
-      '<span style="color:var(--text-light)">' + dn2[dObj.getDay()] + ' ' + dObj.getDate() + ' ' + mn2[dObj.getMonth()] + ' ' + dObj.getFullYear() + ' · ' + selSess.time + '</span>';
+      '<span style="color:var(--text-light)">' + dn2[dObj.getDay()] + ' ' + dObj.getDate() + ' ' + mn2[dObj.getMonth()] + ' ' + dObj.getFullYear() + ' · ' + fmtSessTime(selSess) + '</span>';
     $('bk-spots-sub').textContent = 'Max ' + max + ' per boeking';
     $('bk-spots-count').textContent = '1';
     $('bk-minus').disabled = true;

@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const { workshopId, date, time, maxSpots, bookedSpots, notes } =
+      const { workshopId, date, time, endTime, maxSpots, bookedSpots, notes } =
         req.body || {};
       if (!workshopId || !date || !time) {
         res.status(400).json({ error: "Ontbrekende gegevens." });
@@ -27,6 +27,7 @@ module.exports = async function handler(req, res) {
           workshop_id: workshopId,
           date,
           time,
+          end_time: endTime || null,
           max_spots: maxSpots || null,
           booked_spots: bookedSpots || 0,
           notes: notes || null,

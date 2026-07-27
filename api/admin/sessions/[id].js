@@ -1,14 +1,21 @@
 const { sb } = require("../../_lib/supabase");
 const { requireAdmin } = require("../../_lib/admin-auth");
 
-const PATCHABLE_FIELDS = [
-  "date",
-  "time",
-  "max_spots",
-  "booked_spots",
-  "notes",
-  "cancelled",
-];
+// Vertaalt de camelCase velden die de client stuurt (zelfde vorm als de
+// POST-body in sessions.js) naar de snake_case kolomnamen in Postgres. Eerder
+// verwachtte deze whitelist rechtstreeks "max_spots"/"booked_spots" terwijl
+// de admin-UI altijd "maxSpots"/"bookedSpots" stuurde — die twee velden
+// werden daardoor stilzwijgend nooit opgeslagen bij het bewerken van een
+// bestaande sessie.
+const FIELD_MAP = {
+  date: "date",
+  time: "time",
+  endTime: "end_time",
+  maxSpots: "max_spots",
+  bookedSpots: "booked_spots",
+  notes: "notes",
+  cancelled: "cancelled",
+};
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
@@ -17,8 +24,8 @@ module.exports = async function handler(req, res) {
   try {
     if (req.method === "PATCH") {
       const body = {};
-      for (const key of PATCHABLE_FIELDS) {
-        if (req.body && req.body[key] !== undefined) body[key] = req.body[key];
+      for (const [key, column] of Object.entries(FIELD_MAP)) {
+        if (req.body && req.body[key] !== undefined) body[column] = req.body[key];
       }
       const [row] = await sb(`/workshop_sessions?id=eq.${id}`, {
         method: "PATCH",
