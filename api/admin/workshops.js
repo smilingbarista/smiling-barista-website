@@ -44,6 +44,23 @@ module.exports = async function handler(req, res) {
       return;
     }
 
+    if (req.method === "PATCH") {
+      // Volgorde herschikken: body = { order: [id1, id2, ...] } in de nieuwe
+      // volgorde. sort_order wordt herschreven naar de positie in die lijst.
+      const { order } = req.body || {};
+      if (!Array.isArray(order) || !order.length) {
+        res.status(400).json({ error: "Ontbrekende volgorde." });
+        return;
+      }
+      await Promise.all(
+        order.map((id, i) =>
+          sb(`/workshops?id=eq.${id}`, { method: "PATCH", body: { sort_order: i } }),
+        ),
+      );
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
     console.error("admin/workshops error:", err);
