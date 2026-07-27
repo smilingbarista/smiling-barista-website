@@ -885,6 +885,11 @@ async function showBookingReturnStatus() {
 (async function init() {
   await WorkshopsData.load();
   renderWorkshopCards();
+  // De workshopkaarten (met hun img_ws_<id> placeholders) bestaan pas na
+  // deze async Supabase-fetch, dus ruim ná de DOMContentLoaded-pass die
+  // cms.js al deed — zonder deze herhaling worden de foto's van de
+  // workshops nooit ingevuld.
+  CMS.applyToPage();
   showBookingReturnStatus();
 })();
 </script>
