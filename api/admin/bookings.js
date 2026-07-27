@@ -17,6 +17,6 @@ module.exports = async function handler(req, res) {
     res.status(200).json(rows);
   } catch (err) {
     console.error("admin/bookings error:", err);
-    res.status(500).json({ error: "Er ging iets mis." });
+    res.status(500).json({ error: err.message || "Er ging iets mis." });
   }
 };

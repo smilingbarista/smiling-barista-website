@@ -16,6 +16,6 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
     console.error("admin/workshops error:", err);
-    res.status(500).json({ error: "Er ging iets mis." });
+    res.status(500).json({ error: err.message || "Er ging iets mis." });
   }
 };
