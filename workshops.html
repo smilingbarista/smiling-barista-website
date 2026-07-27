@@ -206,12 +206,18 @@
     .bk-avail-dates { background: var(--cream); border-radius: 10px; padding: .75rem; max-height: 268px; overflow-y: auto; }
     .bk-avail-dates__label { font-size: .625rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-light); margin-bottom: .625rem; }
     .bk-avail-date {
-      display: block; width: 100%; text-align: left; background: #fff; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: .375rem;
+      width: 100%; text-align: left; background: #fff; border: 1px solid var(--border);
       border-radius: 8px; padding: .4rem .5rem; margin-bottom: .375rem; cursor: pointer;
       font-size: .75rem; font-family: inherit; line-height: 1.3; color: var(--text); transition: background .12s, border-color .12s;
     }
     .bk-avail-date:hover { border-color: var(--caramel); }
     .bk-avail-date.sel { background: var(--caramel); border-color: var(--caramel); color: #fff; }
+    .bk-avail-date__spots { font-weight: 700; flex-shrink: 0; }
+    .bk-avail-date__spots--ok   { color: var(--caramel); }
+    .bk-avail-date__spots--low  { color: #ea580c; }
+    .bk-avail-date__spots--full { color: var(--text-light); }
+    .bk-avail-date.sel .bk-avail-date__spots { color: #fff; }
     .bk-avail-date-empty { font-size: .75rem; color: var(--text-light); }
     @media (max-width: 560px) {
       .bk-cal-layout { grid-template-columns: 1fr; }
@@ -682,7 +688,10 @@ const BookingModal = (() => {
   function renderAvailDates(selectedDs) {
     const dn = ['zo','ma','di','wo','do','vr','za'];
     const mn = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
-    const dates = Array.from(new Set(WorkshopsData.getUpcoming(wsKey).map(s => s.date))).sort();
+    const ws = WorkshopsData.getWorkshop(wsKey);
+    const byDate = {};
+    WorkshopsData.getUpcoming(wsKey).forEach(s => { (byDate[s.date] = byDate[s.date] || []).push(s); });
+    const dates = Object.keys(byDate).sort();
     const listEl = $('bk-avail-dates-list');
     if (!dates.length) {
       listEl.innerHTML = '<p class="bk-avail-date-empty">Nog geen data gepland.</p>';
@@ -691,8 +700,15 @@ const BookingModal = (() => {
     listEl.innerHTML = dates.map(ds => {
       const d = new Date(ds + 'T00:00:00');
       const label = dn[d.getDay()] + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
-      const sel = ds === selectedDs ? ' sel' : '';
-      return '<button type="button" class="bk-avail-date' + sel + '" onclick="BookingModal.jumpToDate(\'' + ds + '\')">' + label + '</button>';
+      const sessList = byDate[ds];
+      const left = Math.max(0, sessList.reduce((sum, s) => sum + WorkshopsData.spotsLeft(s), 0));
+      const max  = sessList.reduce((sum, s) => sum + (s.max_spots ?? ws?.max_spots ?? 8), 0);
+      const sel  = ds === selectedDs ? ' sel' : '';
+      const spotsCls = left <= 0 ? 'bk-avail-date__spots--full' : left <= 2 ? 'bk-avail-date__spots--low' : 'bk-avail-date__spots--ok';
+      return '<button type="button" class="bk-avail-date' + sel + '" onclick="BookingModal.jumpToDate(\'' + ds + '\')">' +
+        '<span>' + label + '</span>' +
+        '<span class="bk-avail-date__spots ' + spotsCls + '">' + left + '/' + max + '</span>' +
+        '</button>';
     }).join('');
   }
 
