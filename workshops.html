@@ -182,7 +182,8 @@
     .bk-error-msg.visible { display: block; }
 
     /* ── Calendar in modal ──────────────────────────── */
-    .bk-cal { background: #fff; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; border: 1.5px solid var(--border); }
+    .bk-cal-layout { display: grid; grid-template-columns: 1fr 172px; gap: 1rem; align-items: start; margin-bottom: 1.5rem; }
+    .bk-cal { background: #fff; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); }
     .bk-cal-head { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1rem; background: var(--espresso); color: #fff; }
     .bk-cal-head h4 { font-family: var(--font-head); font-size: .9375rem; }
     .bk-cal-nav { width: 1.875rem; height: 1.875rem; background: rgba(255,255,255,.12); border: none; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -200,6 +201,22 @@
     .bk-cal-dots { display: flex; gap: 2px; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); }
     .bk-cal-dot  { width: 4px; height: 4px; border-radius: 50%; display: block; }
     .bk-cd-sel .bk-cal-dot { background: rgba(255,255,255,.7) !important; }
+
+    /* Beschikbare-data zijpaneel naast de kalender */
+    .bk-avail-dates { background: var(--cream); border-radius: 10px; padding: .75rem; max-height: 268px; overflow-y: auto; }
+    .bk-avail-dates__label { font-size: .625rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-light); margin-bottom: .625rem; }
+    .bk-avail-date {
+      display: block; width: 100%; text-align: left; background: #fff; border: 1px solid var(--border);
+      border-radius: 8px; padding: .4rem .5rem; margin-bottom: .375rem; cursor: pointer;
+      font-size: .75rem; font-family: inherit; line-height: 1.3; color: var(--text); transition: background .12s, border-color .12s;
+    }
+    .bk-avail-date:hover { border-color: var(--caramel); }
+    .bk-avail-date.sel { background: var(--caramel); border-color: var(--caramel); color: #fff; }
+    .bk-avail-date-empty { font-size: .75rem; color: var(--text-light); }
+    @media (max-width: 560px) {
+      .bk-cal-layout { grid-template-columns: 1fr; }
+      .bk-avail-dates { max-height: 140px; }
+    }
 
     /* Sessions on selected date */
     .bk-day-sessions { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.5rem; }
@@ -477,14 +494,20 @@
           Er zijn momenteel geen geplande sessies.
           <a href="contact.html">Neem contact op</a> en we plannen iets in.
         </div>
-        <div class="bk-cal" id="bk-cal">
-          <div class="bk-cal-head">
-            <button class="bk-cal-nav" id="bk-cal-prev" onclick="BookingModal.calNav(-1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <h4 id="bk-cal-label"></h4>
-            <button class="bk-cal-nav" id="bk-cal-next" onclick="BookingModal.calNav(1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <div class="bk-cal-layout">
+          <div class="bk-cal" id="bk-cal">
+            <div class="bk-cal-head">
+              <button class="bk-cal-nav" id="bk-cal-prev" onclick="BookingModal.calNav(-1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <h4 id="bk-cal-label"></h4>
+              <button class="bk-cal-nav" id="bk-cal-next" onclick="BookingModal.calNav(1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+            <div class="bk-cal-wdays" id="bk-cal-wdays"></div>
+            <div class="bk-cal-grid" id="bk-cal-grid"></div>
           </div>
-          <div class="bk-cal-wdays" id="bk-cal-wdays"></div>
-          <div class="bk-cal-grid" id="bk-cal-grid"></div>
+          <div class="bk-avail-dates" id="bk-avail-dates">
+            <div class="bk-avail-dates__label">Beschikbare data</div>
+            <div id="bk-avail-dates-list"></div>
+          </div>
         </div>
         <div id="bk-day-label" class="bk-section-label" style="display:none;margin-top:1.25rem;margin-bottom:.75rem"></div>
         <div class="bk-day-sessions" id="bk-day-sessions"></div>
@@ -650,6 +673,34 @@ const BookingModal = (() => {
     const upcoming = WorkshopsData.getUpcoming(wsKey);
     $('bk-no-dates').style.display = upcoming.length ? 'none' : 'block';
     $('bk-cal').style.display = upcoming.length ? '' : 'none';
+    renderAvailDates();
+  }
+
+  // Lijst van alle unieke toekomstige datums met sessies, klikbaar — naast
+  // de kalender, zodat een klant niet per se maand per maand hoeft te
+  // doorklikken om te zien wanneer er iets gepland staat.
+  function renderAvailDates(selectedDs) {
+    const dn = ['zo','ma','di','wo','do','vr','za'];
+    const mn = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+    const dates = Array.from(new Set(WorkshopsData.getUpcoming(wsKey).map(s => s.date))).sort();
+    const listEl = $('bk-avail-dates-list');
+    if (!dates.length) {
+      listEl.innerHTML = '<p class="bk-avail-date-empty">Nog geen data gepland.</p>';
+      return;
+    }
+    listEl.innerHTML = dates.map(ds => {
+      const d = new Date(ds + 'T00:00:00');
+      const label = dn[d.getDay()] + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
+      const sel = ds === selectedDs ? ' sel' : '';
+      return '<button type="button" class="bk-avail-date' + sel + '" onclick="BookingModal.jumpToDate(\'' + ds + '\')">' + label + '</button>';
+    }).join('');
+  }
+
+  function jumpToDate(ds) {
+    const [y, m] = ds.split('-').map(Number);
+    calY = y; calM = m - 1;
+    renderCal();
+    selectDay(ds);
   }
 
   function selectDay(ds) {
@@ -661,6 +712,7 @@ const BookingModal = (() => {
         if (elDs === ds) el.classList.add('bk-cd-sel');
       }
     });
+    renderAvailDates(ds);
     const list = WorkshopsData.getSessionsOnDate(wsKey, ds);
     const lblEl = $('bk-day-label'), listEl = $('bk-day-sessions');
     if (!list.length) { lblEl.style.display = 'none'; listEl.innerHTML = ''; return; }
@@ -792,7 +844,7 @@ const BookingModal = (() => {
   $('booking-overlay').addEventListener('click', function(e) { if (e.target === this) close(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-  return { open, close, backToCal, calNav, selectDay, selectSession, changeSpots, submit };
+  return { open, close, backToCal, calNav, selectDay, jumpToDate, selectSession, changeSpots, submit };
 })();
 
 async function showBookingReturnStatus() {
