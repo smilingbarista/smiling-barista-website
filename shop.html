@@ -435,7 +435,7 @@ async function initShop() {
 }
 
 function filterProducts() {
-  let list = [...currentProducts];
+  let list = currentProducts.filter(p => p.visible !== false);
   if (currentCat !== 'all') list = list.filter(p => p.cat === currentCat);
   if (currentPrice !== 'all') {
     if (currentPrice === '0-20')  list = list.filter(p => p.price < 20);
