@@ -1,5 +1,6 @@
 const { sb } = require("./_lib/supabase");
 const { mollie } = require("./_lib/mollie");
+const { revertCodeUsage } = require("./_lib/discount");
 
 // Mollie stuurt enkel { id } (form-encoded) en verwacht een snelle 2xx.
 // Bij een echte fout geven we een 500 terug zodat Mollie het later
@@ -54,6 +55,9 @@ module.exports = async function handler(req, res) {
             booked_spots: Math.max(0, session.booked_spots - booking.spots),
           },
         });
+      }
+      if (booking.discount_code) {
+        await revertCodeUsage(booking.discount_code, Number(booking.discount_amount) || 0);
       }
     }
 

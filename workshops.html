@@ -137,11 +137,21 @@
     .bk-stepper button:hover { background: var(--brown); }
     .bk-stepper button:disabled { background: var(--border); cursor: not-allowed; }
     .bk-spots-count { font-size: 1.25rem; font-weight: 700; min-width: 1.5rem; text-align: center; }
+    .bk-discount-row { display: flex; gap: .625rem; margin-top: -.75rem; margin-bottom: .5rem; }
+    .bk-discount-row input {
+      flex: 1; padding: .625rem .875rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-md); font-size: .875rem; font-family: inherit; outline: none;
+    }
+    .bk-discount-row input:focus { border-color: var(--caramel); }
+    .bk-discount-msg { font-size: .8125rem; margin-bottom: 1rem; display: none; }
+    .bk-discount-msg.ok  { color: var(--success); display: block; }
+    .bk-discount-msg.err { color: var(--error); display: block; }
     .bk-total {
       text-align: right; font-size: .875rem; color: var(--text-light);
-      margin-bottom: 1.75rem; margin-top: -.75rem;
+      margin-bottom: 1.75rem;
     }
     .bk-total strong { font-size: 1.125rem; color: var(--espresso); }
+    .bk-total-original { text-decoration: line-through; color: var(--text-light); margin-right: .5rem; font-weight: 400; font-size: .875rem; }
 
     /* personal info */
     .bk-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
@@ -536,6 +546,12 @@
             <button id="bk-plus" onclick="BookingModal.changeSpots(1)" aria-label="Meer">&#43;</button>
           </div>
         </div>
+        <div class="bk-discount-row">
+          <input type="text" id="bk-discount-code" placeholder="Kortingscode of cadeaubon">
+          <button type="button" class="btn btn--secondary btn--sm" onclick="BookingModal.applyDiscount()" id="bk-discount-btn">Toepassen</button>
+        </div>
+        <div id="bk-discount-msg" class="bk-discount-msg"></div>
+
         <div class="bk-total" id="bk-total">
           Totaal: <strong id="bk-total-price"></strong>
         </div>
@@ -650,6 +666,7 @@ function renderWorkshopCards() {
 
 const BookingModal = (() => {
   let wsKey = null, selSess = null, spots = 1, calY = 0, calM = 0;
+  let appliedDiscount = null; // { code, kind, discount, newTotal } | null
   const $ = id => document.getElementById(id);
 
   function setState(name) {
@@ -774,6 +791,7 @@ const BookingModal = (() => {
     $('bk-plus').disabled  = max <= 1;
     $('bk-minus').dataset.max = max;
     $('bk-plus').dataset.max  = max;
+    resetDiscount();
     updateTotal();
     $('bk-pay-hint').textContent = 'Betaling via Mollie · Bancontact en creditcard';
     $('bk-form').reset();
@@ -782,9 +800,50 @@ const BookingModal = (() => {
     document.getElementById('booking-modal').scrollTop = 0;
   }
 
+  function resetDiscount() {
+    appliedDiscount = null;
+    $('bk-discount-code').value = '';
+    $('bk-discount-msg').className = 'bk-discount-msg';
+    $('bk-discount-msg').textContent = '';
+  }
+
+  async function applyDiscount() {
+    const code = $('bk-discount-code').value.trim();
+    const msgEl = $('bk-discount-msg');
+    if (!code) return;
+    if (!selSess) { msgEl.className = 'bk-discount-msg err'; msgEl.textContent = 'Kies eerst een sessie.'; return; }
+    const btn = $('bk-discount-btn');
+    btn.disabled = true; btn.textContent = 'Bezig…';
+    try {
+      const res = await fetch('/api/validate-discount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, sessionId: selSess.id, spots }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Ongeldige code.');
+      appliedDiscount = { code, kind: data.kind, discount: data.discount, newTotal: data.newTotal };
+      msgEl.className = 'bk-discount-msg ok';
+      msgEl.textContent = '"' + code.toUpperCase() + '" toegepast: -' + fmtEur(data.discount);
+      updateTotal();
+    } catch (err) {
+      appliedDiscount = null;
+      msgEl.className = 'bk-discount-msg err';
+      msgEl.textContent = err.message || 'Ongeldige code.';
+      updateTotal();
+    } finally {
+      btn.disabled = false; btn.textContent = 'Toepassen';
+    }
+  }
+
   function updateTotal() {
     const ws = WorkshopsData.getWorkshop(selSess?.workshop_id);
-    $('bk-total-price').textContent = fmtEur((ws?.price||0) * spots);
+    const total = (ws?.price||0) * spots;
+    if (appliedDiscount) {
+      $('bk-total-price').innerHTML = '<span class="bk-total-original">' + fmtEur(total) + '</span>' + fmtEur(appliedDiscount.newTotal);
+    } else {
+      $('bk-total-price').textContent = fmtEur(total);
+    }
   }
 
   function open(workshopIdArg) {
@@ -795,6 +854,7 @@ const BookingModal = (() => {
     $('bk-day-label').style.display = 'none';
     $('bk-day-sessions').innerHTML  = '';
     $('bk-error-msg').classList.remove('visible');
+    resetDiscount();
     const n = new Date(); calY = n.getFullYear(); calM = n.getMonth();
     renderCal(); setState('cal');
     $('booking-overlay').classList.add('open');
@@ -826,6 +886,13 @@ const BookingModal = (() => {
     $('bk-spots-count').textContent = spots;
     $('bk-minus').disabled = spots <= 1;
     $('bk-plus').disabled  = spots >= max;
+    // Een toegepaste code was berekend voor het vorige aantal plaatsen —
+    // bij een wijziging moet ze opnieuw toegepast worden om te kloppen.
+    if (appliedDiscount) {
+      resetDiscount();
+      $('bk-discount-msg').className = 'bk-discount-msg err';
+      $('bk-discount-msg').textContent = 'Aantal plaatsen gewijzigd — pas de code opnieuw toe.';
+    }
     updateTotal();
   }
 
@@ -850,10 +917,21 @@ const BookingModal = (() => {
           customerEmail: email,
           customerPhone: phone,
           customerNote: note,
+          discountCode: appliedDiscount ? appliedDiscount.code : '',
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis.');
+      if (data.paid) {
+        // Volledig gedekt door de kortingscode/cadeaubon — geen Mollie nodig.
+        $('bk-success-msg').textContent = 'Je kortingscode of cadeaubon dekte het volledige bedrag. Je ontvangt een bevestiging per e-mail.';
+        $('bk-pay-action').textContent = 'Sluiten';
+        $('bk-pay-action').removeAttribute('target');
+        $('bk-pay-action').href = '#';
+        $('bk-pay-action').onclick = (ev) => { ev.preventDefault(); close(); };
+        setState('success');
+        return;
+      }
       window.location.href = data.checkoutUrl;
     } catch (err) {
       btn.disabled = false; btn.textContent = 'Bevestigen en betalen';
@@ -866,7 +944,7 @@ const BookingModal = (() => {
   $('booking-overlay').addEventListener('click', function(e) { if (e.target === this) close(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-  return { open, close, backToCal, calNav, selectDay, jumpToDate, selectSession, changeSpots, submit };
+  return { open, close, backToCal, calNav, selectDay, jumpToDate, selectSession, changeSpots, applyDiscount, submit };
 })();
 
 async function showBookingReturnStatus() {
