@@ -316,6 +316,20 @@
     .part-card__meta { font-size: .8125rem; color: var(--text); font-weight: 600; margin-bottom: .5rem; }
     .part-card__note { font-size: .8125rem; color: var(--text); background: var(--bg); border-radius: var(--r-md); padding: .5rem .625rem; font-style: italic; }
     .part-card__prev { font-size: .75rem; color: var(--muted); margin-bottom: .375rem; }
+    .part-card--checked_in { border-color: var(--green); background: #f0fdf4; }
+    .part-card--no_show    { border-color: var(--red); background: #fef2f2; }
+    .part-card--cancelled  { border-color: #ea580c; background: #fff7ed; }
+    .part-card--moved      { border-color: var(--blue); background: #eff6ff; }
+    .part-card__checkin { display: flex; gap: .375rem; flex-wrap: wrap; margin-top: .625rem; }
+    .checkin-btn {
+      font-size: .6875rem; font-weight: 700; padding: .3rem .55rem; border-radius: var(--r-full);
+      border: 1.5px solid var(--border); background: #fff; color: var(--muted); cursor: pointer; transition: all .12s;
+    }
+    .checkin-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+    .checkin-btn.checkin--green.active  { background: var(--green); border-color: var(--green); color: #fff; }
+    .checkin-btn.checkin--red.active    { background: var(--red); border-color: var(--red); color: #fff; }
+    .checkin-btn.checkin--orange.active { background: #ea580c; border-color: #ea580c; color: #fff; }
+    .checkin-btn.checkin--blue.active   { background: var(--blue); border-color: var(--blue); color: #fff; }
 
     /* Toast */
     .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; color: #fff; padding: .75rem 1.25rem; border-radius: var(--r-lg); font-size: .875rem; font-weight: 500; box-shadow: var(--sh-md); animation: toastIn .25s ease, toastOut .3s 2.7s ease forwards; pointer-events: none; }
@@ -1214,6 +1228,28 @@ async function saveWorkshopOrder() {
 let ADMIN_BOOKINGS = [];
 let participantsSessionFilter = null; // { sessionId, label } of null (alle deelnemers)
 const BOOKING_STATUS_LABEL = { paid: 'Betaald', pending: 'In afwachting', cancelled: 'Geannuleerd', expired: 'Verlopen', failed: 'Mislukt' };
+// Aanwezigheidsstatus op de dag zelf — los van BOOKING_STATUS_LABEL, dat de
+// betaalstatus weergeeft.
+const CHECKIN_OPTIONS = [
+  { value: 'checked_in', label: 'Ingecheckt',  cls: 'checkin--green' },
+  { value: 'no_show',    label: 'No show',     cls: 'checkin--red' },
+  { value: 'cancelled',  label: 'Geannuleerd', cls: 'checkin--orange' },
+  { value: 'moved',      label: 'Verplaatst',  cls: 'checkin--blue' },
+];
+async function setCheckinStatus(id, status) {
+  const b = ADMIN_BOOKINGS.find(x => x.id === id);
+  if (!b) return;
+  const prev = b.checkin_status;
+  b.checkin_status = prev === status ? null : status; // nogmaals klikken op dezelfde = wissen
+  renderParticipants();
+  try {
+    await adminFetch('/api/admin/bookings/' + id, { method: 'PATCH', body: JSON.stringify({ checkinStatus: b.checkin_status }) });
+  } catch (err) {
+    b.checkin_status = prev;
+    renderParticipants();
+    toast(err.message, false);
+  }
+}
 
 async function loadParticipants() {
   try {
@@ -1286,7 +1322,11 @@ function renderParticipants() {
     const sess = b.workshop_sessions;
     const statusCls   = 'status--' + (b.status || 'pending');
     const statusLabel = BOOKING_STATUS_LABEL[b.status] || b.status || '';
-    return `<div class="part-card">
+    const checkinCardCls = b.checkin_status ? ' part-card--' + b.checkin_status : '';
+    const checkinBtns = CHECKIN_OPTIONS.map(o =>
+      `<button type="button" class="checkin-btn ${o.cls}${b.checkin_status === o.value ? ' active' : ''}" onclick="setCheckinStatus('${b.id}','${o.value}')">${o.label}</button>`
+    ).join('');
+    return `<div class="part-card${checkinCardCls}">
       <div class="part-card__head">
         <span class="part-card__name">${esc(b.customer_name)}</span>
         <span class="part-card__status ${statusCls}">${esc(statusLabel)}</span>
@@ -1296,6 +1336,7 @@ function renderParticipants() {
         <a href="mailto:${escA(b.customer_email)}">${esc(b.customer_email)}</a>
         ${b.customer_phone ? `<a href="tel:${escA(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
       </div>
+      <div class="part-card__checkin">${checkinBtns}</div>
       <div class="part-card__meta">${b.spots} plaats${b.spots === 1 ? '' : 'en'} · € ${Number(b.amount_total).toFixed(2).replace('.', ',')}${b.newsletter ? ' · 📩 nieuwsbrief' : ''}</div>
       ${b.previous_workshops?.length ? `<div class="part-card__prev">Eerder gevolgd: ${esc(b.previous_workshops.map(id => ADMIN_ALL_WORKSHOPS.find(w => w.id === id)?.short_name || id).join(', '))}</div>` : ''}
       ${b.customer_note ? `<div class="part-card__note">${esc(b.customer_note)}</div>` : ''}
