@@ -242,6 +242,9 @@
     .pm-checklist { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; max-height: 180px; overflow-y: auto; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: .75rem; }
     .pm-checkbox { display: flex; align-items: center; gap: .5rem; font-size: .875rem; font-weight: 400; cursor: pointer; }
     .pm-checkbox input { width: auto; }
+    .sm-participants-list { display: flex; flex-direction: column; gap: .375rem; max-height: 140px; overflow-y: auto; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: .625rem .75rem; }
+    .sm-participant-row { display: flex; justify-content: space-between; gap: .5rem; font-size: .8125rem; }
+    .sm-participant-row span:last-child { color: var(--muted); flex-shrink: 0; }
 
     /* ── MODAL ─────────────────────────────────────────── */
     .modal-bg {
@@ -618,6 +621,10 @@
       <div class="field-row">
         <div class="field"><label>Max. plaatsen</label><input type="number" id="sm-max" min="1" max="20" placeholder="Standaard van workshop"><div class="field-hint">Leeg = standaard maximum.</div></div>
         <div class="field"><label>Reeds geboekt</label><input type="number" id="sm-booked" min="0" value="0"><div class="field-hint">Wordt automatisch bijgehouden bij Mollie-boekingen.</div></div>
+      </div>
+      <div class="field" id="sm-participants-field" style="display:none">
+        <label>Deelnemers (<span id="sm-participants-count">0</span>)</label>
+        <div id="sm-participants-list" class="sm-participants-list"></div>
       </div>
       <div class="field"><label>Notitie (intern)</label><textarea id="sm-notes" rows="2" placeholder="Bijv. privégroep, speciale locatie…"></textarea></div>
     </div>
@@ -1066,7 +1073,25 @@ function openSessionModal(id) {
   document.getElementById('sm-booked').value         = s?.booked_spots  || 0;
   document.getElementById('sm-notes').value          = s?.notes         || '';
   document.getElementById('sm-add-participant').style.display = id ? '' : 'none';
+  loadSessionParticipants(id);
   openModal('session-modal');
+}
+
+async function loadSessionParticipants(sessionId) {
+  const field = document.getElementById('sm-participants-field');
+  if (!sessionId) { field.style.display = 'none'; return; }
+  field.style.display = '';
+  document.getElementById('sm-participants-list').innerHTML = '<span style="color:var(--muted);font-size:.8125rem">Laden…</span>';
+  try {
+    const bookings = await adminFetch('/api/admin/bookings?sessionId=' + sessionId);
+    const active = bookings.filter(b => b.status !== 'cancelled' && b.status !== 'failed' && b.status !== 'expired');
+    document.getElementById('sm-participants-count').textContent = active.reduce((sum, b) => sum + (b.spots || 0), 0);
+    document.getElementById('sm-participants-list').innerHTML = active.length
+      ? active.map(b => `<div class="sm-participant-row"><span>${esc(b.customer_name)}</span><span>${b.spots} plaats${b.spots === 1 ? '' : 'en'}</span></div>`).join('')
+      : '<span style="color:var(--muted);font-size:.8125rem">Nog geen deelnemers.</span>';
+  } catch (err) {
+    document.getElementById('sm-participants-list').innerHTML = '<span style="color:var(--red)">Kon deelnemers niet laden.</span>';
+  }
 }
 
 async function saveSession() {
