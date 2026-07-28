@@ -239,6 +239,9 @@
     .field textarea { min-height: 80px; resize: vertical; }
     .field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .field-hint { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+    .pm-checklist { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; max-height: 180px; overflow-y: auto; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: .75rem; }
+    .pm-checkbox { display: flex; align-items: center; gap: .5rem; font-size: .875rem; font-weight: 400; cursor: pointer; }
+    .pm-checkbox input { width: auto; }
 
     /* ── MODAL ─────────────────────────────────────────── */
     .modal-bg {
@@ -309,6 +312,7 @@
     .part-card__contact a:hover { text-decoration: underline; }
     .part-card__meta { font-size: .8125rem; color: var(--text); font-weight: 600; margin-bottom: .5rem; }
     .part-card__note { font-size: .8125rem; color: var(--text); background: var(--bg); border-radius: var(--r-md); padding: .5rem .625rem; font-style: italic; }
+    .part-card__prev { font-size: .75rem; color: var(--muted); margin-bottom: .375rem; }
 
     /* Toast */
     .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; color: #fff; padding: .75rem 1.25rem; border-radius: var(--r-lg); font-size: .875rem; font-weight: 500; box-shadow: var(--sh-md); animation: toastIn .25s ease, toastOut .3s 2.7s ease forwards; pointer-events: none; }
@@ -504,7 +508,13 @@
     <div id="tab-participants" class="tab-pane">
       <div class="page-head">
         <div><h2>Deelnemers</h2><p>Alle boekingen, per deelnemer.</p></div>
-        <input type="search" id="part-search" placeholder="Zoek op naam, e-mail of workshop…" style="max-width:280px" oninput="renderParticipants()">
+        <div style="display:flex;gap:.625rem;align-items:center">
+          <input type="search" id="part-search" placeholder="Zoek op naam, e-mail of workshop…" style="max-width:280px" oninput="renderParticipants()">
+          <button class="btn btn-primary" onclick="openParticipantModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Deelnemer
+          </button>
+        </div>
       </div>
       <div class="info-chip" id="part-filter-chip" style="display:none;justify-content:space-between;align-items:center">
         <span id="part-filter-label"></span>
@@ -611,9 +621,44 @@
       </div>
       <div class="field"><label>Notitie (intern)</label><textarea id="sm-notes" rows="2" placeholder="Bijv. privégroep, speciale locatie…"></textarea></div>
     </div>
+    <div class="modal-foot" style="justify-content:space-between">
+      <button class="btn btn-outline" id="sm-add-participant" style="display:none" onclick="const sid=_editId; closeModal('session-modal'); openParticipantModal(sid);">+ Deelnemer</button>
+      <div style="display:flex;gap:.625rem">
+        <button class="btn btn-outline" onclick="closeModal('session-modal')">Annuleren</button>
+        <button class="btn btn-primary" onclick="saveSession()">Opslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Deelnemer toevoegen -->
+<div class="modal-bg" id="participant-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Deelnemer toevoegen</h3><button class="modal-close" onclick="closeModal('participant-modal')">&#x2715;</button></div>
+    <div class="modal-body">
+      <div class="field" id="pm-session-field">
+        <label>Sessie *</label>
+        <select id="pm-session"><option value="">— Kies een sessie —</option></select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Naam *</label><input id="pm-name" placeholder="Jan Janssens"></div>
+        <div class="field"><label>E-mail *</label><input id="pm-email" type="email" placeholder="jan@email.be"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>GSM-nummer</label><input id="pm-phone" type="tel" placeholder="+32 4xx xx xx xx"></div>
+        <div class="field"><label>Aantal plaatsen</label><input id="pm-spots" type="number" min="1" value="1"></div>
+      </div>
+      <div class="field">
+        <label>Eerder gevolgde workshops</label>
+        <div id="pm-prev-workshops" class="pm-checklist"></div>
+      </div>
+      <div class="field">
+        <label class="pm-checkbox"><input type="checkbox" id="pm-newsletter"> Schrijft in voor de nieuwsbrief</label>
+      </div>
+    </div>
     <div class="modal-foot">
-      <button class="btn btn-outline" onclick="closeModal('session-modal')">Annuleren</button>
-      <button class="btn btn-primary" onclick="saveSession()">Opslaan</button>
+      <button class="btn btn-outline" onclick="closeModal('participant-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveNewParticipant()">Toevoegen</button>
     </div>
   </div>
 </div>
@@ -1019,6 +1064,7 @@ function openSessionModal(id) {
   document.getElementById('sm-max').value            = s?.max_spots     || '';
   document.getElementById('sm-booked').value         = s?.booked_spots  || 0;
   document.getElementById('sm-notes').value          = s?.notes         || '';
+  document.getElementById('sm-add-participant').style.display = id ? '' : 'none';
   openModal('session-modal');
 }
 
@@ -1148,6 +1194,11 @@ async function loadParticipants() {
     const path = participantsSessionFilter
       ? '/api/admin/bookings?sessionId=' + participantsSessionFilter.sessionId
       : '/api/admin/bookings';
+    // Nodig om workshop-id's in "eerder gevolgd" naar leesbare namen om te
+    // zetten, ook als het Workshoptypes-tabblad nog niet bezocht is.
+    if (!ADMIN_ALL_WORKSHOPS.length) {
+      try { ADMIN_ALL_WORKSHOPS = await adminFetch('/api/admin/workshops'); } catch (e) { /* niet kritiek */ }
+    }
     ADMIN_BOOKINGS = await adminFetch(path);
     renderParticipants();
   } catch (err) {
@@ -1207,10 +1258,68 @@ function renderParticipants() {
         <a href="mailto:${escA(b.customer_email)}">${esc(b.customer_email)}</a>
         ${b.customer_phone ? `<a href="tel:${escA(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
       </div>
-      <div class="part-card__meta">${b.spots} plaats${b.spots === 1 ? '' : 'en'} · € ${Number(b.amount_total).toFixed(2).replace('.', ',')}</div>
+      <div class="part-card__meta">${b.spots} plaats${b.spots === 1 ? '' : 'en'} · € ${Number(b.amount_total).toFixed(2).replace('.', ',')}${b.newsletter ? ' · 📩 nieuwsbrief' : ''}</div>
+      ${b.previous_workshops?.length ? `<div class="part-card__prev">Eerder gevolgd: ${esc(b.previous_workshops.map(id => ADMIN_ALL_WORKSHOPS.find(w => w.id === id)?.short_name || id).join(', '))}</div>` : ''}
       ${b.customer_note ? `<div class="part-card__note">${esc(b.customer_note)}</div>` : ''}
     </div>`;
   }).join('') + '</div>';
+}
+function openParticipantModal(sessionId) {
+  window._pmLockedSession = sessionId || null;
+  document.getElementById('pm-name').value = '';
+  document.getElementById('pm-email').value = '';
+  document.getElementById('pm-phone').value = '';
+  document.getElementById('pm-spots').value = 1;
+  document.getElementById('pm-newsletter').checked = false;
+
+  const sessionField = document.getElementById('pm-session-field');
+  if (sessionId) {
+    sessionField.style.display = 'none';
+  } else {
+    sessionField.style.display = '';
+    const today = new Date().toISOString().slice(0, 10);
+    const upcoming = ADMIN_SESSIONS.filter(s => !s.cancelled && s.date >= today);
+    document.getElementById('pm-session').innerHTML = '<option value="">— Kies een sessie —</option>' +
+      upcoming.map(s => `<option value="${s.id}">${fmtDate(s.date)} ${fmtSessTime(s)} — ${esc(s.workshops?.short_name || '')}</option>`).join('');
+  }
+
+  (async () => {
+    let workshops = ADMIN_ALL_WORKSHOPS.length ? ADMIN_ALL_WORKSHOPS : [];
+    if (!workshops.length) {
+      try { workshops = await adminFetch('/api/admin/workshops'); } catch (e) { workshops = []; }
+    }
+    document.getElementById('pm-prev-workshops').innerHTML = workshops.length
+      ? workshops.map(w => `<label class="pm-checkbox"><input type="checkbox" value="${w.id}"> ${esc(w.short_name || w.name)}</label>`).join('')
+      : '<span style="color:var(--muted);font-size:.8125rem">Geen workshoptypes gevonden.</span>';
+  })();
+
+  openModal('participant-modal');
+}
+async function saveNewParticipant() {
+  const sessionId = window._pmLockedSession || document.getElementById('pm-session').value;
+  const name  = document.getElementById('pm-name').value.trim();
+  const email = document.getElementById('pm-email').value.trim();
+  const phone = document.getElementById('pm-phone').value.trim();
+  const spots = parseInt(document.getElementById('pm-spots').value) || 1;
+  const newsletter = document.getElementById('pm-newsletter').checked;
+  const previousWorkshops = Array.from(document.querySelectorAll('#pm-prev-workshops input:checked')).map(cb => cb.value);
+
+  if (!sessionId || !name || !email) { toast('Vul sessie, naam en e-mail in.', false); return; }
+
+  try {
+    await adminFetch('/api/admin/bookings', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId, customerName: name, customerEmail: email, customerPhone: phone, spots, newsletter, previousWorkshops }),
+    });
+    closeModal('participant-modal');
+    toast('"' + name + '" toegevoegd');
+    await loadAgendaData();
+    if (document.getElementById('tab-participants').classList.contains('active')) await loadParticipants();
+    if (document.getElementById('tab-agenda').classList.contains('active')) { renderCalendar(); if (calSel) selectDay(calSel); renderSessionList(); }
+    renderDashboard();
+  } catch (err) {
+    toast(err.message, false);
+  }
 }
 
 /* ─── KORTINGSCODES ─────────────────────────────────────── */
