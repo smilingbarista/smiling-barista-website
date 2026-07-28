@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
       // Handmatig een deelnemer toevoegen (bv. betaald via overschrijving/
       // cash) — geen Mollie-betaling, de boeking staat meteen op 'paid'.
       const {
-        sessionId, customerName, customerEmail, customerPhone,
+        sessionId, customerName, customerEmail, customerPhone, customerNote,
         spots, newsletter, previousWorkshops,
       } = req.body || {};
       if (!sessionId || !customerName || !customerEmail) {
@@ -50,6 +50,7 @@ module.exports = async function handler(req, res) {
           customer_name: customerName,
           customer_email: customerEmail,
           customer_phone: customerPhone || null,
+          customer_note: customerNote || null,
           spots: spotsNum,
           amount_total: Number(workshop.price) * spotsNum,
           status: "paid",

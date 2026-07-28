@@ -655,6 +655,7 @@
       <div class="field">
         <label class="pm-checkbox"><input type="checkbox" id="pm-newsletter"> Schrijft in voor de nieuwsbrief</label>
       </div>
+      <div class="field"><label>Extra info (intern)</label><textarea id="pm-note" rows="2" placeholder="Bijv. allergieën, speciale wensen…"></textarea></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline" onclick="closeModal('participant-modal')">Annuleren</button>
@@ -1283,6 +1284,7 @@ function openParticipantModal(sessionId) {
   document.getElementById('pm-phone').value = '';
   document.getElementById('pm-spots').value = 1;
   document.getElementById('pm-newsletter').checked = false;
+  document.getElementById('pm-note').value = '';
 
   const sessionField = document.getElementById('pm-session-field');
   if (sessionId) {
@@ -1314,6 +1316,7 @@ async function saveNewParticipant() {
   const phone = document.getElementById('pm-phone').value.trim();
   const spots = parseInt(document.getElementById('pm-spots').value) || 1;
   const newsletter = document.getElementById('pm-newsletter').checked;
+  const note = document.getElementById('pm-note').value.trim();
   const previousWorkshops = Array.from(document.querySelectorAll('#pm-prev-workshops input:checked')).map(cb => cb.value);
 
   if (!sessionId || !name || !email) { toast('Vul sessie, naam en e-mail in.', false); return; }
@@ -1321,7 +1324,7 @@ async function saveNewParticipant() {
   try {
     await adminFetch('/api/admin/bookings', {
       method: 'POST',
-      body: JSON.stringify({ sessionId, customerName: name, customerEmail: email, customerPhone: phone, spots, newsletter, previousWorkshops }),
+      body: JSON.stringify({ sessionId, customerName: name, customerEmail: email, customerPhone: phone, customerNote: note, spots, newsletter, previousWorkshops }),
     });
     closeModal('participant-modal');
     toast('"' + name + '" toegevoegd');
