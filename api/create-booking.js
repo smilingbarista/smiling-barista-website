@@ -1,6 +1,7 @@
 const { sb } = require("./_lib/supabase");
 const { mollie } = require("./_lib/mollie");
 const { lookupCode, validateCode, computeDiscount, applyCodeUsage, revertCodeUsage } = require("./_lib/discount");
+const { sendBookingConfirmation } = require("./_lib/notifications");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -9,7 +10,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { sessionId, spots, customerName, customerEmail, customerPhone, customerNote, discountCode } =
+    const { sessionId, spots, customerName, customerEmail, customerPhone, customerNote, discountCode, smsOptIn } =
       req.body || {};
 
     if (!sessionId || !spots || !customerName || !customerEmail) {
@@ -66,6 +67,7 @@ module.exports = async function handler(req, res) {
         customer_email: customerEmail,
         customer_phone: customerPhone || null,
         customer_note: customerNote || null,
+        sms_opt_in: !!smsOptIn && !!customerPhone,
         spots: spotsNum,
         amount_total: finalAmount,
         discount_code: discountCodeRow ? discountCodeRow.code : null,
@@ -85,6 +87,12 @@ module.exports = async function handler(req, res) {
     // Volledig gedekt door de kortingscode/cadeaubon: geen Mollie-betaling
     // nodig, de boeking staat al meteen op 'paid'.
     if (finalAmount <= 0) {
+      try {
+        await sendBookingConfirmation(booking, session, workshop);
+        await sb(`/bookings?id=eq.${booking.id}`, { method: "PATCH", body: { email_confirmation_sent_at: new Date().toISOString() } });
+      } catch (mailErr) {
+        console.error("bevestigingsmail mislukt voor boeking", booking.id, mailErr);
+      }
       res.status(200).json({ paid: true, bookingId: booking.id });
       return;
     }

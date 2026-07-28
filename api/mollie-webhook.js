@@ -1,6 +1,7 @@
 const { sb } = require("./_lib/supabase");
 const { mollie } = require("./_lib/mollie");
 const { revertCodeUsage } = require("./_lib/discount");
+const { sendBookingConfirmation } = require("./_lib/notifications");
 
 // Mollie stuurt enkel { id } (form-encoded) en verwacht een snelle 2xx.
 // Bij een echte fout geven we een 500 terug zodat Mollie het later
@@ -20,7 +21,7 @@ module.exports = async function handler(req, res) {
 
     const payment = await mollie(`/payments/${paymentId}`);
     const bookings = await sb(
-      `/bookings?mollie_payment_id=eq.${paymentId}&select=*`,
+      `/bookings?mollie_payment_id=eq.${paymentId}&select=*,workshop_sessions(date,time,workshops(name,short_name))`,
     );
     const booking = bookings && bookings[0];
     if (!booking) {
@@ -35,6 +36,12 @@ module.exports = async function handler(req, res) {
         method: "PATCH",
         body: { status: "paid", updated_at: new Date().toISOString() },
       });
+      try {
+        await sendBookingConfirmation(booking, booking.workshop_sessions, booking.workshop_sessions.workshops);
+        await sb(`/bookings?id=eq.${booking.id}`, { method: "PATCH", body: { email_confirmation_sent_at: new Date().toISOString() } });
+      } catch (mailErr) {
+        console.error("bevestigingsmail mislukt voor boeking", booking.id, mailErr);
+      }
     } else if (
       ["expired", "canceled", "failed"].includes(payment.status) &&
       booking.status === "pending"

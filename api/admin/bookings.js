@@ -1,5 +1,6 @@
 const { sb } = require("../_lib/supabase");
 const { requireAdmin } = require("../_lib/admin-auth");
+const { sendBookingConfirmation } = require("../_lib/notifications");
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
@@ -20,7 +21,7 @@ module.exports = async function handler(req, res) {
       // cash) — geen Mollie-betaling, de boeking staat meteen op 'paid'.
       const {
         sessionId, customerName, customerEmail, customerPhone, customerNote,
-        spots, newsletter, previousWorkshops,
+        spots, newsletter, previousWorkshops, smsOptIn,
       } = req.body || {};
       if (!sessionId || !customerName || !customerEmail) {
         res.status(400).json({ error: "Sessie, naam en e-mail zijn verplicht." });
@@ -51,6 +52,7 @@ module.exports = async function handler(req, res) {
           customer_email: customerEmail,
           customer_phone: customerPhone || null,
           customer_note: customerNote || null,
+          sms_opt_in: !!smsOptIn && !!customerPhone,
           spots: spotsNum,
           amount_total: Number(workshop.price) * spotsNum,
           status: "paid",
@@ -62,6 +64,12 @@ module.exports = async function handler(req, res) {
         method: "PATCH",
         body: { booked_spots: session.booked_spots + spotsNum },
       });
+      try {
+        await sendBookingConfirmation(booking, session, workshop);
+        await sb(`/bookings?id=eq.${booking.id}`, { method: "PATCH", body: { email_confirmation_sent_at: new Date().toISOString() } });
+      } catch (mailErr) {
+        console.error("bevestigingsmail mislukt voor boeking", booking.id, mailErr);
+      }
 
       res.status(200).json(booking);
       return;
