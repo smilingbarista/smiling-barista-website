@@ -1237,6 +1237,18 @@ function renderParticipants() {
       (b.workshop_sessions?.workshops?.name || '').toLowerCase().includes(q)
     );
   }
+  // Per sessie gegroepeerd (datum + tijd + workshop), zodat deelnemers van
+  // dezelfde sessie naast elkaar staan; binnen een sessie op naam.
+  list = [...list].sort((a, b) => {
+    const sa = a.workshop_sessions, sb = b.workshop_sessions;
+    const da = sa?.date || '', db = sb?.date || '';
+    if (da !== db) return da < db ? -1 : 1;
+    const ta = sa?.time || '', tb = sb?.time || '';
+    if (ta !== tb) return ta < tb ? -1 : 1;
+    const wa = sa?.workshops?.name || '', wb = sb?.workshops?.name || '';
+    if (wa !== wb) return wa < wb ? -1 : 1;
+    return (a.customer_name || '').localeCompare(b.customer_name || '');
+  });
 
   const el = document.getElementById('participants-list');
   if (!list.length) {
