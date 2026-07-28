@@ -552,11 +552,15 @@
               <input type="email" id="bk-email" required placeholder="jan@email.be">
             </div>
           </div>
-          <div class="form-row" style="margin-bottom:1.5rem">
+          <div class="form-row">
             <div class="form-group">
               <label for="bk-phone">Telefoon</label>
               <input type="tel" id="bk-phone" placeholder="+32 4xx xx xx xx">
             </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem">
+            <label for="bk-note">Extra info</label>
+            <textarea id="bk-note" rows="2" placeholder="Allergieën, speciale wensen…"></textarea>
           </div>
           <button type="submit" class="btn btn--primary btn--full" id="bk-submit-btn">
             Bevestigen en betalen
@@ -832,6 +836,7 @@ const BookingModal = (() => {
     const name  = $('bk-name').value.trim();
     const email = $('bk-email').value.trim();
     const phone = $('bk-phone').value.trim();
+    const note  = $('bk-note').value.trim();
     const btn   = $('bk-submit-btn');
     btn.disabled = true; btn.textContent = 'Even geduld…';
     try {
@@ -844,6 +849,7 @@ const BookingModal = (() => {
           customerName: name,
           customerEmail: email,
           customerPhone: phone,
+          customerNote: note,
         }),
       });
       const data = await res.json();

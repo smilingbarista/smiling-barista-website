@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
   try {
     const sessionId = req.query.sessionId;
     const path = sessionId
-      ? `/bookings?session_id=eq.${sessionId}&select=*&order=created_at.desc`
+      ? `/bookings?session_id=eq.${sessionId}&select=*,workshop_sessions(date,time,workshops(name))&order=created_at.desc`
       : `/bookings?select=*,workshop_sessions(date,time,workshops(name))&order=created_at.desc&limit=200`;
     const rows = await sb(path);
     res.status(200).json(rows);

@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { sessionId, spots, customerName, customerEmail, customerPhone } =
+    const { sessionId, spots, customerName, customerEmail, customerPhone, customerNote } =
       req.body || {};
 
     if (!sessionId || !spots || !customerName || !customerEmail) {
@@ -49,6 +49,7 @@ module.exports = async function handler(req, res) {
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone || null,
+        customer_note: customerNote || null,
         spots: spotsNum,
         amount_total: amountTotal,
         status: "pending",

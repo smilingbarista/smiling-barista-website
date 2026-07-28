@@ -287,6 +287,27 @@
     /* Info chip */
     .info-chip { background: var(--cream); color: var(--blue); border-radius: var(--r-lg); padding: .75rem 1rem; font-size: .8125rem; margin-bottom: 1.5rem; border-left: 3px solid var(--blue); display: flex; gap: .625rem; }
 
+    /* Deelnemers */
+    #part-search {
+      width: 100%; padding: .625rem .875rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-lg); font-size: .875rem; font-family: inherit;
+      outline: none; background: #fff;
+    }
+    .part-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .part-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: 1rem 1.125rem; }
+    .part-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .375rem; }
+    .part-card__name { font-weight: 700; font-size: .9375rem; }
+    .part-card__status { font-size: .625rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: .2rem .5rem; border-radius: var(--r-full); flex-shrink: 0; white-space: nowrap; }
+    .status--paid { background: #dcfce7; color: var(--green); }
+    .status--pending { background: #fef3c7; color: #b45309; }
+    .status--cancelled, .status--expired, .status--failed { background: #fee2e2; color: var(--red); }
+    .part-card__ws { font-size: .8125rem; color: var(--muted); margin-bottom: .75rem; }
+    .part-card__contact { display: flex; flex-direction: column; gap: .25rem; font-size: .8125rem; margin-bottom: .625rem; }
+    .part-card__contact a { color: var(--blue); text-decoration: none; }
+    .part-card__contact a:hover { text-decoration: underline; }
+    .part-card__meta { font-size: .8125rem; color: var(--text); font-weight: 600; margin-bottom: .5rem; }
+    .part-card__note { font-size: .8125rem; color: var(--text); background: var(--bg); border-radius: var(--r-md); padding: .5rem .625rem; font-style: italic; }
+
     /* Toast */
     .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; color: #fff; padding: .75rem 1.25rem; border-radius: var(--r-lg); font-size: .875rem; font-weight: 500; box-shadow: var(--sh-md); animation: toastIn .25s ease, toastOut .3s 2.7s ease forwards; pointer-events: none; }
     @keyframes toastIn  { from { transform: translateY(10px); opacity: 0; } }
@@ -336,6 +357,10 @@
       <button class="sb-item" data-tab="workshoptypes" onclick="showTab('workshoptypes')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         Workshoptypes
+      </button>
+      <button class="sb-item" data-tab="participants" onclick="showTab('participants')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Deelnemers
       </button>
       <div class="sb-section">Website</div>
       <button class="sb-item" data-tab="blocks" onclick="showTab('blocks')">
@@ -467,6 +492,19 @@
       </div>
       <div class="info-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Verborgen workshoptypes verschijnen niet meer op de workshoppagina en kunnen niet meer ingepland worden. Bestaande boekingen blijven gewoon staan.</div>
       <ul class="block-list" id="workshoptypes-list"></ul>
+    </div>
+
+    <!-- DEELNEMERS -->
+    <div id="tab-participants" class="tab-pane">
+      <div class="page-head">
+        <div><h2>Deelnemers</h2><p>Alle boekingen, per deelnemer.</p></div>
+        <input type="search" id="part-search" placeholder="Zoek op naam, e-mail of workshop…" style="max-width:280px" oninput="renderParticipants()">
+      </div>
+      <div class="info-chip" id="part-filter-chip" style="display:none;justify-content:space-between;align-items:center">
+        <span id="part-filter-label"></span>
+        <button class="btn-icon" onclick="clearParticipantsFilter()" title="Alle deelnemers tonen">&#x2715;</button>
+      </div>
+      <div id="participants-list"></div>
     </div>
 
     <!-- PAGINA-INDELING -->
@@ -694,6 +732,7 @@ function showTab(name) {
   if (name === 'agenda')         { if (!calYear) initCalendar(); renderCalendar(); }
   if (name === 'dashboard')      renderDashboard();
   if (name === 'workshoptypes')  loadWorkshopTypes();
+  if (name === 'participants')   loadParticipants();
 }
 
 /* ─── UTILS ─────────────────────────────────────────────── */
@@ -873,6 +912,7 @@ function selectDay(ds) {
         <div class="day-sess-spots ${spotsClass(left)}">${s.booked_spots||0}/${max} geboekt · ${left} vrij</div>
       </div>
       <div class="day-sess-acts">
+        <button class="btn-icon" title="Deelnemers" onclick="openParticipants('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></button>
         <button class="btn-icon" onclick="openSessionModal('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
         <button class="btn-icon del" onclick="delSession('${s.id}','${ds}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
@@ -899,6 +939,7 @@ function renderSessionList() {
       <div class="sess-time">${fmtSessTime(s)}</div>
       <div class="sess-name">${esc(s.workshops?.name||'')}</div>
       <div class="sess-row__actions">
+        <button class="btn-icon" title="Deelnemers" onclick="openParticipants('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></button>
         <button class="btn-icon" onclick="openSessionModal('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
         <button class="btn-icon del" onclick="delSession('${s.id}',null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
@@ -1036,6 +1077,82 @@ async function saveWorkshopOrder() {
     toast(err.message, false);
   }
 }
+
+/* ─── DEELNEMERS ────────────────────────────────────────── */
+let ADMIN_BOOKINGS = [];
+let participantsSessionFilter = null; // { sessionId, label } of null (alle deelnemers)
+const BOOKING_STATUS_LABEL = { paid: 'Betaald', pending: 'In afwachting', cancelled: 'Geannuleerd', expired: 'Verlopen', failed: 'Mislukt' };
+
+async function loadParticipants() {
+  try {
+    const path = participantsSessionFilter
+      ? '/api/admin/bookings?sessionId=' + participantsSessionFilter.sessionId
+      : '/api/admin/bookings';
+    ADMIN_BOOKINGS = await adminFetch(path);
+    renderParticipants();
+  } catch (err) {
+    toast(err.message, false);
+  }
+}
+// Aanroepbaar vanuit een sessie in de Agenda (dagdetail en "Alle komende
+// sessies"), zodat je de deelnemers van net dié sessie kan bekijken zonder
+// zelf te moeten zoeken/filteren.
+function openParticipants(sessionId) {
+  const s = ADMIN_SESSIONS.find(x => x.id === sessionId);
+  const label = s ? (s.workshops?.short_name || s.workshops?.name || '') + ' · ' + fmtDate(s.date) + ' ' + fmtSessTime(s) : '';
+  participantsSessionFilter = { sessionId, label };
+  showTab('participants');
+}
+function clearParticipantsFilter() {
+  participantsSessionFilter = null;
+  document.getElementById('part-filter-chip').style.display = 'none';
+  loadParticipants();
+}
+function renderParticipants() {
+  const chip = document.getElementById('part-filter-chip');
+  if (participantsSessionFilter) {
+    chip.style.display = 'flex';
+    document.getElementById('part-filter-label').textContent = 'Gefilterd op: ' + participantsSessionFilter.label;
+  } else {
+    chip.style.display = 'none';
+  }
+
+  const q = document.getElementById('part-search').value.trim().toLowerCase();
+  let list = ADMIN_BOOKINGS;
+  if (q) {
+    list = list.filter(b =>
+      (b.customer_name || '').toLowerCase().includes(q) ||
+      (b.customer_email || '').toLowerCase().includes(q) ||
+      (b.workshop_sessions?.workshops?.name || '').toLowerCase().includes(q)
+    );
+  }
+
+  const el = document.getElementById('participants-list');
+  if (!list.length) {
+    el.innerHTML = '<p style="color:var(--muted)">Geen deelnemers gevonden.</p>';
+    return;
+  }
+  el.innerHTML = '<div class="part-list">' + list.map(b => {
+    const ws   = b.workshop_sessions?.workshops;
+    const sess = b.workshop_sessions;
+    const statusCls   = 'status--' + (b.status || 'pending');
+    const statusLabel = BOOKING_STATUS_LABEL[b.status] || b.status || '';
+    return `<div class="part-card">
+      <div class="part-card__head">
+        <span class="part-card__name">${esc(b.customer_name)}</span>
+        <span class="part-card__status ${statusCls}">${esc(statusLabel)}</span>
+      </div>
+      <div class="part-card__ws">${esc(ws?.name || '')}${sess ? ' · ' + fmtDate(sess.date) + ' ' + (sess.time || '') : ''}</div>
+      <div class="part-card__contact">
+        <a href="mailto:${escA(b.customer_email)}">${esc(b.customer_email)}</a>
+        ${b.customer_phone ? `<a href="tel:${escA(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
+      </div>
+      <div class="part-card__meta">${b.spots} plaats${b.spots === 1 ? '' : 'en'} · € ${Number(b.amount_total).toFixed(2).replace('.', ',')}</div>
+      ${b.customer_note ? `<div class="part-card__note">${esc(b.customer_note)}</div>` : ''}
+    </div>`;
+  }).join('') + '</div>';
+}
+
 async function toggleWorkshopActive(id, v) {
   const li = document.querySelector(`#workshoptypes-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
