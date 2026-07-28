@@ -7,14 +7,14 @@ module.exports = async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const rows = await sb(
-        "/workshop_sessions?select=*,workshops(id,name,short_name,color,max_spots)&order=date.asc,time.asc",
+        "/workshop_sessions?select=*,workshops(id,name,short_name,color,max_spots),instructors(id,name)&order=date.asc,time.asc",
       );
       res.status(200).json(rows);
       return;
     }
 
     if (req.method === "POST") {
-      const { workshopId, date, time, endTime, maxSpots, bookedSpots, notes } =
+      const { workshopId, date, time, endTime, maxSpots, bookedSpots, notes, instructorId } =
         req.body || {};
       if (!workshopId || !date || !time) {
         res.status(400).json({ error: "Ontbrekende gegevens." });
@@ -31,6 +31,7 @@ module.exports = async function handler(req, res) {
           max_spots: maxSpots || null,
           booked_spots: bookedSpots || 0,
           notes: notes || null,
+          instructor_id: instructorId || null,
         },
       });
       res.status(200).json(row);
