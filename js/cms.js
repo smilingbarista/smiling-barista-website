@@ -47,8 +47,6 @@ const CMS = (() => {
       { id:'services',      label:'Aanbod overzicht',      icon:'📋', visible:true },
       { id:'teambuilding',  label:'Teambuilding',          icon:'🚲', visible:true },
       { id:'workshopteaser',label:'Workshops-teaser',      icon:'🎨', visible:true },
-      { id:'praktisch',     label:'Praktisch',             icon:'📐', visible:true },
-      { id:'tarieven',      label:'Tarieven',              icon:'💶', visible:true },
       { id:'gallery',       label:'Gallery',               icon:'🖼️', visible:true },
       { id:'reviews',       label:'Google Reviews',        icon:'⭐', visible:true },
       { id:'cta',           label:'CTA banner',            icon:'📣', visible:true },
