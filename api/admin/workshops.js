@@ -1,11 +1,13 @@
-const { sb } = require("../../_lib/supabase");
-const { requireAdmin } = require("../../_lib/admin-auth");
+const { sb } = require("../_lib/supabase");
+const { requireAdmin } = require("../_lib/admin-auth");
 
-// Samengevoegd uit workshops.js + workshops/[id].js: Vercel Hobby staat max.
-// 12 serverless functions per deployment toe, en elk apart bestand onder
-// /api telt apart mee. Deze "optional catch-all"-route (bestandsnaam
-// [[...params]].js) vangt zowel /api/admin/workshops als
-// /api/admin/workshops/:id op in één functie. Gedrag is ongewijzigd.
+// Eén plat bestand voor alle workshoptype-operaties (i.p.v. een apart
+// [id].js-bestand): elk bestand onder /api telt als een aparte Vercel
+// Serverless Function, en Hobby staat max. 12 toe per deployment. Een
+// los-item-operatie gebeurt via ?id=xxx in de querystring i.p.v. een
+// dynamisch pad-segment — dat laatste bleek via Vercel's "optional
+// catch-all"-conventie ([[...x]].js) niet te werken voor dit project
+// (geverifieerd: leverde overal 404 op, ook op het basis-pad).
 const FIELD_MAP = {
   active: "active",
   name: "name",
@@ -22,7 +24,7 @@ const FIELD_MAP = {
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
-  const id = (req.query.params || [])[0];
+  const id = req.query.id;
 
   try {
     if (!id) {

@@ -1,14 +1,16 @@
-const { sb } = require("../../_lib/supabase");
-const { requireAdmin } = require("../../_lib/admin-auth");
-const { sendBookingConfirmation } = require("../../_lib/notifications");
+const { sb } = require("../_lib/supabase");
+const { requireAdmin } = require("../_lib/admin-auth");
+const { sendBookingConfirmation } = require("../_lib/notifications");
 
-// Samengevoegd uit bookings.js + bookings/[id].js — zie de toelichting in
-// api/admin/workshops/[[...params]].js voor waarom.
+// Zie de toelichting bovenaan api/admin/workshops.js: één plat bestand,
+// los-item-operaties via ?id=xxx i.p.v. een dynamisch pad-segment. Let op:
+// het bestaande ?sessionId=xxx-filter op GET blijft een apart, eigen
+// queryparam — dat verwart niet met dit nieuwe ?id=xxx (los boekingsitem).
 const VALID_CHECKIN = ["checked_in", "no_show", "cancelled", "moved"];
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
-  const id = (req.query.params || [])[0];
+  const id = req.query.id;
 
   try {
     if (!id) {

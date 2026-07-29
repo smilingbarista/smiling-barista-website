@@ -1,8 +1,8 @@
-const { sb } = require("../../_lib/supabase");
-const { requireAdmin } = require("../../_lib/admin-auth");
+const { sb } = require("../_lib/supabase");
+const { requireAdmin } = require("../_lib/admin-auth");
 
-// Samengevoegd uit discount-codes.js + discount-codes/[id].js — zie de
-// toelichting in api/admin/workshops/[[...params]].js voor waarom.
+// Zie de toelichting bovenaan api/admin/workshops.js: één plat bestand,
+// los-item-operaties via ?id=xxx i.p.v. een dynamisch pad-segment.
 const FIELD_MAP = {
   active: "active",
   value: "value",
@@ -14,7 +14,7 @@ const FIELD_MAP = {
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
-  const id = (req.query.params || [])[0];
+  const id = req.query.id;
 
   try {
     if (!id) {

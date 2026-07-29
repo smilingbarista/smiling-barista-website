@@ -1178,7 +1178,7 @@ async function saveSession() {
   };
   try {
     if (_editId) {
-      await adminFetch('/api/admin/sessions/' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
+      await adminFetch('/api/admin/sessions?id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
       toast('Sessie bijgewerkt');
     } else {
       await adminFetch('/api/admin/sessions', { method: 'POST', body: JSON.stringify(Object.assign({ workshopId }, data)) });
@@ -1197,7 +1197,7 @@ async function saveSession() {
 async function delSession(id, ds) {
   if (!confirm('Sessie definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/sessions/' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/sessions?id=' + id, { method: 'DELETE' });
     await loadAgendaData();
     renderCalendar();
     if (ds) selectDay(ds);
@@ -1299,7 +1299,7 @@ async function setCheckinStatus(id, status) {
   b.checkin_status = prev === status ? null : status; // nogmaals klikken op dezelfde = wissen
   renderParticipants();
   try {
-    await adminFetch('/api/admin/bookings/' + id, { method: 'PATCH', body: JSON.stringify({ checkinStatus: b.checkin_status }) });
+    await adminFetch('/api/admin/bookings?id=' + id, { method: 'PATCH', body: JSON.stringify({ checkinStatus: b.checkin_status }) });
   } catch (err) {
     b.checkin_status = prev;
     renderParticipants();
@@ -1533,7 +1533,7 @@ async function toggleDiscountActive(id, v) {
   const li = document.querySelector(`#discounts-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/discount-codes/' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/discount-codes?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const dc = ADMIN_DISCOUNTS.find(x => x.id === id);
     if (dc) dc.active = v;
   } catch (err) {
@@ -1546,7 +1546,7 @@ async function toggleDiscountActive(id, v) {
 async function deleteDiscountCode(id) {
   if (!confirm('Deze code definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/discount-codes/' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/discount-codes?id=' + id, { method: 'DELETE' });
     ADMIN_DISCOUNTS = ADMIN_DISCOUNTS.filter(x => x.id !== id);
     renderDiscountCodes();
     toast('Code verwijderd');
@@ -1594,7 +1594,7 @@ async function saveInstructor() {
   if (!name) { toast('Vul een naam in.', false); return; }
   try {
     if (_editId) {
-      await adminFetch('/api/admin/instructors/' + _editId, { method: 'PATCH', body: JSON.stringify({ name, email, phone }) });
+      await adminFetch('/api/admin/instructors?id=' + _editId, { method: 'PATCH', body: JSON.stringify({ name, email, phone }) });
     } else {
       await adminFetch('/api/admin/instructors', { method: 'POST', body: JSON.stringify({ name, email, phone }) });
     }
@@ -1609,7 +1609,7 @@ async function toggleInstructorActive(id, v) {
   const li = document.querySelector(`#instructors-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/instructors/' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/instructors?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const ins = ADMIN_INSTRUCTORS.find(x => x.id === id);
     if (ins) ins.active = v;
   } catch (err) {
@@ -1622,7 +1622,7 @@ async function toggleInstructorActive(id, v) {
 async function deleteInstructor(id) {
   if (!confirm('Deze lesgever definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/instructors/' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/instructors?id=' + id, { method: 'DELETE' });
     ADMIN_INSTRUCTORS = ADMIN_INSTRUCTORS.filter(x => x.id !== id);
     renderInstructors();
     toast('Lesgever verwijderd');
@@ -1635,7 +1635,7 @@ async function toggleWorkshopActive(id, v) {
   const li = document.querySelector(`#workshoptypes-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/workshops/' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/workshops?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const w = ADMIN_ALL_WORKSHOPS.find(x => x.id === id);
     if (w) w.active = v;
     toast((v ? '"' + (w?.name || '') + '" is weer zichtbaar' : '"' + (w?.name || '') + '" is verborgen'));
@@ -1685,7 +1685,7 @@ async function saveWorkshopType() {
   };
   try {
     if (_editId) {
-      await adminFetch('/api/admin/workshops/' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
+      await adminFetch('/api/admin/workshops?id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
       toast('"' + name + '" opgeslagen');
     } else {
       await adminFetch('/api/admin/workshops', { method: 'POST', body: JSON.stringify(Object.assign({ id }, data)) });

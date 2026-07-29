@@ -1,13 +1,13 @@
-const { sb } = require("../../_lib/supabase");
-const { requireAdmin } = require("../../_lib/admin-auth");
+const { sb } = require("../_lib/supabase");
+const { requireAdmin } = require("../_lib/admin-auth");
 
-// Samengevoegd uit instructors.js + instructors/[id].js — zie de toelichting
-// in api/admin/workshops/[[...params]].js voor waarom.
+// Zie de toelichting bovenaan api/admin/workshops.js: één plat bestand,
+// los-item-operaties via ?id=xxx i.p.v. een dynamisch pad-segment.
 const FIELD_MAP = { name: "name", email: "email", phone: "phone", active: "active" };
 
 module.exports = async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
-  const id = (req.query.params || [])[0];
+  const id = req.query.id;
 
   try {
     if (!id) {
