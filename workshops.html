@@ -489,7 +489,7 @@
 
 <!-- ═══════════════════════════════════════════════════════════════
      WORKSHOP BOOKING MODAL — kalendergestuurde versie
-     Gebruikt js/workshops-data.js (Supabase) + /api/create-booking (Mollie)
+     Gebruikt js/workshops-data.js (Supabase) + /api/booking?action=create (Mollie)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="booking-overlay" id="booking-overlay" role="dialog" aria-modal="true">
   <div class="booking-modal" id="booking-modal">
@@ -819,7 +819,7 @@ const BookingModal = (() => {
     const btn = $('bk-discount-btn');
     btn.disabled = true; btn.textContent = 'Bezig…';
     try {
-      const res = await fetch('/api/validate-discount', {
+      const res = await fetch('/api/booking?action=validate-discount', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, sessionId: selSess.id, spots }),
@@ -912,7 +912,7 @@ const BookingModal = (() => {
     const btn   = $('bk-submit-btn');
     btn.disabled = true; btn.textContent = 'Even geduld…';
     try {
-      const res = await fetch('/api/create-booking', {
+      const res = await fetch('/api/booking?action=create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -958,7 +958,7 @@ async function showBookingReturnStatus() {
   const bookingId = params.get('booking');
   if (!bookingId) return;
   try {
-    const res = await fetch('/api/booking-status?id=' + encodeURIComponent(bookingId));
+    const res = await fetch('/api/booking?action=status&id=' + encodeURIComponent(bookingId));
     const data = await res.json();
     if (!res.ok) return;
     const label = data.status === 'paid' ? 'Betaling gelukt! Tot binnenkort op de workshop 🎉'

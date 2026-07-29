@@ -3,7 +3,26 @@ const { mollie } = require("./_lib/mollie");
 const { lookupCode, validateCode, computeDiscount, applyCodeUsage, revertCodeUsage } = require("./_lib/discount");
 const { sendBookingConfirmation } = require("./_lib/notifications");
 
+// Publieke, ongeauthenticeerde boekingsflow-endpoints, samengevoegd in 1
+// bestand (Vercel Hobby: max. 12 serverless functions per deployment).
+// Alle drie horen bij hetzelfde vertrouwensniveau (geen inlog) en dezelfde
+// flow. mollie-webhook.js, cron/send-reminders.js en admin/login.js blijven
+// bewust apart (andere aanroeper/vertrouwensgrens).
 module.exports = async function handler(req, res) {
+  const action = req.query.action;
+  switch (action) {
+    case "create":
+      return handleCreate(req, res);
+    case "validate-discount":
+      return handleValidateDiscount(req, res);
+    case "status":
+      return handleStatus(req, res);
+    default:
+      res.status(400).json({ error: "Onbekende actie." });
+  }
+};
+
+async function handleCreate(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
@@ -138,4 +157,72 @@ module.exports = async function handler(req, res) {
       .status(500)
       .json({ error: "Er ging iets mis bij het boeken. Probeer opnieuw." });
   }
-};
+}
+
+async function handleValidateDiscount(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const { code, sessionId, spots } = req.body || {};
+    if (!code || !sessionId || !spots) {
+      res.status(400).json({ error: "Ontbrekende gegevens." });
+      return;
+    }
+
+    const dc = await lookupCode(code);
+    const err = validateCode(dc);
+    if (err) {
+      res.status(400).json({ error: err });
+      return;
+    }
+
+    const sessions = await sb(
+      `/workshop_sessions?id=eq.${sessionId}&select=*,workshops(price)`,
+    );
+    const session = sessions && sessions[0];
+    if (!session) {
+      res.status(404).json({ error: "Sessie niet gevonden." });
+      return;
+    }
+    const spotsNum = parseInt(spots, 10);
+    const amountTotal = Number(session.workshops.price) * spotsNum;
+    const discount = computeDiscount(dc, amountTotal);
+    const newTotal = Math.max(0, Math.round((amountTotal - discount) * 100) / 100);
+
+    res.status(200).json({ valid: true, kind: dc.kind, discount, amountTotal, newTotal });
+  } catch (err) {
+    console.error("validate-discount error:", err);
+    res.status(500).json({ error: err.message || "Er ging iets mis." });
+  }
+}
+
+async function handleStatus(req, res) {
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  const id = req.query.id;
+  if (!id) {
+    res.status(400).json({ error: "Ontbrekend boekings-id." });
+    return;
+  }
+
+  try {
+    const rows = await sb(
+      `/bookings?id=eq.${id}&select=status,spots,amount_total,workshop_sessions(date,time,workshops(name))`,
+    );
+    const booking = rows && rows[0];
+    if (!booking) {
+      res.status(404).json({ error: "Boeking niet gevonden." });
+      return;
+    }
+    res.status(200).json(booking);
+  } catch (err) {
+    console.error("booking-status error:", err);
+    res.status(500).json({ error: "Er ging iets mis." });
+  }
+}
