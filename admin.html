@@ -935,14 +935,14 @@ function fmtSessTime(s) {
 }
 
 /* ─── AGENDA-DATA (Supabase i.p.v. localStorage) ────────── */
-let ADMIN_SESSIONS = [];   // alle sessies (verleden + toekomst), van /api/admin/sessions
+let ADMIN_SESSIONS = [];   // alle sessies (verleden + toekomst), van /api/admin/resource?resource=sessions
 let ADMIN_WORKSHOPS = [];  // cursuscatalogus, publiek via WorkshopsData
 
 async function loadAgendaData() {
   await WorkshopsData.load();
   ADMIN_WORKSHOPS = WorkshopsData.getWorkshops();
   populateWorkshopSelect();
-  ADMIN_SESSIONS = await adminFetch('/api/admin/sessions');
+  ADMIN_SESSIONS = await adminFetch('/api/admin/resource?resource=sessions');
 }
 
 function populateWorkshopSelect() {
@@ -1139,7 +1139,7 @@ async function populateInstructorSelect(selectedId) {
   const sel = document.getElementById('sm-instructor');
   let instructors = ADMIN_INSTRUCTORS.length ? ADMIN_INSTRUCTORS : [];
   if (!instructors.length) {
-    try { instructors = await adminFetch('/api/admin/instructors'); ADMIN_INSTRUCTORS = instructors; } catch (e) { instructors = []; }
+    try { instructors = await adminFetch('/api/admin/resource?resource=instructors'); ADMIN_INSTRUCTORS = instructors; } catch (e) { instructors = []; }
   }
   sel.innerHTML = '<option value="">— Geen —</option>' +
     instructors.filter(i => i.active || i.id === selectedId).map(i => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
@@ -1152,7 +1152,7 @@ async function loadSessionParticipants(sessionId) {
   field.style.display = '';
   document.getElementById('sm-participants-list').innerHTML = '<span style="color:var(--muted);font-size:.8125rem">Laden…</span>';
   try {
-    const bookings = await adminFetch('/api/admin/bookings?sessionId=' + sessionId);
+    const bookings = await adminFetch('/api/admin/resource?resource=bookings&sessionId=' + sessionId);
     const active = bookings.filter(b => b.status !== 'cancelled' && b.status !== 'failed' && b.status !== 'expired');
     document.getElementById('sm-participants-count').textContent = active.reduce((sum, b) => sum + (b.spots || 0), 0);
     document.getElementById('sm-participants-list').innerHTML = active.length
@@ -1178,10 +1178,10 @@ async function saveSession() {
   };
   try {
     if (_editId) {
-      await adminFetch('/api/admin/sessions?id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
+      await adminFetch('/api/admin/resource?resource=sessions&id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
       toast('Sessie bijgewerkt');
     } else {
-      await adminFetch('/api/admin/sessions', { method: 'POST', body: JSON.stringify(Object.assign({ workshopId }, data)) });
+      await adminFetch('/api/admin/resource?resource=sessions', { method: 'POST', body: JSON.stringify(Object.assign({ workshopId }, data)) });
       toast('Sessie aangemaakt');
     }
     closeModal('session-modal');
@@ -1197,7 +1197,7 @@ async function saveSession() {
 async function delSession(id, ds) {
   if (!confirm('Sessie definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/sessions?id=' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/resource?resource=sessions&id=' + id, { method: 'DELETE' });
     await loadAgendaData();
     renderCalendar();
     if (ds) selectDay(ds);
@@ -1239,7 +1239,7 @@ function saveBlocks() {
 let ADMIN_ALL_WORKSHOPS = [];
 async function loadWorkshopTypes() {
   try {
-    ADMIN_ALL_WORKSHOPS = await adminFetch('/api/admin/workshops');
+    ADMIN_ALL_WORKSHOPS = await adminFetch('/api/admin/resource?resource=workshops');
     renderWorkshopTypes();
   } catch (err) {
     toast(err.message, false);
@@ -1270,7 +1270,7 @@ function renderWorkshopTypes() {
 async function saveWorkshopOrder() {
   const ids = Array.from(document.getElementById('workshoptypes-list').querySelectorAll('[data-id]')).map(li => li.dataset.id);
   try {
-    await adminFetch('/api/admin/workshops', { method: 'PATCH', body: JSON.stringify({ order: ids }) });
+    await adminFetch('/api/admin/resource?resource=workshops', { method: 'PATCH', body: JSON.stringify({ order: ids }) });
     ids.forEach((id, i) => { const w = ADMIN_ALL_WORKSHOPS.find(x => x.id === id); if (w) w.sort_order = i; });
     ADMIN_ALL_WORKSHOPS.sort((a, b) => a.sort_order - b.sort_order);
     document.getElementById('wst-order-save').style.display = 'none';
@@ -1299,7 +1299,7 @@ async function setCheckinStatus(id, status) {
   b.checkin_status = prev === status ? null : status; // nogmaals klikken op dezelfde = wissen
   renderParticipants();
   try {
-    await adminFetch('/api/admin/bookings?id=' + id, { method: 'PATCH', body: JSON.stringify({ checkinStatus: b.checkin_status }) });
+    await adminFetch('/api/admin/resource?resource=bookings&id=' + id, { method: 'PATCH', body: JSON.stringify({ checkinStatus: b.checkin_status }) });
   } catch (err) {
     b.checkin_status = prev;
     renderParticipants();
@@ -1310,12 +1310,12 @@ async function setCheckinStatus(id, status) {
 async function loadParticipants() {
   try {
     const path = participantsSessionFilter
-      ? '/api/admin/bookings?sessionId=' + participantsSessionFilter.sessionId
-      : '/api/admin/bookings';
+      ? '/api/admin/resource?resource=bookings&sessionId=' + participantsSessionFilter.sessionId
+      : '/api/admin/resource?resource=bookings';
     // Nodig om workshop-id's in "eerder gevolgd" naar leesbare namen om te
     // zetten, ook als het Workshoptypes-tabblad nog niet bezocht is.
     if (!ADMIN_ALL_WORKSHOPS.length) {
-      try { ADMIN_ALL_WORKSHOPS = await adminFetch('/api/admin/workshops'); } catch (e) { /* niet kritiek */ }
+      try { ADMIN_ALL_WORKSHOPS = await adminFetch('/api/admin/resource?resource=workshops'); } catch (e) { /* niet kritiek */ }
     }
     ADMIN_BOOKINGS = await adminFetch(path);
     renderParticipants();
@@ -1423,7 +1423,7 @@ function openParticipantModal(sessionId) {
   (async () => {
     let workshops = ADMIN_ALL_WORKSHOPS.length ? ADMIN_ALL_WORKSHOPS : [];
     if (!workshops.length) {
-      try { workshops = await adminFetch('/api/admin/workshops'); } catch (e) { workshops = []; }
+      try { workshops = await adminFetch('/api/admin/resource?resource=workshops'); } catch (e) { workshops = []; }
     }
     document.getElementById('pm-prev-workshops').innerHTML = workshops.length
       ? workshops.map(w => `<label class="pm-checkbox"><input type="checkbox" value="${w.id}"> ${esc(w.short_name || w.name)}</label>`).join('')
@@ -1446,7 +1446,7 @@ async function saveNewParticipant() {
   if (!sessionId || !name || !email) { toast('Vul sessie, naam en e-mail in.', false); return; }
 
   try {
-    await adminFetch('/api/admin/bookings', {
+    await adminFetch('/api/admin/resource?resource=bookings', {
       method: 'POST',
       body: JSON.stringify({ sessionId, customerName: name, customerEmail: email, customerPhone: phone, customerNote: note, spots, newsletter, smsOptIn, previousWorkshops }),
     });
@@ -1467,7 +1467,7 @@ const DISCOUNT_KIND_LABEL = { percent: 'Percentage', fixed: 'Vast bedrag', giftc
 
 async function loadDiscountCodes() {
   try {
-    ADMIN_DISCOUNTS = await adminFetch('/api/admin/discount-codes');
+    ADMIN_DISCOUNTS = await adminFetch('/api/admin/resource?resource=discount-codes');
     renderDiscountCodes();
   } catch (err) {
     toast(err.message, false);
@@ -1513,7 +1513,7 @@ async function saveDiscountCode() {
   const value = parseFloat(document.getElementById('dc-value').value);
   if (!code || isNaN(value) || value <= 0) { toast('Vul code en waarde in.', false); return; }
   try {
-    await adminFetch('/api/admin/discount-codes', {
+    await adminFetch('/api/admin/resource?resource=discount-codes', {
       method: 'POST',
       body: JSON.stringify({
         code, kind, value,
@@ -1533,7 +1533,7 @@ async function toggleDiscountActive(id, v) {
   const li = document.querySelector(`#discounts-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/discount-codes?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/resource?resource=discount-codes&id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const dc = ADMIN_DISCOUNTS.find(x => x.id === id);
     if (dc) dc.active = v;
   } catch (err) {
@@ -1546,7 +1546,7 @@ async function toggleDiscountActive(id, v) {
 async function deleteDiscountCode(id) {
   if (!confirm('Deze code definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/discount-codes?id=' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/resource?resource=discount-codes&id=' + id, { method: 'DELETE' });
     ADMIN_DISCOUNTS = ADMIN_DISCOUNTS.filter(x => x.id !== id);
     renderDiscountCodes();
     toast('Code verwijderd');
@@ -1559,7 +1559,7 @@ async function deleteDiscountCode(id) {
 let ADMIN_INSTRUCTORS = [];
 async function loadInstructors() {
   try {
-    ADMIN_INSTRUCTORS = await adminFetch('/api/admin/instructors');
+    ADMIN_INSTRUCTORS = await adminFetch('/api/admin/resource?resource=instructors');
     renderInstructors();
   } catch (err) {
     toast(err.message, false);
@@ -1594,9 +1594,9 @@ async function saveInstructor() {
   if (!name) { toast('Vul een naam in.', false); return; }
   try {
     if (_editId) {
-      await adminFetch('/api/admin/instructors?id=' + _editId, { method: 'PATCH', body: JSON.stringify({ name, email, phone }) });
+      await adminFetch('/api/admin/resource?resource=instructors&id=' + _editId, { method: 'PATCH', body: JSON.stringify({ name, email, phone }) });
     } else {
-      await adminFetch('/api/admin/instructors', { method: 'POST', body: JSON.stringify({ name, email, phone }) });
+      await adminFetch('/api/admin/resource?resource=instructors', { method: 'POST', body: JSON.stringify({ name, email, phone }) });
     }
     closeModal('instructor-modal');
     await loadInstructors();
@@ -1609,7 +1609,7 @@ async function toggleInstructorActive(id, v) {
   const li = document.querySelector(`#instructors-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/instructors?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/resource?resource=instructors&id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const ins = ADMIN_INSTRUCTORS.find(x => x.id === id);
     if (ins) ins.active = v;
   } catch (err) {
@@ -1622,7 +1622,7 @@ async function toggleInstructorActive(id, v) {
 async function deleteInstructor(id) {
   if (!confirm('Deze lesgever definitief verwijderen?')) return;
   try {
-    await adminFetch('/api/admin/instructors?id=' + id, { method: 'DELETE' });
+    await adminFetch('/api/admin/resource?resource=instructors&id=' + id, { method: 'DELETE' });
     ADMIN_INSTRUCTORS = ADMIN_INSTRUCTORS.filter(x => x.id !== id);
     renderInstructors();
     toast('Lesgever verwijderd');
@@ -1635,7 +1635,7 @@ async function toggleWorkshopActive(id, v) {
   const li = document.querySelector(`#workshoptypes-list [data-id="${id}"]`);
   li?.classList.toggle('block-hidden', !v);
   try {
-    await adminFetch('/api/admin/workshops?id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
+    await adminFetch('/api/admin/resource?resource=workshops&id=' + id, { method: 'PATCH', body: JSON.stringify({ active: v }) });
     const w = ADMIN_ALL_WORKSHOPS.find(x => x.id === id);
     if (w) w.active = v;
     toast((v ? '"' + (w?.name || '') + '" is weer zichtbaar' : '"' + (w?.name || '') + '" is verborgen'));
@@ -1685,10 +1685,10 @@ async function saveWorkshopType() {
   };
   try {
     if (_editId) {
-      await adminFetch('/api/admin/workshops?id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
+      await adminFetch('/api/admin/resource?resource=workshops&id=' + _editId, { method: 'PATCH', body: JSON.stringify(data) });
       toast('"' + name + '" opgeslagen');
     } else {
-      await adminFetch('/api/admin/workshops', { method: 'POST', body: JSON.stringify(Object.assign({ id }, data)) });
+      await adminFetch('/api/admin/resource?resource=workshops', { method: 'POST', body: JSON.stringify(Object.assign({ id }, data)) });
       toast('"' + name + '" aangemaakt');
     }
     closeModal('wsm-modal');
