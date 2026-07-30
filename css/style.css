@@ -355,6 +355,13 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
   overflow: hidden;
 }
 .hero-card__badge-img--fixed img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.hero-card__badge-text {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: .75rem; font-family: var(--font-head); font-size: 1.40625rem; font-weight: 800; line-height: 1.1;
+  color: var(--white); -webkit-text-stroke: 2px #0366C5; paint-order: stroke fill;
+  pointer-events: none;
+}
 
 .hero-card__video {
   position: relative; z-index: 2; flex-shrink: 0;
@@ -367,6 +374,7 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.625rem); }
   .hero-card { flex-direction: column; align-items: center; justify-content: flex-start; }
   .hero-card__content { padding-bottom: 1rem; padding-top: 10rem; }
   .hero-card__badge-img--fixed { width: 110px; height: 110px; }
+  .hero-card__badge-text { font-size: 1.125rem; padding: .5rem; }
   .hero-card__video { padding: 0 clamp(1.5rem, 6vw, 3.5rem) clamp(2rem, 6vw, 3.5rem); }
   .hero-card__video .video-wrap--portrait { width: min(220px, 55vw); margin: 0 auto; }
 }
